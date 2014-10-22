@@ -1,0 +1,19 @@
+# Windows
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Latex
+
+*.aux
+*.lof
+*.log
+*.lol
+*.out
+*.synctex
+*.toc
+
+# Output
+
+*.pdf

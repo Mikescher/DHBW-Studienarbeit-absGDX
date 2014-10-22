@@ -1,0 +1,50 @@
+\documentclass[a4paper]{article}
+
+\input{header}
+\input{definitions}
+
+\begin{document}
+\input{settings}
+
+%########################
+%######## HEADER ########
+%########################
+
+\pagenumbering{Alph}
+\cstmtitlepage
+\newpage
+
+\setcounter{page}{1}
+\pagenumbering{Roman}
+
+\tableofcontents
+\newpage
+
+\lstlistoflistings
+\newpage
+
+\listoffigures 
+\newpage
+
+\cstmlegalpage
+\newpage
+
+%########################
+%######## CONTENT #######
+%########################
+
+\setcounter{page}{1}
+\pagenumbering{arabic}
+\input{content}
+
+%########################
+%######## FOOTER ########
+%########################
+
+\newpage 
+\bibliographystyle{acm}
+\bibliography{mainbib}
+
+\nocite{*} % Include EVERYTHING o.O
+
+\end{document}

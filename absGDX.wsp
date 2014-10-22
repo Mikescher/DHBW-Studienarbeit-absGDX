@@ -1,0 +1,11 @@
+[main]
+.\main.tex
+
+[texfiles]
+.\content.tex
+.\definitions.tex
+.\header.tex
+.\settings.tex
+.\title.tex
+.\mainbib.bib
+

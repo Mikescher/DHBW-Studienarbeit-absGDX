@@ -1,0 +1,88 @@
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\definecolor{limgreen}{rgb}{0,0.5,0}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
+\definecolor{cstringcol}{rgb}{0.6,0.33,0.2}
+\definecolor{nptabcol}{rgb}{1,0.725,0.47}
+
+\newcommand{\cstmtitlepage}{\input{title}}
+
+\newcommand{\cstmlegalpage}{\input{legal}}
+
+\lstdefinestyle{sharpc}{
+  language=[Sharp]C, 
+  rulecolor=\color{darkblue},
+  keywordstyle=\bfseries\color{darkblue}
+}
+
+\lstdefinestyle{sharpcpp}{
+  language=C++, 
+  rulecolor=\color{darkblue},
+  keywordstyle=\bfseries\color{darkblue},
+  stringstyle=\color{red},
+  commentstyle=\color{darkgreen}
+}
+
+\lstset{ 
+    language=SQL,
+    lineskip={-0.5pt}, % single line spacing
+    keywordstyle=\color{darkblue}\bfseries
+}
+
+\lstnewenvironment{lstsnippet}[1][]
+    {\lstset{float=htpb,#1}} 
+    {}
+
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  showstringspaces=false,
+  commentstyle=\color{gray}\upshape,
+  breaklines=true,
+  language=XML,
+  lineskip={-0.5pt}, % single line spacing
+  frame=single
+}
+
+\lstdefinelanguage{XML}
+{
+  morestring=[b]",
+  morestring=[s]{>}{<},
+  morecomment=[s]{<?}{?>},
+  moredelim=[s][\color{black}]{>}{<},
+  moredelim=[s][\color{cyan}]{\ }{=},
+  stringstyle=\color{limgreen},
+  identifierstyle=\color{cyan},
+  keywordstyle=\bfseries\color{darkblue},
+  commentstyle=\color{red},
+  alsoletter={.},
+  morekeywords={xml, Project, PropertyGroup, DLLPath, PExists, UsingTask, Target, Error, RunCppCheck.RunCppCheckTask, error, errors, location, results, cppcheck}% list your attributes here
+}
+
+\newcommand{\cstmdraft}{\include{draft}}
+
+\newcommand{\doinline}{\vspace{-5mm}}
+
+\newcommand{\keyword}[1]{\textbf{\color{darkblue}#1}}
+
+\newcommand{\reflink}[1]{\hypersetup{linkcolor = blue} \underline{\ref{#1}} \hypersetup{linkcolor = black}}
+
+\newcommand{\quickfigure}[3]{\begin{figure}[ht]\centering\includegraphics[width=#3\textwidth]{#2}\caption{#1}\end{figure}}
+\newcommand{\quicklblfigure}[4]{\begin{figure}[ht]\centering\includegraphics[width=#4\textwidth]{#2}\caption{#1}\label{#3}\end{figure}}
+
+\newcommand{\CS}[0]{C\#  } % 2x space
+
+\newcommand{\ti}[1]{\textit{#1}}
+
+\newcommand{\tbs}[0]{\textbackslash}
+
+\newcommand{\stringify}[1]{\texttt{\color{cstringcol}#1}}
+
+\newcommand{\detIIpp}[4]{\begin{vmatrix} #1 && #2 \\ && \\ #3 && #4 \\ \end{vmatrix}}
+\newcommand{\detII}[4]{\begin{vmatrix} #1 & #2 \\ #3 & #4 \\ \end{vmatrix}}
+
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1} \nameref*{#1}}} % One single link
