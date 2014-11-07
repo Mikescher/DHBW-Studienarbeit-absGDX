@@ -1,0 +1,10 @@
+Eine große Anzahl von Spielen, vor allem sogenannte \ti{mobile Games} teilen sich eine Reihe von Merkmalen.
+So ist ein Großteil dieser Spiele zumindest von der Spiellogik her zweidimensional und die Karte ist in einem Grid angeordnet. Neben der gerasterten Karte gibt es eine Reihe von Entities die sich frei auf dieser bewegen können. Die Welt ist demnach entweder eine Draufsicht oder eine Seitenansicht. Im letzteren wird of einfache zweidimensionale Physik und Kollisionserkennung benötigt.
+
+Da dies Merkmale sind, die diese Gruppe von Spielen gemeinsam haben, ist es unsere Idee ein Framework zu entwickeln dass diese Funktionalitäten abstrahiert und es dem Entwickler somit einfacher macht Spiele dieser Art zu entwickeln.
+Solche einfacheren 2D Spiele wie oben beschreiben findet man besonders häufig auf Handys und Tablets. Dies liegt einerseits an den schwächeren Geräten, welche es nicht ohne weiteres schaffen grafisch aufwendigere 3D Umgebungen darzustellen und andererseits daran dass von solchen Gelegenheitsspielen einfache und schnell begreifbare Spielprinzipien erwartet werden.
+
+Von technischer Seite haben wir uns dagegen entschieden ein Framework von Grund auf, ohne jede Basis zu schreiben. Denn in dieser Richtung gibt es schon mehrere fertige Produkte und es wäre unnötig hier das Rad neu zu erfinden. 
+Die Basis die wir für unser Projekt gewählt haben ist LibGDX. LibGDX ist OpenGL Framework mit dem Ziel Programme für unterschiedliche Plattformen zu kompilieren. Unterstützt werden unter anderen auch Android Geräte und Desktop PCs. Dies bietet den Vorteil, dass man seine Programme auf dem Rechner schnell testen und debuggen kann und nur ab und zu auch auf ein echtes Android Gerät exportieren muss. Hauptsächlich aus diesem Grund haben wir uns entschieden LibGDX als Grundlage für unser Framework zu verwenden
+
+Das Ziel, dass wir uns für unser Produkt gesetzt haben ist es, es einfach zu gestalten 2D Spiele mit einer Tilemap und einem Entity-System zu entwickeln. Unser Framework übernimmt die Verwaltung von Map, Entities und optional Dingen wie Menü und Netzwerk. Und durch LibGDX kann man die Projekte einfach direkt am Rechner testen.
