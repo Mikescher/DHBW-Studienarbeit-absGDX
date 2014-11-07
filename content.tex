@@ -1,58 +1,21 @@
-\section{Vorwort}
-	\input{content/vorwort}
+\section{Vorwort}\input{content/vorwort}
 \section{Umsetzung}
 	\subsection{Umgebung}
-		\subsubsection{git}
-		\subsubsection{gradle}
-			% Dependency Managment
-			% Build Managment
-			% Multi project files
-			% Maven Central Repository
-			% Groovy
-			% eclipse integration etc etc
-		\subsubsection{Continous Integration}
-		\subsubsection{jUnit Tests}
-			% Problem: ANdroid duplicate files when packaging (hamcrest <> junit)
-			% => Solution: New Test Project
-		\subsubsection{javaDoc}
-			% API Documentation
-		\subsubsection{XML Format}
-			% XML
-			% DTD
-			% Parsing TMX (preview)
+		\subsubsection{git}\input{content/git}
+		\subsubsection{gradle}\input{content/gradle}
+		\subsubsection{Continous Integration}\input{content/ci}
+		\subsubsection{jUnit Tests}\input{content/unittests}
+		\subsubsection{javaDoc}\input{content/javadoc}
+		\subsubsection{XML Format}\input{content/xml}
 	\subsection{Das Framework}
-		\subsubsection{Tiled Map}
-			\subsubsubsection{MapScaleResolver}
-			\subsubsubsection{Laden aus dem TMX Format}
-				% Multi Layer
-				% Compare XML Parser (Libraries) (DOM vs SAX vs StAX)
-				% Compression & Format (csv <> xml <> base64) (gzip <> zlib)
-				% Creation via Reflection
-		\subsubsection{Entity System}
-			\subsubsubsection{Framerate unabhängige Bewegung}
-				% Acceleration & Speed
-				% Delta calculations
-		\subsubsection{Layer System}
-			\subsubsubsection{Der GameLayer}
-			\subsubsubsection{Der Menü Layer}
-		\subsubsection{Settings} 
-			% => DependentProperties
-			% Tree structure
-		\subsubsection{Textausgabe}
-			% BitmapFont
-			% Font Spritesheets
-		\subsubsection{Debugging}
-			% via DependentProperties
-			% Debugoutput on screen
-	\subsection{Performance Optimizations}
-		% float vs double
-		\subsubsection{Entity Liste} 
-			% Entities: ArrayList <> LinkedList
-			% SortedLinkedList (=> Sort on add, O notation) // http://stackoverflow.com/a/322742/1761622
-		\subsubsection{Getter and Setter} 
-			% (Only use where needed - otherwise public)
-		\subsubsection{Immutable Objects}
-			% Vermeiden
-			% Vector problem
-		\subsubsection{???}
-			% Only render visible tiles / entities
+		\subsubsection{Tiled Map}\input{content/tiledmap}
+		\subsubsection{Entity System}\input{content/entitysystem}
+		\subsubsection{Layer System}\input{content/layersystem}
+		\subsubsection{Settings}\input{content/settings}
+		\subsubsection{Textausgabe}\input{content/textoutput}
+		\subsubsection{Debugging}\input{content/debugging}
+	\subsection{Performance Optimizations}\input{content/performance}
+		\subsubsection{Entity Liste}\input{content/entitylist}
+		\subsubsection{Getter and Setter}\input{content/gettersetter}
+		\subsubsection{Immutable Objects}\input{content/immutableobjects}
+\section{Fazit}
