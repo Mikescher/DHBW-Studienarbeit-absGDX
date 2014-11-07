@@ -1,6 +1,24 @@
+% Together with git
 % Dependency Managment
 % Build Managment
 % Multi project files
 % Maven Central Repository
 % Groovy
 % eclipse integration etc etc
+% wrapper
+
+Zwar commiten wir unser Code mit git in unsere Repository, jedoch nicht alle Dateien. Es gibt eine Reihe an Dateien die nur temporär sind und beispielsweise bei jedem Kompiliervorgang neu erzeugt werden. Es wäre sinnlos solche Dateien in die Versionskontrolle aufzunehmen, vor allem da sie sich immer ändern würden. Es gibt jedoch auch Dateien die zwar wichtig sind, trotzdem aber nicht in die Versionskontrolle gehören. Dies sind einerseits Konfigurationsdateien mit lokalen Pfaden die ungültig auf anderen System wären, IDE spezifische Dateien die unnütz für Nutzer anderer IDE's wären oder externe Libraries die oftmals zu groß sind um sie alle in die Repository zu commiten.
+
+Um diese Probleme kümmert sich nun ein weiteres Tool namens gradle. Gradle ist ein Build-Managment-Automatisierung-Tool was bedeutet, dass wir in unser Git-Repository nur noch die gradle Konfigurationsdateien commiten und diese dann jeweils auf den Entwicklerrechnern ausführen. Diese löst dann die Projektabhängigkeiten auf und lädt fehlende Libraries automatisch nach und erstellt außerdem Dateien wie die IDE-Projektdateien automatisch.
+
+\paragraph{Dependency Managment}
+
+In gradle kann man angeben von welchen Bibliotheken oder Projekten ein Programm abhängig ist. Diese Bibliotheken können dann wiederum von anderen Bibliotheken abhängig sein und so bildet sich ein Abhängigkeitsbaum ausgehen vom Anfangsprojekt.
+Gradle lädt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil dass wenn eine Bibliothek öfters im Abhängigkeitsbaum auftaucht sie trotzdem nur einmal geladen werden muss.
+
+Gradle unterstützt viele verschiedene Repositories wo nach fehlenden Bibliotheken gesucht werden kann, standardmäßig wird jedoch die \ti{Maven Central Repository} benutzt.
+In dieser Repository sind sehr viele der frei verfügbaren java Libraries in vielen Versionen enthalten und können einfach über zum Beispiel gradle geladen werden.
+
+\paragraph{Konfiguration}
+
+Die Konfiguration geschieht über \keyword{build.gradle} Dateien. ..............
