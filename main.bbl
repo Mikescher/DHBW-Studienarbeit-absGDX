@@ -1,0 +1,18 @@
+\begin{thebibliography}{1}
+
+\bibitem{DGIJ}
+{\sc Brackeen, D.}
+\newblock {\em Developing Games in Java}.
+\newblock NRG, 2004.
+
+\bibitem{TMXDOC}
+{\sc Lindeijer, T.}
+\newblock Tmx fileformat description.
+\newblock \url{https://github.com/bjorn/tiled/wiki/TMX-Map-Format}, 2014.
+
+\bibitem{TILED}
+{\sc TILED}.
+\newblock Tiled mapeditor.
+\newblock \url{http://www.mapeditor.org/}, 2014.
+
+\end{thebibliography}

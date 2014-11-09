@@ -25,7 +25,7 @@ Das Projekt \keyword{absGDX-framework} ist hierbei das eigentliche Framework das
 Da wir alle an dem Projekt mit der Eclipse IDE entwickeln haben wir ein paar extra Eclipse Einstellungen in die build.gradle Dateien ausgelagert:
 
 \doinline
-\begin{lstlisting}[caption=Point-In-Polygon Algorithmus, title=\hspace{0 pt}, language=groovy]
+\begin{lstlisting}[caption=Eclipse Optionen in gradle setzen, title=\hspace{0 pt}, language=groovy]
 eclipse.jdt.file.withProperties { props ->
     props.setProperty('org.eclipse.jdt.core.formatter.number_of_blank_lines_at_beginning_of_method_body', '0')
     props.setProperty('org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve', '1')
@@ -50,7 +50,7 @@ Um Problemen mit verschiedenen Versionen von gradle entgegen zu wirken ist in un
 
 Ausgeführt wird sie dann über die Kommandozeile mit Befehlen wie
 
-\begin{lstlisting}[style=cmd]
+\begin{lstlisting}[caption=Gradle in der Kommandozeile, title=\hspace{0 pt}, style=cmd]
 > gradlew cleanEclipse eclipse afterclipseImport
 \end{lstlisting}
 
