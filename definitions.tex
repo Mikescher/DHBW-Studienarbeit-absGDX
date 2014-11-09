@@ -9,6 +9,10 @@
 \definecolor{cstringcol}{rgb}{0.6,0.33,0.2}
 \definecolor{nptabcol}{rgb}{1,0.725,0.47}
 
+\definecolor{groovyblue}{HTML}{0000A0}
+\definecolor{groovygreen}{HTML}{008000}
+\definecolor{groovydarkgray}{rgb}{.4,.4,.4}
+
 \newcommand{\cstmtitlepage}{\input{title}}
 
 \newcommand{\cstmlegalpage}{\input{legal}}
@@ -25,6 +29,15 @@
   keywordstyle=\bfseries\color{darkblue},
   stringstyle=\color{red},
   commentstyle=\color{darkgreen}
+}
+
+\lstdefinelanguage{Groovy}[]{Java}{
+  keywordstyle=\color{groovyblue}\bfseries,
+  stringstyle=\color{groovygreen}\ttfamily,
+  keywords=[3]{each, findAll, groupBy, collect, inject, eachWithIndex},
+  morekeywords={def, as, in, use},
+  moredelim=[is][\textcolor{groovydarkgray}]{\%\%}{\%\%},
+  moredelim=[il][\textcolor{groovydarkgray}]{§§}
 }
 
 \lstset{ 
@@ -63,6 +76,12 @@
   morekeywords={xml, Project, PropertyGroup, DLLPath, PExists, UsingTask, Target, Error, RunCppCheck.RunCppCheckTask, error, errors, location, results, cppcheck}% list your attributes here
 }
 
+\lstdefinestyle{cmd}
+{
+    backgroundcolor=\color{black},
+    basicstyle=\scriptsize\color{white}\ttfamily
+}
+
 \newcommand{\cstmdraft}{\include{draft}}
 
 \newcommand{\doinline}{\vspace{-5mm}}
@@ -71,7 +90,7 @@
 
 \newcommand{\reflink}[1]{\hypersetup{linkcolor = blue} \underline{\ref{#1}} \hypersetup{linkcolor = black}}
 
-\newcommand{\quickfigure}[3]{\begin{figure}[ht]\centering\includegraphics[width=#3\textwidth]{#2}\caption{#1}\end{figure}}
+\newcommand{\quickfigure}[3]{\begin{figure}[ht]\centering\includegraphics[width=#3\textwidth]{data/#2}\caption{#1}\end{figure}}
 \newcommand{\quicklblfigure}[4]{\begin{figure}[ht]\centering\includegraphics[width=#4\textwidth]{#2}\caption{#1}\label{#3}\end{figure}}
 
 \newcommand{\CS}[0]{C\#  } % 2x space

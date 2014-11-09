@@ -1,11 +1,4 @@
-% Together with git
-% Dependency Managment
-% Build Managment
-% Multi project files
-% Maven Central Repository
-% Groovy
-% eclipse integration etc etc
-% wrapper
+%TODO Buch über gradle (? -> PDF) für Referenzen
 
 Zwar commiten wir unser Code mit git in unsere Repository, jedoch nicht alle Dateien. Es gibt eine Reihe an Dateien die nur temporär sind und beispielsweise bei jedem Kompiliervorgang neu erzeugt werden. Es wäre sinnlos solche Dateien in die Versionskontrolle aufzunehmen, vor allem da sie sich immer ändern würden. Es gibt jedoch auch Dateien die zwar wichtig sind, trotzdem aber nicht in die Versionskontrolle gehören. Dies sind einerseits Konfigurationsdateien mit lokalen Pfaden die ungültig auf anderen System wären, IDE spezifische Dateien die unnütz für Nutzer anderer IDE's wären oder externe Libraries die oftmals zu groß sind um sie alle in die Repository zu commiten.
 
@@ -21,4 +14,44 @@ In dieser Repository sind sehr viele der frei verfügbaren java Libraries in viel
 
 \paragraph{Konfiguration}
 
-Die Konfiguration geschieht über \keyword{build.gradle} Dateien. ..............
+Die Konfiguration geschieht über \keyword{build.gradle} Dateien welche in \keyword{Groovy} geschrieben sind. 
+absGDX ist ein Multiprojekt, das bedeutet es besteht aus mehreren Gradle Projekten mit jeweils eigenen Konfigurationen die voneinander abhängen.
+
+\quickfigure{Gradle Dependency Graph absGDX}{dependency-graph-gradle.png}{1.0}
+
+Das Projekt \keyword{absGDX-framework} ist hierbei das eigentliche Framework das wir entwickeln. \keyword{asGDX-test} ist das Testprojekt, es enthält alle Unit-tests für das Framework.
+\keyword{absGDX-core} und die beiden Plattformprojekte \keyword{desktop} und \keyword{android} sind zum testen und debuggen. Wird das Framework später für ein Projekt benutzt kommen in diese Projekte der eigentliche Code und \keyword{absGDX-framework} wird als Dependency eingebunden. Während wir jedoch das Framework noch entwickeln sind diese Projekte notwendig damit wir es auch ausprobieren können.
+
+Da wir alle an dem Projekt mit der Eclipse IDE entwickeln haben wir ein paar extra Eclipse Einstellungen in die build.gradle Dateien ausgelagert:
+
+\doinline
+\begin{lstlisting}[caption=Point-In-Polygon Algorithmus, title=\hspace{0 pt}, language=groovy]
+eclipse.jdt.file.withProperties { props ->
+    props.setProperty('org.eclipse.jdt.core.formatter.number_of_blank_lines_at_beginning_of_method_body', '0')
+    props.setProperty('org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve', '1')
+    props.setProperty('org.eclipse.jdt.core.formatter.put_empty_statement_on_new_line', 'true')
+    props.setProperty('org.eclipse.jdt.core.formatter.tabulation.char', 'tab')
+    props.setProperty('org.eclipse.jdt.core.formatter.tabulation.size', '4')
+    props.setProperty('org.eclipse.jdt.core.formatter.use_on_off_tags', 'false')
+    props.setProperty('org.eclipse.jdt.core.formatter.use_tabs_only_for_leading_indentations', 'false')
+    props.setProperty('org.eclipse.jdt.core.formatter.wrap_before_binary_operator', 'true')
+    props.setProperty('org.eclipse.jdt.core.formatter.wrap_before_or_operator_multicatch', 'true')
+    props.setProperty('org.eclipse.jdt.core.formatter.wrap_outer_expressions_when_nested', 'true')
+    // ...
+}
+\end{lstlisting}
+
+Dies ist ein gutes Beispiel wie mächtig die Groovy Konfiguartionsdateien sind, wir fügen in die generierten Eclipse property files hier noch unsere eigenen Felder ein. 
+In diesem Beispiel setzen wir die Einstellungen für projektspezifische Formatierungen, damit der automatische Quellcodeformatter bei allen die das PRojekt in Eclipse laden gleich funktioniert.
+
+\paragraph{Verwendung in unserem Projekt}
+
+Um Problemen mit verschiedenen Versionen von gradle entgegen zu wirken ist in unserer git Repository nicht nur die build.gradle Dateien vorhanden sondern auch der \ti{gradle Wrapper}. Dies ist eine vollständige unabhängige Version von gradle die man anstatt der lokal installierten verwenden soll. Damit ist garantiert dass jeder die gleiche Version von gradle verwendet.
+
+Ausgeführt wird sie dann über die Kommandozeile mit Befehlen wie
+
+\begin{lstlisting}[style=cmd]
+> gradlew cleanEclipse eclipse afterclipseImport
+\end{lstlisting}
+
+Dieses Beispiel führt zuerst den Task \ti{cleanEclispe} aus um alle Eclipse Dateien zu löschen, dann werden sie mit \ti{eclipse} neu aus den gradle Einstellungen erzeugt und zu letzt werden mit \ti{afterEclipseImport} einige Änderungen vorgenommen. Der letzte Schritt von LibGDX vorgegeben damit das android Projekt richtig konfiguriert ist.

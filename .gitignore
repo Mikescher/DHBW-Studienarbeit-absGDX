@@ -17,3 +17,7 @@ Desktop.ini
 # Output
 
 *.pdf
+
+# Data #
+
+*.dia~
