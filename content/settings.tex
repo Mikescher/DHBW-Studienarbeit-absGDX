@@ -10,7 +10,7 @@ Zusätzlich gibt es verschiedene Optionen die angeben wie das Framework sich verh
 Eine Instanz der Klasse \keyword{DependentProperty} repräsentiert einen einzelnen Wert. Dies ist meist ein Wahrheitswert kann aber auch ein String oder eine Zahl sein.
 Der besondere Vorteil ist jedoch dass jede Property von einer anderen abhängig sein kann. Ein Tag ist nur dann aktiv wenn alle Tags von denen er abhängig ist ebenfalls aktiv sind. Daraus entsteht dann ein Abhängigkeitsbaum der einzelnen Properties.
 
-\quickfigure{Die absGDX Einstellungen in Baumdarstellung}{settings_deptree}{0.7}
+\quickfigure{Die absGDX Einstellungen in Baumdarstellung}{settings_deptree}{0.7} %TODO Update Graph (many new settings)
 
 Dies ist beispielsweise für die Debugoptionen in absGDX nützlich: Wird der übergeordnete Tag \ti{debugmode} deaktiviert sind auch alle anderen untergeordneten Debugoptionen deaktiviert. 
 Ist die Property ein Boolean entscheidet sich ob er aktiv ist einfach mittels seines Wertes. 
