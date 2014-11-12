@@ -24,4 +24,10 @@
 .\content\gettersetter.tex
 .\content\performance.tex
 .\content\immutableobjects.tex
+.\content\cocos2d.tex
+.\content\krossplattformen.tex
+.\content\monogame.tex
+.\content\unity.tex
+.\content\libgdx.tex
+.\content\whylibgdx.tex
 
