@@ -1,26 +1,26 @@
-%TODO Buch über gradle (? -> PDF) für Referenzen
+%TODO Buch Ã¼ber gradle (? -> PDF) fÃ¼r Referenzen
 
-Zwar commiten wir unser Code mit git in unsere Repository, jedoch nicht alle Dateien. Es gibt eine Reihe an Dateien die nur temporär sind und beispielsweise bei jedem Kompiliervorgang neu erzeugt werden. Es wäre sinnlos solche Dateien in die Versionskontrolle aufzunehmen, vor allem da sie sich immer ändern würden. Es gibt jedoch auch Dateien die zwar wichtig sind, trotzdem aber nicht in die Versionskontrolle gehören. Dies sind einerseits Konfigurationsdateien mit lokalen Pfaden die ungültig auf anderen System wären, IDE spezifische Dateien die unnütz für Nutzer anderer IDE's wären oder externe Libraries die oftmals zu groß sind um sie alle in die Repository zu commiten.
+Zwar commiten wir unser Code mit git in unsere Repository, jedoch nicht alle Dateien. Es gibt eine Reihe an Dateien die nur temporÃ¤r sind und beispielsweise bei jedem Kompiliervorgang neu erzeugt werden. Es wÃ¤re sinnlos solche Dateien in die Versionskontrolle aufzunehmen, vor allem da sie sich immer Ã¤ndern wÃ¼rden. Es gibt jedoch auch Dateien die zwar wichtig sind, trotzdem aber nicht in die Versionskontrolle gehÃ¶ren. Dies sind einerseits Konfigurationsdateien mit lokalen Pfaden die ungÃ¼ltig auf anderen System wÃ¤ren, IDE spezifische Dateien die unnÃ¼tz fÃ¼r Nutzer anderer IDE's wÃ¤ren oder externe Libraries die oftmals zu groÃŸ sind um sie alle in die Repository zu commiten.
 
-Um diese Probleme kümmert sich nun ein weiteres Tool namens gradle. Gradle ist ein Build-Managment-Automatisierung-Tool was bedeutet, dass wir in unser Git-Repository nur noch die gradle Konfigurationsdateien commiten und diese dann jeweils auf den Entwicklerrechnern ausführen. Diese löst dann die Projektabhängigkeiten auf und lädt fehlende Libraries automatisch nach und erstellt außerdem Dateien wie die IDE-Projektdateien automatisch.
+Um diese Probleme kÃ¼mmert sich nun ein weiteres Tool namens gradle. Gradle ist ein Build-Managment-Automatisierung-Tool was bedeutet, dass wir in unser Git-Repository nur noch die gradle Konfigurationsdateien commiten und diese dann jeweils auf den Entwicklerrechnern ausfÃ¼hren. Diese lÃ¶st dann die ProjektabhÃ¤ngigkeiten auf und lÃ¤dt fehlende Libraries automatisch nach und erstellt auÃŸerdem Dateien wie die IDE-Projektdateien automatisch.
 
 \paragraph{Dependency Managment}
 
-In gradle kann man angeben von welchen Bibliotheken oder Projekten ein Programm abhängig ist. Diese Bibliotheken können dann wiederum von anderen Bibliotheken abhängig sein und so bildet sich ein Abhängigkeitsbaum ausgehen vom Anfangsprojekt.
-Gradle lädt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil dass wenn eine Bibliothek öfters im Abhängigkeitsbaum auftaucht sie trotzdem nur einmal geladen werden muss.
+In gradle kann man angeben von welchen Bibliotheken oder Projekten ein Programm abhÃ¤ngig ist. Diese Bibliotheken kÃ¶nnen dann wiederum von anderen Bibliotheken abhÃ¤ngig sein und so bildet sich ein AbhÃ¤ngigkeitsbaum ausgehen vom Anfangsprojekt.
+Gradle lÃ¤dt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil dass wenn eine Bibliothek Ã¶fters im AbhÃ¤ngigkeitsbaum auftaucht sie trotzdem nur einmal geladen werden muss.
 
-Gradle unterstützt viele verschiedene Repositories wo nach fehlenden Bibliotheken gesucht werden kann, standardmäßig wird jedoch die \ti{Maven Central Repository} benutzt.
-In dieser Repository sind sehr viele der frei verfügbaren java Libraries in vielen Versionen enthalten und können einfach über zum Beispiel gradle geladen werden.
+Gradle unterstÃ¼tzt viele verschiedene Repositories wo nach fehlenden Bibliotheken gesucht werden kann, standardmÃ¤ÃŸig wird jedoch die \ti{Maven Central Repository} benutzt.
+In dieser Repository sind sehr viele der frei verfÃ¼gbaren java Libraries in vielen Versionen enthalten und kÃ¶nnen einfach Ã¼ber zum Beispiel gradle geladen werden.
 
 \paragraph{Konfiguration}
 
-Die Konfiguration geschieht über \keyword{build.gradle} Dateien welche in \keyword{Groovy} geschrieben sind. 
-absGDX ist ein Multiprojekt, das bedeutet es besteht aus mehreren Gradle Projekten mit jeweils eigenen Konfigurationen die voneinander abhängen.
+Die Konfiguration geschieht Ã¼ber \keyword{build.gradle} Dateien welche in \keyword{Groovy} geschrieben sind.
+absGDX ist ein Multiprojekt, das bedeutet es besteht aus mehreren Gradle Projekten mit jeweils eigenen Konfigurationen die voneinander abhÃ¤ngen.
 
-\quickfigure{Gradle Dependency Graph absGDX}{dependency-graph-gradle.png}{1.0}
+\quickfigure{Gradle Dependency Graph absGDX}{dependency-graph-gradle.png}{1.0} %TODO update me
 
-Das Projekt \keyword{absGDX-framework} ist hierbei das eigentliche Framework das wir entwickeln. \keyword{asGDX-test} ist das Testprojekt, es enthält alle Unit-tests für das Framework.
-\keyword{absGDX-core} und die beiden Plattformprojekte \keyword{desktop} und \keyword{android} sind zum testen und debuggen. Wird das Framework später für ein Projekt benutzt kommen in diese Projekte der eigentliche Code und \keyword{absGDX-framework} wird als Dependency eingebunden. Während wir jedoch das Framework noch entwickeln sind diese Projekte notwendig damit wir es auch ausprobieren können.
+Das Projekt \keyword{absGDX-framework} ist hierbei das eigentliche Framework das wir entwickeln. \keyword{asGDX-test} ist das Testprojekt, es enthÃ¤lt alle Unit-tests fÃ¼r das Framework.
+\keyword{absGDX-core} und die beiden Plattformprojekte \keyword{desktop} und \keyword{android} sind zum testen und debuggen. Wird das Framework spÃ¤ter fÃ¼r ein Projekt benutzt kommen in diese Projekte der eigentliche Code und \keyword{absGDX-framework} wird als Dependency eingebunden. WÃ¤hrend wir jedoch das Framework noch entwickeln sind diese Projekte notwendig damit wir es auch ausprobieren kÃ¶nnen.
 
 Da wir alle an dem Projekt mit der Eclipse IDE entwickeln haben wir ein paar extra Eclipse Einstellungen in die build.gradle Dateien ausgelagert:
 
@@ -41,17 +41,17 @@ eclipse.jdt.file.withProperties { props ->
 }
 \end{lstlisting}
 
-Dies ist ein gutes Beispiel wie mächtig die Groovy Konfiguartionsdateien sind, wir fügen in die generierten Eclipse property files hier noch unsere eigenen Felder ein. 
-In diesem Beispiel setzen wir die Einstellungen für projektspezifische Formatierungen, damit der automatische Quellcodeformatter bei allen die das PRojekt in Eclipse laden gleich funktioniert.
+Dies ist ein gutes Beispiel wie mÃ¤chtig die Groovy Konfiguartionsdateien sind, wir fÃ¼gen in die generierten Eclipse property files hier noch unsere eigenen Felder ein.
+In diesem Beispiel setzen wir die Einstellungen fÃ¼r projektspezifische Formatierungen, damit der automatische Quellcodeformatter bei allen die das PRojekt in Eclipse laden gleich funktioniert.
 
 \paragraph{Verwendung in unserem Projekt}
 
-Um Problemen mit verschiedenen Versionen von gradle entgegen zu wirken ist in unserer git Repository nicht nur die build.gradle Dateien vorhanden sondern auch der \ti{gradle Wrapper}. Dies ist eine vollständige unabhängige Version von gradle die man anstatt der lokal installierten verwenden soll. Damit ist garantiert dass jeder die gleiche Version von gradle verwendet.
+Um Problemen mit verschiedenen Versionen von gradle entgegen zu wirken ist in unserer git Repository nicht nur die build.gradle Dateien vorhanden sondern auch der \ti{gradle Wrapper}. Dies ist eine vollstÃ¤ndige unabhÃ¤ngige Version von gradle die man anstatt der lokal installierten verwenden soll. Damit ist garantiert dass jeder die gleiche Version von gradle verwendet.
 
-Ausgeführt wird sie dann über die Kommandozeile mit Befehlen wie
+AusgefÃ¼hrt wird sie dann Ã¼ber die Kommandozeile mit Befehlen wie
 
 \begin{lstlisting}[caption=Gradle in der Kommandozeile, title=\hspace{0 pt}, style=cmd]
 > gradlew cleanEclipse eclipse afterclipseImport
 \end{lstlisting}
 
-Dieses Beispiel führt zuerst den Task \ti{cleanEclispe} aus um alle Eclipse Dateien zu löschen, dann werden sie mit \ti{eclipse} neu aus den gradle Einstellungen erzeugt und zu letzt werden mit \ti{afterEclipseImport} einige Änderungen vorgenommen. Der letzte Schritt von LibGDX vorgegeben damit das android Projekt richtig konfiguriert ist.
+Dieses Beispiel fÃ¼hrt zuerst den Task \ti{cleanEclispe} aus um alle Eclipse Dateien zu lÃ¶schen, dann werden sie mit \ti{eclipse} neu aus den gradle Einstellungen erzeugt und zu letzt werden mit \ti{afterEclipseImport} einige Ã„nderungen vorgenommen. Der letzte Schritt von LibGDX vorgegeben damit das android Projekt richtig konfiguriert ist.

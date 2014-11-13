@@ -3,25 +3,25 @@
 
 In absGDX gibt es zwei Arten von Einstellungen: Anwendungseinstellungen und Frameworkoptionen.
 Anwendungseinstellungen sind Einstellungen im eigentlichen Spiel, ihre Verwaltung liegt in der Hand des Entwicklers.
-Zus‰tzlich gibt es verschiedene Optionen die angeben wie das Framework sich verh‰lt. F¸r beide Dinge werden \keyword{DependentProperty} Objekte verwendet.
+Zus√§tzlich gibt es verschiedene Optionen die angeben wie das Framework sich verh√§lt. F√ºr beide Dinge werden \keyword{DependentProperty} Objekte verwendet.
 
 \paragraph{Framework Optionen}
 
-Eine Instanz der Klasse \keyword{DependentProperty} repr‰sentiert einen einzelnen Wert. Dies ist meist ein Wahrheitswert kann aber auch ein String oder eine Zahl sein.
-Der besondere Vorteil ist jedoch dass jede Property von einer anderen abh‰ngig sein kann. Ein Tag ist nur dann aktiv wenn alle Tags von denen er abh‰ngig ist ebenfalls aktiv sind. Daraus entsteht dann ein Abh‰ngigkeitsbaum der einzelnen Properties.
+Eine Instanz der Klasse \keyword{DependentProperty} repr√§sentiert einen einzelnen Wert. Dies ist meist ein Wahrheitswert kann aber auch ein String oder eine Zahl sein.
+Der besondere Vorteil ist jedoch dass jede Property von einer anderen abh√§ngig sein kann. Ein Tag ist nur dann aktiv wenn alle Tags von denen er abh√§ngig ist ebenfalls aktiv sind. Daraus entsteht dann ein Abh√§ngigkeitsbaum der einzelnen Properties.
 
 \quickfigure{Die absGDX Einstellungen in Baumdarstellung}{settings_deptree}{0.7} %TODO Update Graph (many new settings)
 
-Dies ist beispielsweise f¸r die Debugoptionen in absGDX n¸tzlich: Wird der ¸bergeordnete Tag \ti{debugmode} deaktiviert sind auch alle anderen untergeordneten Debugoptionen deaktiviert. 
+Dies ist beispielsweise f√ºr die Debugoptionen in absGDX n√ºtzlich: Wird der √ºbergeordnete Tag \ti{debugmode} deaktiviert sind auch alle anderen untergeordneten Debugoptionen deaktiviert. 
 Ist die Property ein Boolean entscheidet sich ob er aktiv ist einfach mittels seines Wertes. 
-Bei String-Properties werden alle Werte auﬂer \keyword{null} als wahr gewertet und Zahlen werden immer als wahr gewertet.
+Bei String-Properties werden alle Werte au√üer \keyword{null} als wahr gewertet und Zahlen werden immer als wahr gewertet.
 
-Zus‰tzlich zu den normalen DependentProperties gibt es auch noch speziellere Subklassen:
+Zus√§tzlich zu den normalen DependentProperties gibt es auch noch speziellere Subklassen:
 
 \begin{itemize}
-\item \keyword{ConstantBooleanProperty:} Dies ist eine BooleanProperty die nicht mehr ver‰nderlich ist. Dies sit n¸tzlich f¸r zur Compile-zeit festgelegte Werte (wie ob debugging mˆglich ist)
+\item \keyword{ConstantBooleanProperty:} Dies ist eine BooleanProperty die nicht mehr ver√§nderlich ist. Dies sit n√ºtzlich f√ºr zur Compile-zeit festgelegte Werte (wie ob debugging m√∂glich ist)
 \item \keyword{MetaProperty:} Diese Property ist immer wahr und dient der Kategorisierung mehrere anderer Properties unter sich.
-\item \keyword{RootProperty:} Dies ist ‰hnlich einer \keyword{MetaProperty} kann jedoch keine Abh‰ngigkeiten haben und bildet somit die Wurzel des Baumes.
+\item \keyword{RootProperty:} Dies ist √§hnlich einer \keyword{MetaProperty} kann jedoch keine Abh√§ngigkeiten haben und bildet somit die Wurzel des Baumes.
 \end{itemize}
 
 \paragraph{Laden und Speichern}
