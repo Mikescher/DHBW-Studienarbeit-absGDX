@@ -1,10 +1,3 @@
-%\subsubsubsection{MapScaleResolver}
-%\subsubsubsection{Laden aus dem TMX Format}
-	% Multi Layer
-	% Compare XML Parser (Libraries) (DOM vs SAX vs StAX)
-	% Compression & Format (csv <> xml <> base64) (gzip <> zlib)
-	% Creation via Reflection
-	
 Als Karte benutzt absGDX ein Tiled-Map System. Die Karte ist unterteilt in viele einzelne quadratische Tiles.
 Jedes Tile hat eine eigene Textur und zusammen bilden sie die Karte. Die Texturen kommen meist aus einer sogenannten Tilemap in der eine große Anzahl an Texturen in einer einzigen Datei zusammengefasst sind.
 
@@ -101,7 +94,7 @@ TileMaps kann man mit dem Programm Tiled erstellen \cite{TILED} welche TMX Datei
 
 TMX unterstützt verschiedene Karten und Tilegrößen, mehrere Layer und auch fest eingebundene Tilesets. Die eigentlichen Daten sind entweder in XML, CSV oder als base64-binär Daten kodiert. zusätzlich kann entweder keine, \ti{gzip} oder \ti{zlib} Kompression vorliegen\cite{TMXDOC}.
 
-Als XML Parser haben wir uns für die XOM Library entschieden. XOM ist ein java-XML-DOM Parser, dies bedeutet dass die komplette Datei analysiert und in den Speicher geladen wird. Dies macht das Auswerten der Datei sehr einfach verbraucht aber mehr Arbeitsspeicher als beispielsweise ein SAX-Parser. Da die TMX Dateien jedoch nicht sehr groß sind im Verhältnis zum gewöhnlich verfügbaren Arbeitsspeicher haben wir uns trotzdem für ihn entschieden.
+Als XML Parser haben wir uns für die XMLReader Library entschieden, welche schon in LibGDX integriert ist und auf allen Zielplattformen funktioniert. XMLReader ist ein java-XML-DOM Parser, dies bedeutet dass die komplette Datei analysiert und in den Speicher geladen wird. Dies macht das Auswerten der Datei sehr einfach verbraucht aber mehr Arbeitsspeicher als beispielsweise ein SAX-Parser. Da die TMX Dateien jedoch nicht sehr groß sind im Verhältnis zum gewöhnlich verfügbaren Arbeitsspeicher haben wir uns trotzdem für ihn entschieden.
 
 Das Parsen einer TMX Datei wird von der Klasse \keyword{TmxParser} übernommen. Nach dem Laden der XML Datei geht dieser zuerst die einzelnen Layer von dem niedrigsten angefangen durch. Für jeden Layer müssen die Daten dekodiert werden. Sind sie in gzip oder zlib komprimiert muss man sie zuerst dekomprimieren. Sind sie dann in XMl kodiert kann der XOM Parser einfach ebenfalls die Daten parsen. Auch CSV kodierte Daten könenn recht einfach mit der in java enthaltenen \keyword{String.split} Funktion analysiert werden.
 Bei Base64 Daten ist der Prozess jedoch komplizierter. Zuerst muss der String als Reihe von Bytes interpretiert werden. Danach gruppiert man jeweils 3 bytes zusammen und interpretiert sie als Little-Endian unsigned 32bit-Integer. Der entstehende Int32-Array sind dann die GIDs der Tiles.

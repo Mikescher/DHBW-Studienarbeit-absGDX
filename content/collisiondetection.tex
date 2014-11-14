@@ -1,0 +1,36 @@
+% Einleitung CD (warum etc)
+% Bedingungen an Algo
+
+% Aufteilung Entities <-> CollisionGeos
+% Relative CollisionGeos
+% -> muss auf geo-pos change reagieren (deshalb gibt entity den Position-vector nicht public) -> ref zu punkt unter Collmap wo das nochmal kommt
+% CollisionCircle <-> Box
+
+% Optimierungen (len2 / zuerst circle testen)
+% Performancevergleich (box testing / circle first testing)
+
+% Erklärung CollisionMap
+% -> Map
+% -> muss auf geo-pos change reagieren (deshalb gibt entity den Position-vector nicht public)
+% Performancevergleich (colllisionMapSize := mapsize  ||  colllisionMapSize := 1)
+% Optimierung durch versch expTileScales
+% Optimierung NO-OP Movement
+% Vergleich CollisionTile-CollisonGeoList  (ArrayList <> LinkedList)  %TODO ectl dann auch im code das bessere nehmen ?
+% Implementierung Active / Passive collision
+% PROBLEM :-> Out of map Handling
+
+% Mathematik -> Polygon intersection
+% Circle-Circle Collision
+% Box-Box Collision
+% Box-Circle Collision
+% PROBLEM :-> Discrete Time Issue (Book reference)
+
+% Collision aware movement
+% - X/Y independent moving (-> semi-sliding)
+% Implementierung Active / Passive movement collision
+% - PROBLEM :-> Collision mit mehreren Geos (collide mit erster)
+% - PROBLEM :-> FP Rundung (Collision aware movement) -> Nach movement intersecten die geos immernoch --> delta
+
+% don't collide with everything
+% -> commutative method
+% -> getClass() vs instanceof
