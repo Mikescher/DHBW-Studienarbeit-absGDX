@@ -7,7 +7,6 @@
 % CollisionCircle <-> Box
 
 % Optimierungen (len2 / zuerst circle testen)
-% Performancevergleich (box testing / circle first testing)
 
 % Erklärung CollisionMap
 % -> Map
@@ -15,22 +14,139 @@
 % Performancevergleich (colllisionMapSize := mapsize  ||  colllisionMapSize := 1)
 % Optimierung durch versch expTileScales
 % Optimierung NO-OP Movement
-% Vergleich CollisionTile-CollisonGeoList  (ArrayList <> LinkedList)  %TODO ectl dann auch im code das bessere nehmen ?
+% Optimierung Pseudo Geos
+% Vergleich CollisionTile-CollisonGeoList  ( ArrayList <> LinkedList <> COW-Array )  %TODO ectl dann auch im code das bessere nehmen ?
 % Implementierung Active / Passive collision
 % PROBLEM :-> Out of map Handling
 
+
+% Performancevergleich (box testing / circle first testing)
+
 % Mathematik -> Polygon intersection
 % Circle-Circle Collision
-% Box-Box Collision
+% Box-Box Collision          (+ OuterCircle Optimierung)
 % Box-Circle Collision
-% PROBLEM :-> Discrete Time Issue (Book reference)
 
 % Collision aware movement
 % - X/Y independent moving (-> semi-sliding)
 % Implementierung Active / Passive movement collision
 % - PROBLEM :-> Collision mit mehreren Geos (collide mit erster)
 % - PROBLEM :-> FP Rundung (Collision aware movement) -> Nach movement intersecten die geos immernoch --> delta
+% - PROBLEM :-> Discrete Time Issue (Book reference)
+
+% Tile Collisions
 
 % don't collide with everything
 % -> commutative method
 % -> getClass() vs instanceof
+
+Eine wichtige Funktionalität, die unser Framework übernehmen soll ist es Kollisionen zwischen Entities zu erkennen. Beispielsweise muss ein Spiel erkennen ob das Spieler-Entity gerade mit einem Gegner kollidiert oder ob beispielsweise die Kugel-Entities etwas treffen. Eine solche Kollisionserkennung kann man unterschiedlich komplex implementieren, da unser Framework als primäre Zielplattform jedoch mobile Geräte hat ist hierbei die Performance besonders wichtig.
+
+Das Ziel ist es nun ein Algorithmus zu entwickeln, welcher folgende Eigenschaften erfüllt:
+
+\begin{itemize}
+\item Der Algorithmus sollte auch bei vielen Entities auf der Karte noch schnell sein und die \ti{Update-Time} nicht unnötig erhöhen
+\item Der Algorithmus sollte genau sein und weder \ti{False-Positives} noch \ti{False-Negatives} haben. Zwar kann es Anwendungen geben, wo eine genaue Erkennung nicht immer nötig ist, doch da unser Framework für eine Vielzahl an Anwendungen funktionieren soll muss der Algorithmus exakt sein.
+\item Es sollte möglich sein Entities ohne Kollisionserkennung hinzuzufügen ohne dass diese Einfluss auf die \ti{Update-Time} haben.
+\end{itemize}
+
+\paragraph{Die CollisionGeometry Klasse}
+
+Wir haben uns in unserem Ansatz dagegen entschieden die Kollision zwischen Entities direkt zu berechnen. Dies würde zwar die Handhabung des Frameworks vereinfachen würde aber auch zu einigen Problemen führen: Einerseits könnte es keine rein-visuellen Entities geben welche mit nichts kollidieren und keinen Einfluss auf die Performance haben. Außerdem kann es auf der anderen Seite auch keine Entities mit mehreren Bereichen geben welche jeweils einzeln kollidieren können. 
+Stattdessen gibt es neben den Entities auf der Karte auch noch sogenannten \keyword{CollisionGeometries} welches die Elemente sind die miteinander kollidieren.
+Ein Entity kann nun ein- / kein-, oder mehrere \keyword{CollisionGeometries} haben und auf deren Kollisionen reagieren. Beispielsweise kann der Kopf einer Figur eine andere Hitbox als der Körper haben und anders auf eintreffende Kugeln reagieren.
+
+Jede Entity hat nun eine Liste mit von \keyword{EntityCollisionGeometry}. Dies ist ein einfacher Wrapper über die Klasse \keyword{CollisionGeometry}, die die Geometrie zusammen mit der relativen Position zum Entity enthält.
+
+\begin{lstlisting}[caption=Die Klasse EntityCollisionGeometry, title=\hspace{0 pt}, language=java]
+public class EntityCollisionGeometry {
+	public final Vector2 relativePosition;
+	public final CollisionGeometry geometry;
+
+	public EntityCollisionGeometry(Vector2 relativePos, CollisionGeometry geo) {
+		super();
+		
+		this.relativePosition = relativePos;
+		this.geometry = geo;
+	}
+	
+	public void updatePosition(float x, float y) {
+		geometry.setCenter(x + relativePosition.x, y + relativePosition.y);
+	}
+}
+\end{lstlisting}
+
+Jedes mal wenn die Entity eine Veränderung ihrer Position erfährt wird updatePosition() aufgerufen und auch die \keyword{CollisionGeometry} bewegt sich mit.
+Mit dieser Technik kann man auch komplexere Geometrie Gebilde bauen welche die Form des Entities beliebig genau annähern kann. \cite[S 500]{DGIJ} %TODO Alle DGIJ cites in dieser Datei überprüfen - die Seitenzahlen sind aus der PDF
+
+\quickfigure{Beispiel eines Entities mit mehreren Hitboxen}{angel}{0.4} %TODO Engel mit boxen
+
+Aktuell gibt es zwei verschiedene Arten von \keyword{CollisionGeometry}: \keyword{CollisionCircle} und \keyword{CollisionBox}. Das eine hat die Form eines Kreises und die andere die eines Rechteckes. In den meisten Fällen möchte man Hitboxen in der Form von Rechtecken, es kann jedoch überlegenswert sein nur Kreise zu verwenden da bei diesen die Kollisionsberechnung schneller ist.
+
+Für den Fall Kollision Kreis-Kreis ist die Formel um zu berechnen ob sie sich schneiden sehr einfach:
+$ Abstand < (Radius_1 + Radius_2) $ was in unserem Fall zu $ sqrt((x_1 - x_2)^2 + (y_1 - y_2)^2) < (r_1 + r_2)$ wird. Dies kann noch weiter optimiert werden indem man beide Seiten quadriert: $ x_1 - x_2)^2 + (y_1 - y_2)^2 < (r_1 + r_2)^2 $ \cite[S 499]{DGIJ}. Dies liegt daran, dass eine Multiplikation um mehrere Größenordnungen schneller als eine Quadratwurzel ist, ersteres ist meist ein einzelner Maschinenbefehl.
+
+Den Vorteil einer Kreis-Kreis Kollision kann man auch auf alle anderen Geometrien anwenden indem man alle Geometrien als umschließende Kreise abschätzt und diese zuerst kollidieren lässt. Nur wenn die umschließenden Kreise sich überschneiden muss man dann den komplizierteren Schritt machen und die genauen Geometrien kollidieren lassen.
+
+Dies führt dazu dass es 3 Fälle von Kollisionsberechnung gibt:
+
+\doinline
+\begin{lstlisting}[caption=Erkennen von Kollisionen, title=\hspace{0 pt}, language=java]
+public static boolean doGeometriesIntersect(CollCircle a, CollCircle b) {
+	return fsquare(a.centerX-b.centerX) + fsquare(a.centerY-b.centerY) < fsquare(a.radius + b.radius);
+}
+
+public static boolean doGeometriesIntersect(CollCircle a, CollBox b) {
+	if (a.centerY > b.y && a.centerY < b.topY)
+		return a.centerX > (b.x - a.radius) && 
+			a.centerX < (b.rightX + a.radius);
+	else if (a.centerX > b.x && a.centerX < b.rightX)
+		return a.centerY > (b.y - a.radius) && 
+			a.centerY < (b.topY + a.radius);
+	else return 
+		fsquare(a.centerX-b.x) + fsquare(a.centerY-b.y) < fsquare(a.radius) ||
+		fsquare(a.centerX-b.rightX) + fsquare(a.centerY-b.y) < fsquare(a.radius) ||
+		fsquare(a.centerX-b.rightX) + fsquare(a.centerY-b.topY) < fsquare(a.radius) ||
+		fsquare(a.centerX-b.x) + fsquare(a.centerY-b.topY) < fsquare(a.radius);
+}
+
+public static boolean doGeometriesIntersect(CollBox a, CollBox b) {
+	return ! (a.rightX < b.x || b.rightX < a.x || 
+		a.topY < b.y || b.topY < a.y);
+}
+\end{lstlisting}
+
+\paragraph{Optimierung mit der Collisionmap}
+
+%TODO Hier weiter
+
+\paragraph{Analyse der Performance}
+
+Um die Vorteile der einzelnen Optimierungen darzustellen, hier eine Tabelle mit Messwerten unter verschiedenen Bedingungen.
+
+In jedem Test wurden eine gewisse Anzahl an Entities mit jeweils einer \keyword{CollisionGeometry} erstellt und gleichmäßig auf einer 128x128 Karte verteilt.
+Jedes mal wird die Zeit gemessen die ein Update-Vorgang braucht in dem für jede Geometrie berechnet wird mit welchen anderen Geometrien sie kollidiert. Falls die Zeit so groß war das wir kein Ergebnis bekamen wurde \ti{NaN} eingetragen
+
+\begin{itemize}
+\item{\bf{Test 1}:} Rechteckige Hitboxen
+\item{\bf{Test 2}:} Kreis Hitboxen (mit sqrt)
+\item{\bf{Test 3}:} Kreis Hitboxen (ohne sqrt) 
+\item{\bf{Test 4}:} Rechteckige Hitboxen (mit vorheriger Kreis Abschätzung)
+\item{\bf{Test 4}:} Rechteckige Hitboxen in einer vollständigen CollisionMap 
+\end{itemize}
+
+\begin{table}
+\begin{tabular}{|r|r|r|r|r|r|}
+\hline
+Anzahl Geometries & Test 1      & Test 2      & Test 3      & Test 4      & Test 5       \\ \hline\hline
+
+     128          &     1.03 ms &     0.95 ms &     0.76 ms &     0.66 ms &      0.28 ms \\ \hline
+    1024          &    65.42 ms &    63.81 ms &    55.32 ms &    46.08 ms &      1.10 ms \\ \hline
+   16384          & 22139.79 ms & 22199.35 ms & 18604.07 ms & 20451.18 ms &     58.59 ms \\ \hline
+   65536          & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    &    738.22 ms \\ \hline
+  262144          & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    &  11891.37 ms \\ \hline
+16777216          & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & 219178.66 ms \\ \hline
+\end{tabular}
+\end{table}
+
+Ein paar Dinge kann man direkt aus dieser Tabelle erkennen. Einerseits den offensichtlich extremen Vorteil der \keyword{CollisionMap} im Gegensatz zu allen anderen Ansätzen. Außerdem gibt es einen erkennbaren Performance Einbruch durch Verwendung von sqrt. Der Unterschied zwischen Kreis und Rechteck Kollision ist fast nicht da - dies ist in soweit erklärbar dass beides mathematisch einfach zu erkennen ist.

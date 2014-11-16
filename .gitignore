@@ -13,6 +13,7 @@ Desktop.ini
 *.out
 *.synctex
 *.toc
+*.*(busy)
 
 # Output
 
