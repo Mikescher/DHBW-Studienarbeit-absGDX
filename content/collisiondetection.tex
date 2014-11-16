@@ -22,11 +22,6 @@
 
 % Performancevergleich (box testing / circle first testing)
 
-% Mathematik -> Polygon intersection
-% Circle-Circle Collision
-% Box-Box Collision          (+ OuterCircle Optimierung)
-% Box-Circle Collision
-
 % Collision aware movement
 % - X/Y independent moving (-> semi-sliding)
 % Implementierung Active / Passive movement collision
@@ -116,6 +111,15 @@ public static boolean doGeometriesIntersect(CollBox a, CollBox b) {
 }
 \end{lstlisting}
 
+Die Kollisionserkennung zwischen zwei Kreisen oder zwei Rechtecken ist recht simpel. Nur eine Kreis-Rechteck Kollision ist etwas komplexer zu bestimmen.
+Zuerst muss man bestimmen ob der Kreis neben, über oder unter dem Rechteck liegt, falls ja bestimmt man den Abstand der jeweiligen Seite und des Kreismittelpunktes. Wenn dieser Abstand kleiner als der Kreisradius ist schneiden sich die beiden Geometrien.
+
+\quickfigure{Kollisionserkennung Kreis-Rechteck (1)}{circle-rect-coll-1}{0.4}
+
+Wenn der Kreis andererseits schräg im Verhältnis zum Rechteck liegt muss man schauen ob das jeweilige Eck im Kreis liegt, hierfür bestimmt man den Abstand Eck - Kreismuittelpunkt und überprüft ob dieser kleiner dem Kreisradius ist.
+
+\quickfigure{Kollisionserkennung Kreis-Rechteck (2)}{circle-rect-coll-2}{0.4}
+
 \paragraph{Optimierung mit der Collisionmap}
 
 %TODO Hier weiter
@@ -135,7 +139,7 @@ Jedes mal wird die Zeit gemessen die ein Update-Vorgang braucht in dem für jede
 \item{\bf{Test 4}:} Rechteckige Hitboxen in einer vollständigen CollisionMap 
 \end{itemize}
 
-\begin{table}
+
 \begin{tabular}{|r|r|r|r|r|r|}
 \hline
 Anzahl Geometries & Test 1      & Test 2      & Test 3      & Test 4      & Test 5       \\ \hline\hline
@@ -147,6 +151,13 @@ Anzahl Geometries & Test 1      & Test 2      & Test 3      & Test 4      & Test
   262144          & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    &  11891.37 ms \\ \hline
 16777216          & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & 219178.66 ms \\ \hline
 \end{tabular}
-\end{table}
+
+\vspace*{1 cm}
 
 Ein paar Dinge kann man direkt aus dieser Tabelle erkennen. Einerseits den offensichtlich extremen Vorteil der \keyword{CollisionMap} im Gegensatz zu allen anderen Ansätzen. Außerdem gibt es einen erkennbaren Performance Einbruch durch Verwendung von sqrt. Der Unterschied zwischen Kreis und Rechteck Kollision ist fast nicht da - dies ist in soweit erklärbar dass beides mathematisch einfach zu erkennen ist.
+
+\paragraph{Bewegung mit Kollisionen}
+
+\paragraph{Kollisionen mit der Karte}
+
+\paragraph{Limitierte Kollisionen}
