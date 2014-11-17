@@ -11,11 +11,9 @@
 % Erklärung CollisionMap
 % -> Map
 % -> muss auf geo-pos change reagieren (deshalb gibt entity den Position-vector nicht public)
-% Performancevergleich (colllisionMapSize := mapsize  ||  colllisionMapSize := 1)
 % Optimierung durch versch expTileScales
 % Optimierung NO-OP Movement
 % Optimierung Pseudo Geos
-% Vergleich CollisionTile-CollisonGeoList  ( ArrayList <> LinkedList <> COW-Array )  %TODO ectl dann auch im code das bessere nehmen ?
 % Implementierung Active / Passive collision
 % PROBLEM :-> Out of map Handling
 
@@ -122,7 +120,81 @@ Wenn der Kreis andererseits schräg im Verhältnis zum Rechteck liegt muss man s
 
 \paragraph{Optimierung mit der Collisionmap}
 
-%TODO Hier weiter
+Das grundlegende Problem dass dieser Algorithmus bis jetzt noch hat ist dass mit steigender Geometrie Anzahl die Anzahl der Vergleiche quadratisch ansteigt. 
+Es müssen aktuell nämlich jede \keyword{CollisionGeometry} mit jeder anderen getestet werden und überprüft werden ob sie sich überschneiden.
+Die meisten dieser Operationen sind offensichtlich unnötig - wenn sich zwei Geometrien auf unterschiedlichen Seiten der Karte befinden können sie in keinem Fall miteinander kollidieren (den Fall von Entities die fast so groß wie die Karte sind ausgeschlossen).
+
+Unsere Lösung liegt darin die Datenstruktur zu ändern. Bisher wurden die CollisionGeometrien in einer einzigen großen Liste gespeichert, jetzt speichern wir sie in einem zweidimensionalen Raster.
+Man muss sich das so vorstellen dass man die Karte in ein Raster unterteilt. Jedes dieser Raster-Felder wird von einem Objekt der Klasse \keyword{CollisionMapTile} dargestellt und jedes Objekt enthält eine Liste der CollisionGeometrien die auf diesem Tile sind.
+Das bedeutet das jedes mal wenn eine CollisionGeometry hinzugefügt wird oder sich bewegt werden die Tiles berechnet auf denen die Geometrie sich befindet. Die CollisionGeometry wird dann in die Listen aller dieser Tiles hinzugefügt. Möchte man nun wissen ob eine Geometrie mit einer anderen kollidiert geht man alle Tiles durch auf denen diese Geometrie liegt. Den eigentlichen Überschneidung-Test-Code führt man dann auf allen Geometrien aus die man in diesem Tiles findet. Die vorherigen Optimierungen, wie dass man zuerst eine Kreiskollision durchführt, bleiben immer noch in Stand. Mit dieser Methode haben wir die Anzahl der zu überprüfenden Geometrien von allen enthaltenen auf ein paar in der Nähe eingeschränkt.
+
+Diese \keyword{CollisionMap} muss nun immer aktuell gehalten werden, jedes mal wenn eine Geometrie hinzugefügt/bewegt/entfernt wird muss die jeweilige Methode aufgerufen werden um die \keyword{CollisionMap} zu aktualisieren. Dies ist auch der technische Grund warum sowohl bei \keyword{Entity} als auch bei \keyword{CollisionGeometry} der \ti{position}-Vektor nicht öffentlich ist sondern nur durch Setter verändert werden kann. Denn dadurch kann man diese Events abfangen und an die \keyword{CollisionMap} weitergeben.
+
+Eine Frage ist nun wie die \keyword{CollisionMapTiles} skaliert werden sollen. Der Standard Ansatz unseres Frameworks ist es da die \keyword{CollisionMapTiles} gleich groß wie die normalen Map \keyword{Tiles} zu haben.
+Dies ist als Standard Ansatz in soweit gut, dass normalerweise eine Map weder nur ein paar Tiles noch eine extreme Anzahl Tiles hat und meist sind maximal eine Hand voll Entities gleichzeitig auf einer Tile.
+Trotzdem bieten wir dem Benutzer die Möglichkeit die Tilegröße manuell anzupassen.
+Dafür gibt es im \keyword{CollisionMap}-Konstruktor den Parameter \ti{expTileScale}.
+Dieser ist das Verhältnis von MapTiles zu CollisionTiles in der Form $ 2^n $.
+Der Wert 0 ist hierbei Standard und beschreibt den Fall MapTiles == CollisionTiles.
+Ein Wert von 1 würde CollisionTiles bewirken die doppelt so groß sind wie die MapTiles ($2^1 = 2$) und ein Wert von -1 halb so große ($2^{-1} = \frac{1}{2}$)
+
+Um dies nun implementieren zu können muss man für eine Geometrie berechnen können auf welchen Tiles sie sich befindet.
+Zuerst muss man die Position auf den Map Tiles in eine Position auf den CollisionTiles umwandeln:
+
+\doinline
+\begin{lstlisting}[caption=Berechnen der CollisionMap-Position aus der Tile-Position, title=\hspace{0 pt}, language=java]
+private int getTileX(float x) {
+	if (expTileScale < 0) {
+		return (int) (x * 1d * (1 << -expTileScale));		
+	} else if (expTileScale == 0) {
+		return (int) x;
+	} else {
+		return (int) (x * 1d  / (1 << expTileScale));
+	}
+}
+
+private int getTileY(float y) {
+	if (expTileScale < 0) {
+		return (int) (y * 1d * (1 << -expTileScale));		
+	} else if (expTileScale == 0) {
+		return (int) y;
+	} else {
+		return (int) (y * 1d  / (1 << expTileScale));
+	}
+}
+\end{lstlisting}
+
+Jedoch muss man hier auch den Ausnahmefall beachten. Eine Geometrie muss nicht zwangsweise auf der Karte sein, theoretisch kann sie sich auch daneben befinden.
+Für diesen Fall haben wir einen zweiten 3x3 \keyword{CollisionMapTile}-Array welcher die 8 Bereiche um die Karte herum bezeichnet (Oben, Oben-Rechts, Rechts, Unten-Rechts, Unten, Unten-Link, Links, Oben-Links). Zwar hat man für den Fall von Kollisionen außerhalb der Karte keinen Vorteil durch die \keyword{CollisionMap}, sondern effektiv wieder den gleichen Fall wie vor deren Einführung. Aber dafür ist nun auch dort Kollisionserkennung möglich.
+
+Neben der TilePosition muss nun auch der Radius berechnet werden, alle CollisionTiles innerhalb dieses Radius werden dann mit der entsprechenden Geometrie gefüllt. Dieser Collision-Radius berechnet sich aus dem umschließenden Radius der Geometrie mit der Formel $ceil(r_{geometry} * 2^{expTileScale})$.
+Dieser Radius ist immer mindestens 1, was dazu führt das jede Geometrie immer mindestens auf 9 Tiles liegt. In den meisten Fällen liegt die Geometrie nicht wirklich auf allen diesen Tiles. Dies ist jedoch kein Problem da die endgültige Kollisionserkennung immer noch durch die genauen Formeln berechnet wird.
+Es ist nur wichtig dass es keine Tiles gibt auf denen die Geometrie liegt die aber nicht diese enthalten.
+
+Eine weitere Optimierung kann man beim Bewegen von Geometrien implementieren. Normalerweise werden, wenn eine Geometrie bewegt werden bei allen Tiles auf denen sie vorher gelegen ist die Einträge entfernt und bei allen neuen die Einträge hinzugefügt. Falls die Geometrie jedoch auf der gleichen \keyword{CollisionMapTile} bleibt muss die Map nicht aktualisiert werden. Deshalb wird in der Methode moveGeometry() zuerst überprüft ob eine Änderung Geschehen ist und nur dann die Map aktualisiert:
+
+\doinline
+\begin{lstlisting}[caption=Bewegen einer Geometrie in der CollisionMap, title=\hspace{0 pt}, language=java]
+public boolean moveGeometry(float prevCenterX, float prevCenterY, CollisionGeometry geo) {
+	if (getTileX(prevCenterX) == getTileX(geo.getCenterX()) && getTileY(prevCenterY) == getTileY(geo.getCenterY()))
+		return true;
+	
+	boolean success = removeGeometry(geo, prevCenterX, prevCenterY);
+	addGeometry(geo);
+	
+	return success;
+}
+\end{lstlisting}
+
+Eine weitere Möglichkeit die Kollisionserkennung zu optimieren ist durch Einführung von Pseudo-Geometrien. Möchte eine Geometrie nur selbst mit anderen kollidieren aber nicht als Kollisionsobjekt dienen muss es sich nicht in die \keyword{CollisionMap} eintragen. Ein Beispiel hierfür wäre eine Kugel-Entity.
+Diese besitzt eine \keyword{CollisionGeometry} um zu erkennen wann sie etwas getroffen hat. Jedoch gibt es normalerweise kein Fall in dem eine andere Entity wissen müsste ob die mit einer Kugel kollidiert.
+Deshalb kann man einen Performancevorteil erlangen indem man die Kugel-Geometrie nicht in die \keyword{CollisionMap} einträgt und stattdessen selber verwaltet. Es gilt zu beachten dass man dies nicht mit zu vielen Entity-Typen machen sollten um nicht den Überblick zu verlieren wer mit wem kollidieren kann.
+Außerdem muss die Kugel in jedem Schritt selbst ihre Kollisionen überprüfen, da es sonst keiner für sie tut.
+
+\paragraph{Verwendung mit Entities}
+
+In den meisten Fällen werden \keyword{CollisionGeometries} nicht alleinstehend benutzt sondern in Zusammenhang mit einer Entity. Aus diesem Grund sind die beiden Klassen auch eng miteinander verknüpft. So kann man einer Entity eine Liste an Geometrien hinzufügen, die diese Geometrie verwaltet. Wenn sich das Entity bewegt werden auch die Geometrien bewegt. Hierfür wird den Geometrien eine relative Position im Verhältnis zum Entity gegeben.
+Außerdem wird jedes mal wenn die Entity sich  nach Kollisionen überpüft. Falls eine Kollision geschieht wird auf der bewegten Entity die Methode \ti{onActiveCollide()} aufgerufen und auf der anderen Entity \ti{onPassiveCollide()}. Diese beiden Methoden werden im Interface \keyword{CollisionListener} implementiert - welches die Klasse \keyword{Entity} standardmäßig hat. Außerdem wird wenn man eine Geometry zu einem Entity hinzufügt dieses automatisch in den \ti{listener}-Array der Geometrie aufgenommen. Dies ist der Array mit allen Klassen die benachrichtigt werden wenn eine Kollision stattfindet.
 
 \paragraph{Analyse der Performance}
 
@@ -142,7 +214,7 @@ Jedes mal wird die Zeit gemessen die ein Update-Vorgang braucht in dem für jede
 
 \begin{tabular}{|r|r|r|r|r|r|}
 \hline
-Anzahl Geometries & Test 1      & Test 2      & Test 3      & Test 4      & Test 5       \\ \hline\hline
+Anzahl Geo's & Test 1      & Test 2      & Test 3      & Test 4      & Test 5       \\ \hline\hline
 
      128          &     1.03 ms &     0.95 ms &     0.76 ms &     0.66 ms &      0.28 ms \\ \hline
     1024          &    65.42 ms &    63.81 ms &    55.32 ms &    46.08 ms &      1.10 ms \\ \hline
@@ -155,6 +227,8 @@ Anzahl Geometries & Test 1      & Test 2      & Test 3      & Test 4      & Test
 \vspace*{1 cm}
 
 Ein paar Dinge kann man direkt aus dieser Tabelle erkennen. Einerseits den offensichtlich extremen Vorteil der \keyword{CollisionMap} im Gegensatz zu allen anderen Ansätzen. Außerdem gibt es einen erkennbaren Performance Einbruch durch Verwendung von sqrt. Der Unterschied zwischen Kreis und Rechteck Kollision ist fast nicht da - dies ist in soweit erklärbar dass beides mathematisch einfach zu erkennen ist.
+
+%TODO graph Anzahl -> upd time
 
 \paragraph{Bewegung mit Kollisionen}
 
