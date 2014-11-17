@@ -72,7 +72,7 @@ public class EntityCollisionGeometry {
 Jedes mal wenn die Entity eine Veränderung ihrer Position erfährt wird updatePosition() aufgerufen und auch die \keyword{CollisionGeometry} bewegt sich mit.
 Mit dieser Technik kann man auch komplexere Geometrie Gebilde bauen welche die Form des Entities beliebig genau annähern kann. \cite[S 500]{DGIJ} %TODO Alle DGIJ cites in dieser Datei überprüfen - die Seitenzahlen sind aus der PDF
 
-\quickfigure{Beispiel eines Entities mit mehreren Hitboxen}{angel}{0.4} %TODO Engel mit boxen
+\quickfigure{Beispiel eines Entities mit mehreren Hitboxen}{angel}{0.4}
 
 Aktuell gibt es zwei verschiedene Arten von \keyword{CollisionGeometry}: \keyword{CollisionCircle} und \keyword{CollisionBox}. Das eine hat die Form eines Kreises und die andere die eines Rechteckes. In den meisten Fällen möchte man Hitboxen in der Form von Rechtecken, es kann jedoch überlegenswert sein nur Kreise zu verwenden da bei diesen die Kollisionsberechnung schneller ist.
 
@@ -273,4 +273,19 @@ Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. F
 
 \paragraph{Kollisionen mit der Karte}
 
+%TODO Paragraph Tile Collisions
+
 \paragraph{Limitierte Kollisionen}
+
+In unserer aktuellen Implementation kollidiere noch all Entities mit allen. Da ist in soweit kein Problem, dass man in den Event-Handlern überprüfen kann ob die Kollision Sinn macht und wenn nicht sie einfach verwirft.
+
+Jedoch kann es trotzdem hilfreich sein die Kollisionen im Vorfeld zu Filtern. Dafür gibts es in der Klasse \keyword{CollisionGeometryOwner} die Mthode \ti{canCollideWith()}. Bevor eine Kollision ausgeführt wird, wird überprüft ob die beiden Geometrien auch wirklich miteinander kollidieren können. DIes ist auch wichtig für die \ti{movePosition()} Methode in der Klasse \keyword{Entity}. Ohne diese Methode würde das Entity mit jeder anderen CollisionBox kollidieren, mit ihr lässt sich dies auf die Objekte einschränken mit der das Entity auch wirklich zusammenstoßen soll.
+Problematisch wird es jedoch da, die Methode kommutativ sein soll.
+Dies bedeutet dass a.canCollideWith(b) das gleiche Ergebnis wie b.canCollideWith(a) liefert. 
+
+\doinline
+\begin{lstlisting}[caption=Kommutative Eigenschaft von canCollideWith, title=\hspace{0 pt}, language=java]
+Assert.True(a.CanCollideWith(b) == b.canCollideWith(a))
+\end{lstlisting}
+
+Dass diese Bedingung erfüllt ist liegt in der Verantwortung des Programmierers.
