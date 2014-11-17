@@ -208,29 +208,68 @@ Jedes mal wird die Zeit gemessen die ein Update-Vorgang braucht in dem für jede
 \item{\bf{Test 2}:} Kreis Hitboxen (mit sqrt)
 \item{\bf{Test 3}:} Kreis Hitboxen (ohne sqrt) 
 \item{\bf{Test 4}:} Rechteckige Hitboxen (mit vorheriger Kreis Abschätzung)
-\item{\bf{Test 4}:} Rechteckige Hitboxen in einer vollständigen CollisionMap 
+\item{\bf{Test 5}:} Rechteckige Hitboxen in einer vollständigen CollisionMap 
 \end{itemize}
 
 
 \begin{tabular}{|r|r|r|r|r|r|}
 \hline
-Anzahl Geo's & Test 1      & Test 2      & Test 3      & Test 4      & Test 5       \\ \hline\hline
-
+Anzahl Geo's      & Test 1      & Test 2      & Test 3      & Test 4      & Test 5       \\ \hline\hline
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      128          &     1.03 ms &     0.95 ms &     0.76 ms &     0.66 ms &      0.28 ms \\ \hline
     1024          &    65.42 ms &    63.81 ms &    55.32 ms &    46.08 ms &      1.10 ms \\ \hline
    16384          & 22139.79 ms & 22199.35 ms & 18604.07 ms & 20451.18 ms &     58.59 ms \\ \hline
-   65536          & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    &    738.22 ms \\ \hline
-  262144          & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    &  11891.37 ms \\ \hline
-16777216          & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & \ti{NaN}    & 219178.66 ms \\ \hline
+   65536          & \tcNaN      & \tcNaN      & \tcNaN      & \tcNaN      &    738.22 ms \\ \hline
+  262144          & \tcNaN      & \tcNaN      & \tcNaN      & \tcNaN      &  11891.37 ms \\ \hline
+16777216          & \tcNaN      & \tcNaN      & \tcNaN      & \tcNaN      & 219178.66 ms \\ \hline
 \end{tabular}
 
 \vspace*{1 cm}
 
 Ein paar Dinge kann man direkt aus dieser Tabelle erkennen. Einerseits den offensichtlich extremen Vorteil der \keyword{CollisionMap} im Gegensatz zu allen anderen Ansätzen. Außerdem gibt es einen erkennbaren Performance Einbruch durch Verwendung von sqrt. Der Unterschied zwischen Kreis und Rechteck Kollision ist fast nicht da - dies ist in soweit erklärbar dass beides mathematisch einfach zu erkennen ist.
 
-%TODO graph Anzahl -> upd time
+\quickfigure{Performance Graph der CollisionMap}{performance-collisionmap}{1.0}
 
 \paragraph{Bewegung mit Kollisionen}
+
+Kollisionserkennung ist nicht nur gut um zu erkennen wann zwei Entities kollidieren sondern auch um dies zu verhindern. Hat man beispielsweise eine vom Spieler gesteuerte Figur möchte man nicht dass diese stirbt wenn sie in einer Wand endet, sondern dass sie dies überhaupt nicht kann.
+Dafür hat die Klasse \keyword{Entity} außer der setPosition() Methode auch noch die movePosition()-Methode. Diese bewegt das Entity entweder die komplette Strecke oder nur partiell falls zwischenzeitlich eine Kollision stattfindet.
+
+Um dies zu zu schaffen bewegt man das Entity und all seine Geometrien zuerst die komplette Strecke. Dann sucht man die erste fremde Geometrie mit denen eine eigene Geometrie kollidiert. Für diese Geometrie berechnet man dann die Entfernung die man rückwärts gehen muss dass sich die beiden Geometrien nicht mehr überschneiden. Dies wiederholt man solange bis es für keine eigene Geometrie mehr eine Überschneidung gibt. Jedoch führt man dies nicht für die ganze Bewegung aus sondern einmal für die Bewegung in X-Richtng und dann noch einmal in Y-Richtung. X und Y Bewegung sind somit unabhängig und es ist möglich beispielsweise an einer Wand "entlang zu gleiten" indem die X-Bewegung verhindert wird aber die Y-Bewegung immer noch ausgeführt.
+
+Mathematisch interessant ist hierbei die Algorithmen um den minimalen Abstand zu berechnen. Wir brauchen eine Methode die zwei Geometrien, positioniert durch ihren Mittelpunkt, bekommt und uns den minimalen Abstand in X oder Y Richtung sagt bei denen dies sich gerade nicht schneiden. Dies führt zu acht unterschiedlichen Methoden: Der Kreis-Kreis, Kreis-Rechteck, Rechteck-Kreis und Rechteck-Rechteck Abstand jeweils in X und Y Richtung.
+
+Der Kreis-Kreis Abstand lässt sich einfach durch diese Formel berechnen:
+
+$$d_x = \sqrt{(r_1 + r_2)^2 - (y_2 - y_1)} * signum(x_2 - x_1)$$:
+
+\quickfigure{Berechnung des minimalen X-Abstands zweier Kreise}{x-touch-dist_1}{0.6}
+
+Der Kreis-Rechteck Abstand muss wieder zwei Fälle abdecken. Wenn der Kreis neben dem Rechteck ist, ist dies die Formel:
+
+$$d_x = (r_1 + \frac{width_2}{2}) * signum(x_2 - x_1)$$. 
+
+Befindet sich der Kreis über oder unter dem Rechteck ist die Formel die gleiche wie bei dem Kreis-Kreis Abstand:
+
+$$d_x = \sqrt{(r_1)^2 - (y_{2bl} - y_1)} * signum(x_2 - x_1)$$
+
+\quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Rechtecks}{x-touch-dist_2}{0.6}
+
+Der Rechteck-Kreis Fall ist der selbe wie Kreis-Rechteck nur mit getauschten Vorzeichen. Und beim Rechteck-Rechteck Fall bestimmt man den Abstand mit:
+
+$$d_x = \frac{width_1 + width_2}{2}$$
+
+\quickfigure{Berechnung des minimalen X-Abstands zweier Rechtecke}{x-touch-dist_3}{0.6}
+
+Nun gibt es in der Klasse \keyword{CollisionListener} auch noch Events für solche verhinderten Kollisionen. Kollidiert eine Geometrie in ihrer eigenen Bewegung wird die Methode \ti{onActiveMovementCollide()} bei dem bewegten Entity aufgerufen und bei dem anderen \ti{onPassiveMovementCollide}.
+
+Ein Problem können hier Entities mit mehreren \keyword{CollisonGeometries} sein. Hierbei muss drauf geachtet werden, dass alle Geometrien in der Kollison beachtet werden und jeweils der größte "Rücksetz-Wert" benutzt wird.
+
+Ein weiteres Problem sind entstehende Rundungsfehler bei Verwendung von FloatingPoint Zahlen. Führt man den Algorithmus exakt so wie oben beschrieben aus kann es vorkommen dass sich die beiden Geometrien auch nach dem Rücksetzen immer noch schneiden. Der einzige Weg um dieses Problem herum ist es einen delta Wert in der Berechnung des minimalen Abstands einzuführen. Damit wird nicht mehr der minimale Abstand zurückgeliefert sonder der minimale Abstand plus einen delta Wert. Somit können sich Entities nicht mehr "wirklich" berühren sondern nur noch bis maximal delta Einheiten nähern.
+
+Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. Falls die Updaterate niedrig genug ist kann es vorkommen, dass ein Objeckt links neben einem anderen ist und sich dann schnell genug nach rechts bewegt um im nächsten Schritt rechts neben dem Objekt zu sein. Obwohl sich das Entity nun direkt durch ein anderes bewegt hat wurde an keiner Stelle eine Kollision bemerkt. Zwar gibt es mathematische Ansätze dieses Problem zu lösen, diese gehen jedoch auf Kosten der Performance. Einfacher ist es eine konstante Update-Rate aufrecht zu erhalten und keine extrem dünne Entities zu verwenden, wo Kollisionen wichtig sind.
+
+\quickfigure{Discrete-Time-Issue: Ein Objekt "phased" durch ein anderes}{discrete-time-issue_phasing}{1.0}
 
 \paragraph{Kollisionen mit der Karte}
 
