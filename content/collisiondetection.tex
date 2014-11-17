@@ -279,7 +279,7 @@ Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. F
 
 In unserer aktuellen Implementation kollidiere noch all Entities mit allen. Da ist in soweit kein Problem, dass man in den Event-Handlern überprüfen kann ob die Kollision Sinn macht und wenn nicht sie einfach verwirft.
 
-Jedoch kann es trotzdem hilfreich sein die Kollisionen im Vorfeld zu Filtern. Dafür gibts es in der Klasse \keyword{CollisionGeometryOwner} die Mthode \ti{canCollideWith()}. Bevor eine Kollision ausgeführt wird, wird überprüft ob die beiden Geometrien auch wirklich miteinander kollidieren können. DIes ist auch wichtig für die \ti{movePosition()} Methode in der Klasse \keyword{Entity}. Ohne diese Methode würde das Entity mit jeder anderen CollisionBox kollidieren, mit ihr lässt sich dies auf die Objekte einschränken mit der das Entity auch wirklich zusammenstoßen soll.
+Jedoch kann es trotzdem hilfreich sein die Kollisionen im Vorfeld zu Filtern. Dafür gibts es in der Klasse \keyword{CollisionGeometryOwner} die Mthode \ti{canCollideWith()}. Bevor eine Kollision ausgeführt wird, wird überprüft ob die beiden Geometrien auch wirklich miteinander kollidieren können. 
 Problematisch wird es jedoch da, die Methode kommutativ sein soll.
 Dies bedeutet dass a.canCollideWith(b) das gleiche Ergebnis wie b.canCollideWith(a) liefert. 
 
@@ -288,4 +288,4 @@ Dies bedeutet dass a.canCollideWith(b) das gleiche Ergebnis wie b.canCollideWith
 Assert.True(a.CanCollideWith(b) == b.canCollideWith(a))
 \end{lstlisting}
 
-Dass diese Bedingung erfüllt ist liegt in der Verantwortung des Programmierers.
+Dass diese Bedingung erfüllt ist liegt in der Verantwortung des Programmierers. Eine zweite Methode ist die \ti{canMoveCollide()} Methode welche bestimmt mit welchen Entities in der \ti{movePosition()} Methode kollidiert wird. Ohne diese Methode würde das Entity mit jeder anderen CollisionBox kollidieren, mit ihr lässt sich dies auf die Objekte einschränken mit der das Entity auch wirklich zusammenstoßen soll. Es ist jedoch zu beachten dass \ti{canCollideWith()} eien höhere Priorität hat als \ti{canMoveCollide()}. Wenn also \ti{canCollideWith()} \bf{false} zurück liefert, dann wird \ti{canMoveCollide()} überhaupt nicht mehr abgefragt.
