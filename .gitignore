@@ -14,10 +14,13 @@ Desktop.ini
 *.synctex
 *.toc
 *.*(busy)
+*.tps
 
 # Output
 
 *.pdf
+*.ps
+*.dvi
 
 # Data #
 

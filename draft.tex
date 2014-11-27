@@ -1,0 +1,35 @@
+% ########## REMOVE FIGURES ##########
+% ####################################
+
+\renewcommand{\quickfigure}[3]{}
+
+% ########## REMOVE LISTINGS ##########
+% ####################################
+
+\renewcommand{\doinline}{}
+\excludecomment{lstlisting}
+\let\endlstlisting\relax
+
+% ######## REMOVE EMPTY PAGES ########
+% ####################################
+
+\renewcommand{\newpage}{}
+
+% ######### REMOVE STRUCTURE #########
+% ####################################
+
+\renewcommand{\tableofcontents}{}
+\renewcommand{\lstlistoflistings}{}
+\renewcommand{\listoffigures}{}
+
+% ####### REMOVE GENERIC PAGES #######
+% ####################################
+
+\renewcommand{\cstmtitlepage}{}
+\renewcommand{\cstmlegalpage}{}
+
+% ######## REMOVE BIBLIOGRAPHY #######
+% ####################################
+
+\renewcommand{\cite}[1]{}
+\renewcommand{\bibliography}[1]{} 
