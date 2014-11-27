@@ -304,15 +304,19 @@ Ein paar Dinge kann man direkt aus dieser Tabelle erkennen. Einerseits den offen
 Kollisionserkennung ist nicht nur gut um zu erkennen wann zwei Entities kollidieren sondern auch um dies zu verhindern. Hat man beispielsweise eine vom Spieler gesteuerte Figur möchte man nicht dass diese stirbt wenn sie in einer Wand endet, sondern dass sie dies überhaupt nicht kann.
 Dafür hat die Klasse \keyword{Entity} außer der setPosition() Methode auch noch die movePosition()-Methode. Diese bewegt das Entity entweder die komplette Strecke oder nur partiell falls zwischenzeitlich eine Kollision stattfindet.
 
-Um dies zu zu schaffen bewegt man das Entity und all seine Geometrien zuerst die komplette Strecke. Dann sucht man die erste fremde Geometrie mit denen eine eigene Geometrie kollidiert. Für diese Geometrie berechnet man dann die Entfernung die man rückwärts gehen muss dass sich die beiden Geometrien nicht mehr überschneiden. Dies wiederholt man solange bis es für keine eigene Geometrie mehr eine Überschneidung gibt. Jedoch führt man dies nicht für die ganze Bewegung aus sondern einmal für die Bewegung in X-Richtng und dann noch einmal in Y-Richtung. X und Y Bewegung sind somit unabhängig und es ist möglich beispielsweise an einer Wand "entlang zu gleiten" indem die X-Bewegung verhindert wird aber die Y-Bewegung immer noch ausgeführt.
+Um dies zu zu schaffen bewegt man das Entity und all seine Geometrien zuerst die komplette Strecke. Dann sucht man die erste fremde Geometrie mit denen eine eigene Geometrie kollidiert. Für diese Geometrie berechnet man dann die Entfernung die man rückwärts gehen muss dass sich die beiden Geometrien nicht mehr überschneiden. Dies wiederholt man solange bis es für keine eigene Geometrie mehr eine Überschneidung gibt. Jedoch führt man dies nicht für die ganze Bewegung aus sondern einmal für die Bewegung in X-Richtung und dann noch einmal in Y-Richtung. X und Y Bewegung sind somit unabhängig und es ist möglich beispielsweise an einer Wand "entlang zu gleiten" indem die X-Bewegung verhindert wird aber die Y-Bewegung immer noch ausgeführt.
 
-Mathematisch interessant ist hierbei die Algorithmen um den minimalen Abstand zu berechnen. Wir brauchen eine Methode die zwei Geometrien, positioniert durch ihren Mittelpunkt, bekommt und uns den minimalen Abstand in X oder Y Richtung sagt bei denen dies sich gerade nicht schneiden. Dies führt zu acht unterschiedlichen Methoden: Der Kreis-Kreis, Kreis-Rechteck, Rechteck-Kreis und Rechteck-Rechteck Abstand jeweils in X und Y Richtung.
+Mathematisch interessant ist hierbei die Algorithmen um den minimalen Abstand zu berechnen. Wir brauchen eine Methode die zwei Geometrien, positioniert durch ihren Mittelpunkt, bekommt und uns den minimalen Abstand in X oder Y Richtung sagt bei denen dies sich gerade nicht schneiden. Dies führt zu unterschiedlichen Methoden für jede Art der Kollision:
+
+\subparagraph{Kreis-Kreis Abstand}
 
 Der Kreis-Kreis Abstand lässt sich einfach durch diese Formel berechnen:
 
 $$d_x = \sqrt{(r_1 + r_2)^2 - (y_2 - y_1)} * signum(x_2 - x_1)$$:
 
 \quickfigure{Berechnung des minimalen X-Abstands zweier Kreise}{x-touch-dist_1}{0.6}
+
+\subparagraph{Kreis-Rechteck Abstand}
 
 Der Kreis-Rechteck Abstand muss wieder zwei Fälle abdecken. Wenn der Kreis neben dem Rechteck ist, ist dies die Formel:
 
@@ -324,19 +328,64 @@ $$d_x = \sqrt{(r_1)^2 - (y_{2bl} - y_1)} * signum(x_2 - x_1)$$
 
 \quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Rechtecks}{x-touch-dist_2}{0.6}
 
-Der Rechteck-Kreis Fall ist der selbe wie Kreis-Rechteck nur mit getauschten Vorzeichen. Und beim Rechteck-Rechteck Fall bestimmt man den Abstand mit:
+Der Rechteck-Kreis Fall ist der selbe wie Kreis-Rechteck nur mit getauschten Vorzeichen. 
+
+\subparagraph{Rechteck-Rechteck Abstand}
+
+Beim Rechteck-Rechteck Fall bestimmt man den Abstand mit:
 
 $$d_x = \frac{width_1 + width_2}{2}$$
 
 \quickfigure{Berechnung des minimalen X-Abstands zweier Rechtecke}{x-touch-dist_3}{0.6}
 
+Es ist interessant, dass dies der einzige Fall bei dem der minimal X-Abstand unabhängig von der Y Position ist (solange es überhaupt eine Kollision gibt)
+
+\subparagraph{Dreieck-Kreis Abstand}
+
+Den Abstand zwischen einem Dreieck und einem Kreis zu berechnen ist etwas komplizierter als die vorangegangenen Beispiele. Zur Vereinfachung brechen wir das Problem in drei Kreis-Strecke Abstände auf. Aus allen validen Abständen die wir so bekommen nehmen wir dann den dessen absoluter Wert minimal ist. Hierbei ist es wichtig dass man nur die validen Abstände  betrachtet. Kollidiert der Kreis zum Beispiel niemals mit der dritten Kante, egal wie weit er sich auf der X-Achse bewegt darf dieser Abstand auch nicht beachtet werden. 
+Da wir bereits mit Gleitkommazahlen arbeiten wird für den Keine-Kollision-Fall der Wert \keyword{NaN} genommen.
+
+\quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Dreieckes (1)}{x-touch-dist_4-1}{0.6}
+
+Zuerst berechnen wird den Winkel \textalpha den die Gerade 
+(definiert durch \ti{P1} und \ti{P2}) mit der X-Achse hat. 
+Dies geschieht über die Funktion \ti{atan2} aus der Math-Bibliothek von java. 
+Der Winkel \textbeta  ist der Komplementwinkel zu 
+\textalpha, es gilt 
+also $\alpha + \beta = 90\degree$
+
+\quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Dreieckes (2)}{x-touch-dist_4-2}{0.6}
+
+Als nächstes möchten wir den Punkt ausrechnen an dem der Kreis die Strecke berühren würde. An dieser Stelle liegt die Gerade tangential zum Kreis. Mittels des Winkels \textbeta  können wir also diesen Punkt ermitteln und auch seine Lage relativ zum Kreismittelpunkt (\ti{dcx} und \ti{dcy}).
+Zwar kann es immer zwei Punkte geben, dies kann jedoch unterschieden werden indem man sich anschaut ob der Kreis rechts oder links neben der Strecke liegt. Je nachdem muss \ti{dcx} positiv oder negativ sein.
+
+\quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Dreieckes (3)}{x-touch-dist_4-3}{0.6}
+
+Da wir nun die Y-Position der Kollisionspunkte haben müssen wir noch den X-Anteil des Punktes auf der Strecke berechnen, dies ist in soweit kein Problem da wir ja dessen Y-Anteil schon kennen. In diesem Schritt können wir auch erkennen ob es überhaupt eine Kollision und somit einen minimalen X-Abstand gibt. Falls der berechnete Punkt auf der Strecke nicht zwischen \ti{P1} und \ti{P2} gibt es auch keine Kollision.
+
+\quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Dreieckes (4)}{x-touch-dist_4-4}{0.6}
+
+Als letzten Schritt muss man nur noch \ti{Pcc.x} von \ti{Pcl.x} abziehen. Dies ist jetzt der minimale Weg den der Kreis sich bewegen darf um nicht mit dem Dreieck zu kollidieren. Da wir aber bisher immer den minimalen Abstand gesucht haben muss dieser noch daraus berechnet werden indem man ihm vom absoluten Abstand der beiden Geometrien abzieht:
+
+$$minX = abs(g1.x - g2.x) - dx$$
+
+\subparagraph{Dreieck-Dreieck Abstand}
+
+Der Abstand Dreieck-Dreieck kann auf mehrere Punkt-Strecke Abstände vereinfacht werden. Denn bei jeder Kollision muss eine Ecke eines Dreiecks auf eine Kante des anderen treffen. Wieder benutzt man den Ansatz von Kreis-Dreieck und berechnet alle gültigen Abstände und nimmt dann denjenigen dessen absoluter Wert am kleinsten ist. Insgesamt sind das 18 Punkt-Strecke Berechnungen. Jeweils drei Ecken des einen Dreiecks mal 3 Kanten des anderen mal zwei Dreiecke. Zwar könnte man dies noch optimieren, jedoch ist die Punkt-Strecke Berechnung so schnell, dass wir das noch nicht für nötig befunden haben.
+
+\subparagraph{Dreieck-Rechteck Abstand}
+
+Der Dreieck-Rechteck Abstand ist effektiv genau das gleiche wie der Dreieck-Dreieck Abstand. Man kann ihn mit dem gleichen Ansatz berechnen, nur dass man anstatt achtzehn vierundzwanzig Punkt-Strecke Berechnungen durchführen muss. Dies liegt an der einen Kante und Ecke die das Rechteck mehr als das Dreieck hat.
+
+\subparagraph{Praktische Probleme}
+
 Nun gibt es in der Klasse \keyword{CollisionListener} auch noch Events für solche verhinderten Kollisionen. Kollidiert eine Geometrie in ihrer eigenen Bewegung wird die Methode \ti{onActiveMovementCollide()} bei dem bewegten Entity aufgerufen und bei dem anderen \ti{onPassiveMovementCollide}.
 
-Ein Problem können hier Entities mit mehreren \keyword{CollisonGeometries} sein. Hierbei muss drauf geachtet werden, dass alle Geometrien in der Kollison beachtet werden und jeweils der größte "Rücksetz-Wert" benutzt wird.
+Ein Problem können hier Entities mit mehreren \keyword{CollisonGeometries} sein. Hierbei muss drauf geachtet werden, dass alle Geometrien in der Kollision beachtet werden und jeweils der größte "Rücksetz-Wert" benutzt wird.
 
 Ein weiteres Problem sind entstehende Rundungsfehler bei Verwendung von FloatingPoint Zahlen. Führt man den Algorithmus exakt so wie oben beschrieben aus kann es vorkommen dass sich die beiden Geometrien auch nach dem Rücksetzen immer noch schneiden. Der einzige Weg um dieses Problem herum ist es einen delta Wert in der Berechnung des minimalen Abstands einzuführen. Damit wird nicht mehr der minimale Abstand zurückgeliefert sonder der minimale Abstand plus einen delta Wert. Somit können sich Entities nicht mehr "wirklich" berühren sondern nur noch bis maximal delta Einheiten nähern.
 
-Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. Falls die Updaterate niedrig genug ist kann es vorkommen, dass ein Objeckt links neben einem anderen ist und sich dann schnell genug nach rechts bewegt um im nächsten Schritt rechts neben dem Objekt zu sein. Obwohl sich das Entity nun direkt durch ein anderes bewegt hat wurde an keiner Stelle eine Kollision bemerkt. Zwar gibt es mathematische Ansätze dieses Problem zu lösen, diese gehen jedoch auf Kosten der Performance. Einfacher ist es eine konstante Update-Rate aufrecht zu erhalten und keine extrem dünne Entities zu verwenden, wo Kollisionen wichtig sind.
+Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. Falls die Updaterate niedrig genug ist kann es vorkommen, dass ein Objekt links neben einem anderen ist und sich dann schnell genug nach rechts bewegt um im nächsten Schritt rechts neben dem Objekt zu sein. Obwohl sich das Entity nun direkt durch ein anderes bewegt hat wurde an keiner Stelle eine Kollision bemerkt. Zwar gibt es mathematische Ansätze dieses Problem zu lösen, diese gehen jedoch auf Kosten der Performance. Einfacher ist es eine konstante Update-Rate aufrecht zu erhalten und keine extrem dünne Entities zu verwenden, wo Kollisionen wichtig sind.
 
 \quickfigure{Discrete-Time-Issue: Ein Objekt "phased" durch ein anderes}{discrete-time-issue_phasing}{1.0}
 

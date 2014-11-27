@@ -90,8 +90,16 @@
 
 \newcommand{\reflink}[1]{\hypersetup{linkcolor = blue} \underline{\ref{#1}} \hypersetup{linkcolor = black}}
 
-\newcommand{\quickfigure}[3]{\noindent\begin{minipage}{\linewidth}\makebox[\linewidth]{\includegraphics[width=#3\textwidth]{data/#2}}\captionof{figure}{#1}\end{minipage}}
-\newcommand{\quicklblfigure}[4]{\noindent\begin{minipage}{\linewidth}\makebox[\linewidth]{\includegraphics[width=#3\textwidth]{data/#2}}\captionof{figure}{#1}\label{#3}\end{minipage}}
+\newcommand{\quickfigure}[3]{
+	\noindent
+	\begin{minipage}[c]{\textwidth}
+		\centering
+		\includegraphics[width=#3\textwidth]{data/#2}
+		\captionof{figure}{#1}
+	\end{minipage}
+}
+	
+%\newcommand{\quicklblfigure}[4]{\noindent\begin{minipage}{\linewidth}\makebox[\linewidth]{\includegraphics[width=#3\textwidth]{data/#2}}\captionof{figure}{#1}\label{#3}\end{minipage}}
 
 \newcommand{\CS}[0]{C\#  } % 2x space
 
