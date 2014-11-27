@@ -74,49 +74,118 @@ Mit dieser Technik kann man auch komplexere Geometrie Gebilde bauen welche die F
 
 \quickfigure{Beispiel eines Entities mit mehreren Hitboxen}{angel}{0.4}
 
-Aktuell gibt es zwei verschiedene Arten von \keyword{CollisionGeometry}: \keyword{CollisionCircle} und \keyword{CollisionBox}. Das eine hat die Form eines Kreises und die andere die eines Rechteckes. In den meisten Fällen möchte man Hitboxen in der Form von Rechtecken, es kann jedoch überlegenswert sein nur Kreise zu verwenden da bei diesen die Kollisionsberechnung schneller ist.
+Aktuell gibt es drei verschiedene Arten von \keyword{CollisionGeometry}: \keyword{CollisionCircle}, \keyword{CollisionBox} und \keyword{CollisionTriangle}. In den meisten Fällen möchte man Hitboxen in der Form von Rechtecken, es kann jedoch überlegenswert sein nur Kreise zu verwenden da bei diesen die Kollisionsberechnung schneller ist oder eben Dreiecke da man aus diesen beliebige Polynome zusammenbauen kann. Dreiecke sollten jedoch nicht im Übermaß verwendet werden da diese am aufwendigsten zu berechnen sind.
 
+\subparagraph{CollisionCircle}
+
+Der Kreis ist die einfachste \keyword{CollisionGeometry}, und bei Programmen mit vielen Entities sollte darüber nachgedacht werden nur Kreisgeometrien zu verwenden.
 Für den Fall Kollision Kreis-Kreis ist die Formel um zu berechnen ob sie sich schneiden sehr einfach:
 $ Abstand < (Radius_1 + Radius_2) $ was in unserem Fall zu $ sqrt((x_1 - x_2)^2 + (y_1 - y_2)^2) < (r_1 + r_2)$ wird. Dies kann noch weiter optimiert werden indem man beide Seiten quadriert: $ x_1 - x_2)^2 + (y_1 - y_2)^2 < (r_1 + r_2)^2 $ \cite[S 499]{DGIJ}. Dies liegt daran, dass eine Multiplikation um mehrere Größenordnungen schneller als eine Quadratwurzel ist, ersteres ist meist ein einzelner Maschinenbefehl.
 
-Den Vorteil einer Kreis-Kreis Kollision kann man auch auf alle anderen Geometrien anwenden indem man alle Geometrien als umschließende Kreise abschätzt und diese zuerst kollidieren lässt. Nur wenn die umschließenden Kreise sich überschneiden muss man dann den komplizierteren Schritt machen und die genauen Geometrien kollidieren lassen.
-
-Dies führt dazu dass es 3 Fälle von Kollisionsberechnung gibt:
+In unserem Projekt wird mit folgender Methode überprüft ob sich zwei Kreise schneiden:
 
 \doinline
-\begin{lstlisting}[caption=Erkennen von Kollisionen, title=\hspace{0 pt}, language=java]
-public static boolean doGeometriesIntersect(CollCircle a, CollCircle b) {
+\begin{lstlisting}[caption=Erkennen von Kollisionen (Kreis-Kreis), title=\hspace{0 pt}, language=java]
+public boolean doGeometriesIntersect(CollCircle a, CollCircle b) {
 	return fsquare(a.centerX-b.centerX) + fsquare(a.centerY-b.centerY) < fsquare(a.radius + b.radius);
-}
-
-public static boolean doGeometriesIntersect(CollCircle a, CollBox b) {
-	if (a.centerY > b.y && a.centerY < b.topY)
-		return a.centerX > (b.x - a.radius) && 
-			a.centerX < (b.rightX + a.radius);
-	else if (a.centerX > b.x && a.centerX < b.rightX)
-		return a.centerY > (b.y - a.radius) && 
-			a.centerY < (b.topY + a.radius);
-	else return 
-		fsquare(a.centerX-b.x) + fsquare(a.centerY-b.y) < fsquare(a.radius) ||
-		fsquare(a.centerX-b.rightX) + fsquare(a.centerY-b.y) < fsquare(a.radius) ||
-		fsquare(a.centerX-b.rightX) + fsquare(a.centerY-b.topY) < fsquare(a.radius) ||
-		fsquare(a.centerX-b.x) + fsquare(a.centerY-b.topY) < fsquare(a.radius);
-}
-
-public static boolean doGeometriesIntersect(CollBox a, CollBox b) {
-	return ! (a.rightX < b.x || b.rightX < a.x || 
-		a.topY < b.y || b.topY < a.y);
 }
 \end{lstlisting}
 
-Die Kollisionserkennung zwischen zwei Kreisen oder zwei Rechtecken ist recht simpel. Nur eine Kreis-Rechteck Kollision ist etwas komplexer zu bestimmen.
+Den Vorteil einer Kreis-Kreis Kollision kann man auch auf alle anderen Geometrien anwenden indem man alle Geometrien als umschließende Kreise abschätzt und diese zuerst kollidieren lässt. Nur wenn die umschließenden Kreise sich überschneiden muss man dann den komplizierteren Schritt machen und die genauen Geometrien kollidieren lassen.
+
+Außer der Kreis-Kreis Kollision gibt es auch noch das Problem zu erkennen ob sich eine Kreisgeometrie und einen Rechtecksgeometrie schneiden.
+Den Algorithmus um diese Kollision zu erkennen ist im nachfolgenden Paragraph \ti{"CollisionBox"} beschreiben.
+
+Der dritte Fall ist die Kollision des Kreises mit einem Dreieck.
+
+Hier muss man 3 Fälle beachten. Entweder der Kreis schneidet einer der Ecken, eine der Kanten oder der Kreis ist komplett innerhalb des Dreieckes. Wider verwenden wir hier den Trick den Abstand in quadriertem Zustand zu vergleichen da dies 2 Aufrufe von \ti{sqrt} spart.
+
+\quickfigure{3 Möglichkeiten einer Kreis-Dreieck Kollision}{circle-triangle-coll}{0.8}
+
+\doinline
+\begin{lstlisting}[caption=Erkennen von Kollisionen (Kreis-Dreieck), title=\hspace{0 pt}, language=java]
+public boolean doGeometriesIntersect(CollisionTriangle a, CollisionCircle b) {
+	return 
+		b.containsPoint(a.p1_x, a.p1_y) ||
+		b.containsPoint(a.p2_x, a.p2_y) ||
+		b.containsPoint(a.p3_x, a.p3_y) ||
+		
+		getLinePointDistanceSquared(b.centerX, b.centerY, a.p1_x, a.p1_y, a.p2_x, a.p2_y) <= (b.radius*b.radius) ||
+		getLinePointDistanceSquared(b.centerX, b.centerY, a.p2_x, a.p2_y, a.p3_x, a.p3_y) <= (b.radius*b.radius) ||
+		getLinePointDistanceSquared(b.centerX, b.centerY, a.p3_x, a.p3_y, a.p1_x, a.p1_y) <= (b.radius*b.radius) ||
+
+		a.containsPoint(b.centerX, b.centerY);
+}
+\end{lstlisting}
+
+\subparagraph{CollisionBox}
+
+Unsere zweite Standard Geometrie ist das Rechteck. Es ist zu beachten dass dies kein frei drehbares Rechteck ist sondern eines das an den Koordinatenachsen ausgerichtet ist. Deshalb wird es auch nur von \ti{width}, \ti{height} und \ti{center} definiert.
+
+Diese Geometrie wird wohl am meisten verwendet da einerseits Kollisionen zwischen zwei Rechtecken sehr schnell zu berechnen sind und andererseits es sich oft natürlich anfühlt Objekte in ein Rechteck zusammenzufassen. Um zu erkennen ob zwei Rechtecke sich überschneiden dreht man die Frage zuerst um. Zwei Rechtecke überschneiden sich nicht wenn die Rechtecke übereinander/untereinander oder nebeneinander liegen. Negiert man dies bekommt man ganz einfach heraus ob sich zwei Rechtecke schneiden:
+
+\doinline
+\begin{lstlisting}[caption=Erkennen von Kollisionen (Box-Box), title=\hspace{0 pt}, language=java]
+public boolean isIntersectingWith(CollisionBox other) {
+	return ! (this.rightX < other.x || other.rightX < this.x || this.topY < other.y || other.topY < this.y);
+}
+\end{lstlisting}
+
+Falls man auf Performance wert legt sollte man Rechtecke nicht (zu oft) mit anderen Geometrien kollidieren lassen. Beispielsweise ist die Kollisionserkennung mit einem Kreis schon komplizierter.
 Zuerst muss man bestimmen ob der Kreis neben, über oder unter dem Rechteck liegt, falls ja bestimmt man den Abstand der jeweiligen Seite und des Kreismittelpunktes. Wenn dieser Abstand kleiner als der Kreisradius ist schneiden sich die beiden Geometrien.
 
 \quickfigure{Kollisionserkennung Kreis-Rechteck (1)}{circle-rect-coll-1}{0.4}
 
-Wenn der Kreis andererseits schräg im Verhältnis zum Rechteck liegt muss man schauen ob das jeweilige Eck im Kreis liegt, hierfür bestimmt man den Abstand Eck - Kreismuittelpunkt und überprüft ob dieser kleiner dem Kreisradius ist.
+Wenn der Kreis andererseits schräg im Verhältnis zum Rechteck liegt muss man schauen ob das jeweilige Eck im Kreis liegt, hierfür bestimmt man den Abstand Eck - Kreismittelpunkt und überprüft ob dieser kleiner dem Kreisradius ist.
 
 \quickfigure{Kollisionserkennung Kreis-Rechteck (2)}{circle-rect-coll-2}{0.4}
+
+\doinline
+\begin{lstlisting}[caption=Erkennen von Kollisionen (Kreis-Box), title=\hspace{0 pt}, language=java]
+public boolean doGeometriesIntersect(CollisionCircle a, CollisionBox b) {
+	if (a.centerY > b.y && a.centerY < b.topY)
+		return a.centerX > (b.x - a.radius) && a.centerX < (b.rightX + a.radius);
+	else if (a.centerX > b.x && a.centerX < b.rightX)
+		return a.centerY > (b.y - a.radius) && a.centerY < (b.topY + a.radius);
+	else return 
+			fsquare(a.centerX-b.x) + fsquare(a.centerY-b.y) < fsquare(a.radius) ||
+			fsquare(a.centerX-b.rightX) + fsquare(a.centerY-b.y) < fsquare(a.radius) ||
+			fsquare(a.centerX-b.rightX) + fsquare(a.centerY-b.topY) < fsquare(a.radius) ||
+			fsquare(a.centerX-b.x) + fsquare(a.centerY-b.topY) < fsquare(a.radius);
+}
+\end{lstlisting}
+
+Als letztes müssen wir wiederum auch die Kollision mit einem Dreieck erkennen. Hierbei nutzen wir aus das sich in jedem Fall mindestens zwei Seiten der zwei Geometrien überschneiden müssen. Dies gilt aber nicht in den Spezialfällen wo das Rechteck komplett innerhalb des Dreiecks ist, oder umgekehrt. Diese beiden Mögliuchkeiten müssen als Spezialfälle ebenfalls überprüft werden.
+
+\doinline
+\begin{lstlisting}[caption=Erkennen von Kollisionen (Box-Dreieck), title=\hspace{0 pt}, language=java]
+public boolean doGeometriesIntersect(CollisionTriangle a, CollisionBox b) {od
+	return 
+		doLinesIntersect(a.p1_x, a.p1_y,a.p2_x, a.p2_y, b.x, b.y, b.x, b.topY) ||
+		/* ... */
+		doLinesIntersect(a.p3_x, a.p3_y,a.p1_x, a.p1_y, rightX, b.y, b.x, b.y) ||
+		b.containsPoint(a.p1_x, a.p1_y) ||
+		a.containsPoint(b.x, b.y);
+}
+\end{lstlisting}
+
+\subparagraph{CollisionTriangle}
+
+Kollisionsgeometrien in der Form von Dreiecken sind unsere letzte Möglichkeit. Es ist zu Beachten, dass diese auch am aufwendigsten zu berechnen sind. Trotzdem kann man mit ihrer Hilfe nahezu beliebig komplexe Strukturen darstellen. Genauer gesagt ist es mit Polynom Triangulation möglich jedes Polygon in Dreiecke zu zerlegen. %TODO Ref zu Polynom Triangualation
+
+Den Fall Kollision mit einem Kreis beziehungsweise mit einem Rechteck haben wir in den vorherigen Kapiteln schon besprochen. Das einzige was noch übrig bleibt ist die Kollision mit einem anderen Dreieck. Hierbei ist die Vorgehensweise jedoch die Gleiche wie bei der Dreieck-Rechteck Kollision. Wir suchen nach Kanten die sich überschneiden und beachten die beiden Sonderfälle in denen eine Geometrie komplett innerhalb der anderen liegt.
+
+\doinline
+\begin{lstlisting}[caption=Erkennen von Kollisionen (Dreieck-Dreieck), title=\hspace{0 pt}, language=java]
+public boolean isIntersectingWith(CollisionTriangle other) {
+	return
+		ShapeMath.doLinesIntersect(p1_x, p1_y, p2_x, p2_y, other.p1_x, other.p1_y, other.p2_x, other.p2_y) ||
+		/* ... */
+		ShapeMath.doLinesIntersect(p3_x, p3_y, p1_x, p1_y, other.p3_x, other.p3_y, other.p1_x, other.p1_y) ||
+		containsPoint(other.p1_x, other.p1_y) ||
+		other.containsPoint(p1_x, p1_y);
+}
+\end{lstlisting}
 
 \paragraph{Optimierung mit der Collisionmap}
 
@@ -288,4 +357,4 @@ Dies bedeutet dass a.canCollideWith(b) das gleiche Ergebnis wie b.canCollideWith
 Assert.True(a.CanCollideWith(b) == b.canCollideWith(a))
 \end{lstlisting}
 
-Dass diese Bedingung erfüllt ist liegt in der Verantwortung des Programmierers. Eine zweite Methode ist die \ti{canMoveCollide()} Methode welche bestimmt mit welchen Entities in der \ti{movePosition()} Methode kollidiert wird. Ohne diese Methode würde das Entity mit jeder anderen CollisionBox kollidieren, mit ihr lässt sich dies auf die Objekte einschränken mit der das Entity auch wirklich zusammenstoßen soll. Es ist jedoch zu beachten dass \ti{canCollideWith()} eien höhere Priorität hat als \ti{canMoveCollide()}. Wenn also \ti{canCollideWith()} \bf{false} zurück liefert, dann wird \ti{canMoveCollide()} überhaupt nicht mehr abgefragt.
+Dass diese Bedingung erfüllt ist liegt in der Verantwortung des Programmierers. Eine zweite Methode ist die \ti{canMoveCollide()} Methode welche bestimmt mit welchen Entities in der \ti{movePosition()} Methode kollidiert wird. Ohne diese Methode würde das Entity mit jeder anderen CollisionBox kollidieren, mit ihr lässt sich dies auf die Objekte einschränken mit der das Entity auch wirklich zusammenstoßen soll. Es ist jedoch zu beachten dass \ti{canCollideWith()} eine höhere Priorität hat als \ti{canMoveCollide()}. Wenn also \ti{canCollideWith()} \textbf{false} zurück liefert, dann wird \ti{canMoveCollide()} überhaupt nicht mehr abgefragt.
