@@ -10,10 +10,26 @@
 \newblock Git.
 \newblock \url{http://git-scm.com/}, 2014.
 
+\bibitem{HCRST}
+{\sc hamcrest.org}.
+\newblock Java hamcrest.
+\newblock \url{http://hamcrest.org/JavaHamcrest/}, 2014.
+
 \bibitem{GRADLE}
 {\sc Inc., G.}
 \newblock Gradle build system.
 \newblock \url{http://www.gradle.org/}, 2014.
+
+\bibitem{JUNIT}
+{\sc JUnit}.
+\newblock Junit - about.
+\newblock \url{http://junit.org/}, 2014.
+
+\bibitem{JUPT}
+{\sc junit team}.
+\newblock junit/wiki - parameterized tests.
+\newblock \url{https://github.com/junit-team/junit/wiki/Parameterized-tests},
+  2014.
 
 \bibitem{TMXDOC}
 {\sc Lindeijer, T.}
