@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{DGIJ}
 {\sc Brackeen, D.}
@@ -35,6 +35,13 @@
 {\sc Lindeijer, T.}
 \newblock Tmx fileformat description.
 \newblock \url{https://github.com/bjorn/tiled/wiki/TMX-Map-Format}, 2014.
+
+\bibitem{XNAEND}
+{\sc Microsoft}.
+\newblock Microsoft confirms end of xna/directx development.
+\newblock
+  \url{http://microsoft-news.com/microsoft-confirms-end-of-xnadirectx-development/},
+  2014.
 
 \bibitem{MCENTRAL}
 {\sc Sonatype, I.}

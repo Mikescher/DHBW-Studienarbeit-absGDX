@@ -1,0 +1,12 @@
+Ein entscheidender Vorteil das unser Framework von Anfang an haben soll ist die Möglichkeit den Code sowohl für Android als auch für Windows zu kompilieren.
+Da wir mit Java arbeiten bedeutet dies, dass wir einerseits Bytecode für die \ti{DalvikVM} (Android) und die \ti{JVM} (Windows) erzeugen müssen.
+Trotzdem ist unser Ziel nicht Spiele zu erstellen die man auf beiden Plattformen vertreiben kann.
+Denn neben den verschiedenen Java Umgebungen gibt es zwischen der Plattform PC und der Plattform Smartphone auch noch andere wichtige Unterschiede.
+Vor allem die unterschiedliche Bildschirmgröße und die verschiedenen Eingabemethoden sorgen dafür, dass eine Handyspiel nicht einfach auf den Rechner zu portieren ist ohne auf diesem fremd zu wirken.
+Trotzdem bietet die Möglichkeit eine App, welche speziell für Smartphones entwickelt wurde, auf dem PC auszuführen einige Vorteile.
+Hauptsächlich führt es zu einem einfacheren Arbeitszyklus des Entwicklers. Möchte man normalerweise eine App testen muss man sie entweder, mehr oder weniger umständlich, auf sie echte Hardware kopieren und dort ausführen oder einen Emulator benutzen welcher oft Anforderungen wie Geschwindigkeit und Korrektheit nicht gerecht wird. Außerdem wird das Finden von Fehlern und das Debuggen des Programms vereinfacht wenn man es direkt auf der Maschine ausführen kann auf der es auch entwickelt wird.
+Die Möglichkeit das Projekt auch auf einem PC auszuführen ist somit für den Entwickler gedacht und idealerweise verlässt ein solches Build niemals den internen Entwicklerkreis.
+
+Obwohl sowohl Android als auch Windows (und Mac/Linux) die Möglichkeit besitzen Java Code auszuführen ist es dennoch nicht einfach Code zu schreiben der ohne Veränderungen auf beiden Plattformen läuft. Ebenfalls ist der plattformunabhängige Zugriff auf die OpenGL Treiber nicht einfach da es hier viele kleinere Unterschiede gibt.
+
+Die Aufgabe ein Framework zu schreiben welches die Aufgabe übernimmt Code soweit zu abstrahieren, dass er sowohl in der DalvikVM als auch in der JVM lauffähig ist, würde den Umfang dieser Studienarbeit sprengen - wir haben uns deshalb dafür entschieden ein schon bestehendes Framework zu benutzen. IM folgenden werden einige unserer Optionen vorgestellt.
