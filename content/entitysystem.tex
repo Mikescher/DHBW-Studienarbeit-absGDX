@@ -1,3 +1,162 @@
-%\subsubsubsection{Framerate unabhängige Bewegung}
-	% Acceleration & Speed
-	% Delta calculations
+% Einleitung - Idee Warum
+
+Unser GameLayer besteht bisher nur aus einer Karte, dem Hintergrund.
+Zusätzlich werden aber auch noch Objekte auf dem Spielfeld benötigt, wir nennen diese Objekte die \keyword{Entities}. 
+Jede \keyword{Entity} ist von der Klasse Entity abgeleitet und muss im aktuell aktiven GameLayer über die Methode \ti{addEntity(Entity e)} hinzugefügt wird.
+
+Der GameLayer übernimmt dann die Verwaltung des Lebenszyklus aller Entities.
+
+%\quickfigure{Lebenszyklus eines einzelnen Entities}{lifecycle_entity}{0.8} %TODO Image (onLayerAdd -> render | update -> repeat | remove)
+
+Jede Entity hat ein \ti{alive} Feld welches am Anfang auf \textbf{true} gesetzt wird, das Entity ist solange aktive bis das Feld auf \textbf{false} gesetzt wird und das Entity im nächsten Zyklus entfernt.
+
+Entities besitzen, neben dem \ti{alive} Attribut, eine Reihe weiterer Eigenschaften welche sie definieren. Sie besitzen eine eindeutige zweidimensionale Position und eine Höhe und Breite, ihre Grundform ist somit ein einfaches Rechteck. Außerdem verwalten sie ihre aktuelle Geschwindigkeit und Beschleunigung um ein einfaches Interface zur flüssigen Bewegung zu bieten. Zuletzt kenne sie auch noch die Textur, oder Texturen, welche sie zeichnen sollen.
+
+\paragraph{Rendering}
+
+Jedes Entity bestimmt selbst wie es gerendert wird, hierfür kann ein Entity entweder eine einzelne statische Textur haben oder einen Array von Texturen welcher als Animation gerendert wird. Außerdem stehen Optionen zur Verfügung wie Drehung oder Verzerrung der Textur.
+Auch muss die gezeichnete Textur nicht mit der Position oder den Ausmaßen des eigentlichen Entities übereinstimmen, theoretisch kann vollkommen frei auf dem aktuellen OpenGL Kontext gezeichnet werden.
+
+Zusätzlich hat jede Entity auch noch einen \ti{Z-Layer} gesetzt welcher bestimmt welche Entities im Vordergrund und welche im Hintergrund gezeichnet werden. Besetzen zwei Entities, beziehungsweise deren Texturen, ganz oder teilweise den selben Punkt wird die Entity mit dem größeren T-Layer über der anderen gezeichnet. Die Verwaltung hiervon übernimmt der GameLayer.
+	
+\paragraph{Collision Detection}
+
+Ein wichtiges Feature der Entities ist es Kollisionen mit anderen Entities zu erkennen, auf die technischen Einzelheiten wird im Paragraph \keyword{Kollisionserkennung} genauer eingegangen.
+
+Aus der Sicht eines Entities ist es einfach so dass man mithilfe der Methode \ti{addCollisionGeo(float relativeX, float relativeY, CollisionGeometry geo)} dem Entity eine Kollisionsgeometrie zuordnen kann. Diese kann Kollisionen mit anderen Kollisionsgeometrien erkennen.
+Der Vorteil dieser Methode ist es, dass Programme die ganz oder teilweise keine Kollisionserkennung brauchen keinen Performance Nachteil haben wenn diese (unnütz) im Hintergrund berechnet wird.
+
+In den meisten Fällen werden jedoch keine sonderlich komplexen Geometrien eingesetzt, und noch seltener hat ein Entity mehrere Geometrien, die ihm zugeordnet sind.
+Deshalb gibt es drei Methoden um schnell und einfach die gebräuchlichsten Fälle abzudecken:
+
+\begin{itemize}
+	\item \keyword{addFullCollisionBox():} Fügt ein Collision Rechteck hinzu mit gleichen Ausmaßen wie das Entity
+	\item \keyword{addFullCollisionCircle():} Fügt ein Collision Kreis hinzu, welcher das Entity komplett ausfüllt
+	\item \keyword{addFullCollisionTriangle(AlignCorner4 align):} Fügt ein Collision Dreieck hinzu, welches drei Ecken des Entities benutzt \ti{(Abhängig von dem übergebenen Alignment)}.
+\end{itemize}
+
+Jede dieser Geometrien wird zwar wiederum vom GameLayer verwaltet, kennt aber sein jeweiliges Vater-Entity. Und sobald eine Kollision erkannt wird, wird das Entity über eine Event-Methode benachrichtigt. Dies ist im Grunde ein \ti{Listener-Pattern} bei dem das Entity automatisch als Listener als seiner Geometrien eingetragen wird, hierfür besitzt jedes Entity auch die Interfaces \keyword{CollisionListener} und \keyword{CollisionGeometryOwner}.
+
+Über das Interface \keyword{CollisionListener} werden vier Methoden implementiert:
+
+\begin{itemize}
+	\item onActiveCollide
+	\item onPassiveCollide
+	\item onActiveMovementCollide
+	\item onPassiveMovementCollide
+\end{itemize}
+
+Das \keyword{active} bedeutet jeweils, dass die Kollision durch eine Bewegung der eigenen Geometrie ausgelöst wurde, und das \keyword{passiv} entsprechend dass der Grund die Bewegung der anderen Geometrie war.
+Ist die Veränderung der Position Teil einer Bewegung wird die Methode \ti{onActiveMovementCollide} oder \ti{onPassiveMovementCollide} aufgerufen. Wurde vorher festgelegt dass die beiden Entities sich nicht überschneiden dann entspricht dies einem Zusammenstoß, bei dem das bewegende Entity zum Stillstand gekommen ist und als Resultat beide Entity sich nur berühren \ti{nicht schneiden}.
+Ist dies andererseits das Resultat eines direkten Aufrufs von \ti{setPosition(float x, float y)} dann werden die Methoden \ti{onActiveCollide} oder \ti{onPassivCollide} aufgerufen.
+
+\paragraph{Framerate unabhängige Bewegung}
+
+Eine der grundsätzlichen Aufgaben eines Entities ist es sich zu bewegen. Als Benutzer dieses Frameworks hat man dazu zwei grundsätzliche Optionen.
+Einerseits kann man über \ti{setPosition(float x, float y)} das Entity in jedem Update Zyklus manuell auf eine Position setzen.
+Dies hat jedoch Nachteile. 
+Man muss sich bei dieser Methode selbst darum kümmern dass die Bewegung unabhängig von der Updaterate ist, den auch mit nur halb so vielen Updates pro Sekunde sollte sich jedes Entity immer noch gleich schnell bewegen. Andernfalls wäre das Spiel nur auf einem Rechner mit gleichen oder ähnlichen UPS \ti{Updates per second} wie denen des Entwicklerrechners spielbar.
+Außerdem erschwert dies das Programmieren der allgemeinen Spiellogik. In den meisten Fällen denkt man über Objekte nicht in der Form von "An diesem Zeitpunkt sind sie an diesem Ort" sondern eher mit welcher Geschwindigkeit sie sich in welche Richtung bewegen oder wie stark sie beschleunigen.
+
+Um dies zu Lösen hat unser Entity - wie oben schon erwähnt - die Eigenschaften \keyword{speed} und \keyword{List<accelerations>}. Als Programmierer kann man nun entweder den Vektor Geschwindigkeit (\keyword{speed}) beeinflussen um dem Entity eine Geschwindigkeit und eine Richtung vorzugeben, oder man gibt ihm eine oder mehrere Beschleunigungen (\keyword{accelerations}) welche ihrerseits wiederum Vektoren sind welche die Geschwindigkeit beeinflussen. Die genaue Berechnung der Position wird dann von Entity selber übernommen und Framerate unabhängig berechnet. Ein zusätzlicher Vorteil dieses Weges ist, dass man besser mit Kollisionen arbeiten kann. Hat man festgelegt, dass sich zwei Entities nicht überschneiden dürfen, dann bewegen sich dies nicht ineinander. Es werden die Entities stattdessen nur soweit bewegt bis sie sich berühren und danach wird die Geschwindigkeit auf null gesetzt.
+
+Intern wird deshalb nach jedem \ti{update()} die Methode \ti{updateMovements(float delta)} aufgerufen. \keyword{delta} ist hierbei die Zeit (in millisekunden) die seit dem letzten Update vergangen ist, bei 60 FPS sollte die ungefähr 17 ms sein. Zur Sicherheit ist dieser Wert bei 100ms gedeckelt. Damit einzelne Lag Spikes nicht dazu führen dass innerhalb eines Frames Objekte eine sehr große Distanz zurücklegen, dies würde auch die Kollisionserkennung stark beeinträchtigen.
+
+\subparagraph{Beweis Korrektheit}
+
+Die Bewegung ist im Framework wie folgt implementiert:
+
+\doinline
+\begin{lstlisting}[caption=Framerate unabhängiges bewegen eines Entities, title=\hspace{0 pt}, language=java]
+private void updateMovement(float delta) {
+	for (Vector2 acc : accelerations) {
+		speed.x += acc.x * delta;
+		speed.y += acc.y * delta;
+	}
+	if (movePositionX(this.speed.x * delta)) {
+		// Collision appeared
+		speed.x = 0;
+	}
+	if (movePositionY(this.speed.y * delta)) {
+		// Collision appeared
+		speed.y = 0;
+	}
+}
+\end{lstlisting}
+
+Das erste was wir uns klarmachen müssen ist, dass wir die Bewegungen bzw Beschleunigungen in X und Y Richtung unabhängig betrachten. Somit können wir das Problem auf eindimensionale herunterbrechen.
+
+Fassen wir zusammen was wir im obigen Code tun:
+Zuerst bilden wir die Summe aus allen Beschleunigungen um eine Gesamtbeschleunigung zu erhalten
+Die Geschwindigkeit erhalten wir dann indem wir die Beschleunigung mit \keyword{delta} multiplizieren und zur bisherigen Geschwindigkeit addieren.
+Genauso erhalten wir die neue Position in dem wir zur alten Position die aktuelle Geschwindigkeit multipliziert mit \keyword{delta} addieren
+
+\begin{align*}
+    a &= \sum_{i=1}^{k}{a_i}  \\
+  v_n &= v_{n-1} + a_n * \dt  \\
+  x_n &= x_{n-1} + v_n * \dt
+\end{align*}
+
+Schauen wir uns im Vergleich dazu die echten physikalischen Zusammenhänge an. Der wesentliche Unterschied ist, dass diese sich in einem kontinuierlichen System befinden und wir in unserer Simulation nur diskrete Zeitabschnitte haben \ti{(von der Breite 16ms)}.
+
+\begin{align*}
+  a(t) &= \sum_{i=1}^{k}{a_i(t)}  \\
+  v(t) &= v_0 + \int_0^t {a(t)}\,\mathrm{d}t  \\
+  x(t) &= x_0 + \int_0^t {v(t)}\,\mathrm{d}t
+\end{align*}
+
+Die Berechnung von Geschwindigkeit v und Position x benötigt jeweils ein Integral über eine kontinuierliche Funktion, da wir uns aber in einem zeit diskreten Raum befinden könne wir hierfür das Riemann-Integral einsetzen. %TODO cite{} Riemann Referenz !!
+Dies berechnet ein Integral indem es in Abschnitte unterteilt wird und für diese Abschnitte Rechtecke bildet. Da wir in unserem Fall im Zeitpunkt t immer die Werte im Zeitraum $[t - \dt , t)$ berechnen brauchen wir das Obersummen Riemann Integral.
+
+\begin{align*}
+  a(t) &= \sum_{i=1}^{k}{a_i(t)}  \\
+  v(t) &= v_0 + \uprint{0}{t}{a(t)}\,\mathrm{d}t  \\
+  x(t) &= x_0 + \uprint{0}{t}{v(t)}\,\mathrm{d}t
+\end{align*}
+
+Aktuell sind dies jedoch noch zeit kontinuierliche Gleichungen, wir wollen diese in zeit diskrete Sequenzen mit Schrittgröße $\dt$ umwandeln. Aus der Variable t wird dabei der Schrittzähler n. Aus dem Riemann Integral wird die Summe über alle bisherigen Rechtecke, also jeweils Wert an der Position i mal Breite des i-ten Schrittes.
+
+\begin{align*}
+  a_n &= \sum_{i=1}^{k}{a_{n, i}}  \\
+  v_n &= v_0 + \sum_{i=1}^{n}{a_i * \dt_i}  \\
+  x_n &= x_0 + \sum_{i=1}^{n}{v_i * \dt_i}
+\end{align*}
+
+Als letzten Schritt können wir eine Vereinfachung vornehmen. (1) können wir auch als (2) schreiben indem wir das Riemann Integral aufteilen. Und der vordere Teil von (2) ist äquivalent zu $v_{n-1}$ womit man (1) auch als (3) schreiben kann. 
+
+\begin{align}
+  v_n &= v_0 + \sum_{i=1}^{n}{a_i * \dt_i}  \\
+  v_n &= v_0 + \sum_{i=1}^{n-1}{a_i * \dt_i} + a_n * \dt  \\
+  v_n &= v_{n-1} + a_n * \dt
+\end{align}
+
+Daraus ergeben sich dann also die Formeln
+
+\begin{align*}
+  a_n &= \sum_{i=1}^{k}{a_i}  \\
+  v_n &= v_{n-1} + a_n * \dt  \\
+  x_n &= x_{n-1} + v_n * \dt
+\end{align*}
+
+Welches wieder unserem ursprünglichen Algorithmus entspricht. Wir haben also bewiesen, dass unabhängig von der Update rate unser Algorithmus im Zeit diskreten Raum für $\dt \rightarrow 0$ korrekt ist. Zwar ist $\dt $ in unserem Fall größer null, jedoch stimmt unsere Simulation annähernd immer noch mit der Realität überein, und mehr wollten wir ja auch nicht erreichen.
+
+Es ist noch festzuhalten, dass damit auch die Einheiten der einzelnen Attribute klar ist. die Position wird in Tiles festgehalten und die Geschwindigkeit somit in $\frac{Tiles}{s}$ und die Beschleunigung entsprechend in $\frac{Tiles}{s^2}$.
+
+\paragraph{Spezielle Entities}
+
+Wie schon zuvor gesagt müssen alle Entities von der Stammklasse \keyword{Entity} abgeleitet werden. Zur Vereinfachung gebräuchlicher Fälle gibt es schon vorbereitet abstrakte Kindklassen, von welchen man wieder ableiten kann.
+
+%\quickfigure{Spezielle ENtities}{special_entities}{0.8} %TODO Image (Class Diagramm)
+
+\subparagraph{SimpleEntity}
+
+Leitet man von der Klasse \keyword{Entity} muss man eine Vielzahl an Methoden zwangsweise Überschreiben (da diese als \ti{abstract} markiert sind). Möchte man jedoch ein simples, statisches, rein visuelles Entity implementieren kommt man in die Situation alle oder viele überschriebene Methoden einfach leer zu lassen.
+
+Stattdessen kann man von \keyword{SimpleEntity} ableiten, diese Klasse hat alle sinnvollen Methoden schon überschrieben und Handler/Listener leer gelassen beziehungsweise Standardwerte zurückgeben lassen. Möchte man trotzdem auf einige diese Events reagieren oder bei einigen Methoden andere Werte zurückgeben kann man diese immer noch überschreiben, standardmäßig existiert jedoch kein Zwang diese zu implementieren.
+Gerade deshalb sollte man dies jedoch nur machen wenn man schon Erfahrung mit dem Framework hat und mit Sicherheit weiß was es bedeutet auf keines der Events sinnvoll zu reagieren.
+
+\subparagraph{PhysicsEntity}
+
+Die PhysicsEntity implementiert zusätzlich einige physikalische Eigenschaften auf die Entities. Aktuell ist es jedoch nur die Schwerkraft.
+
+Diese wird als eigene Beschleunigung in die Liste der Beschleunigungen aufgenommen und erhält einen Wert entsprechend der gesetzten Masse. Setzt man die Masse des PhysicEntities auf null, entspricht es komplett einem normalen Entity, da die Gewichtskraft ein Nullvektor ist.
