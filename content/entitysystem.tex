@@ -6,7 +6,7 @@ Jede \keyword{Entity} ist von der Klasse Entity abgeleitet und muss im aktuell a
 
 Der GameLayer übernimmt dann die Verwaltung des Lebenszyklus aller Entities.
 
-%\quickfigure{Lebenszyklus eines einzelnen Entities}{lifecycle_entity}{0.8} %TODO Image (onLayerAdd -> render | update -> repeat | remove)
+\quickfigure{Lebenszyklus eines einzelnen Entities}{lifecycle_entity}{0.6}
 
 Jede Entity hat ein \ti{alive} Feld welches am Anfang auf \textbf{true} gesetzt wird, das Entity ist solange aktive bis das Feld auf \textbf{false} gesetzt wird und das Entity im nächsten Zyklus entfernt.
 
@@ -84,7 +84,7 @@ private void updateMovement(float delta) {
 }
 \end{lstlisting}
 
-Das erste was wir uns klarmachen müssen ist, dass wir die Bewegungen bzw Beschleunigungen in X und Y Richtung unabhängig betrachten. Somit können wir das Problem auf eindimensionale herunterbrechen.
+Das erste was wir uns klarmachen müssen ist, dass wir die Bewegungen beziehungsweise Beschleunigungen in X und Y Richtung unabhängig betrachten. Somit können wir das Problem auf eindimensionale herunterbrechen.
 
 Fassen wir zusammen was wir im obigen Code tun:
 Zuerst bilden wir die Summe aus allen Beschleunigungen um eine Gesamtbeschleunigung zu erhalten
@@ -106,6 +106,10 @@ Schauen wir uns im Vergleich dazu die echten physikalischen Zusammenhänge an. D
 \end{align*}
 
 Die Berechnung von Geschwindigkeit v und Position x benötigt jeweils ein Integral über eine kontinuierliche Funktion, da wir uns aber in einem zeit diskreten Raum befinden könne wir hierfür das Riemann-Integral einsetzen. %TODO cite{} Riemann Referenz !!
+
+\quickfigure{Riemann-Integral über die Beschleunigung eiens Entities}{Riemann_acc-speed}{0.85}
+
+
 Dies berechnet ein Integral indem es in Abschnitte unterteilt wird und für diese Abschnitte Rechtecke bildet. Da wir in unserem Fall im Zeitpunkt t immer die Werte im Zeitraum $[t - \dt , t)$ berechnen brauchen wir das Obersummen Riemann Integral.
 
 \begin{align*}
@@ -146,7 +150,7 @@ Es ist noch festzuhalten, dass damit auch die Einheiten der einzelnen Attribute 
 
 Wie schon zuvor gesagt müssen alle Entities von der Stammklasse \keyword{Entity} abgeleitet werden. Zur Vereinfachung gebräuchlicher Fälle gibt es schon vorbereitet abstrakte Kindklassen, von welchen man wieder ableiten kann.
 
-%\quickfigure{Spezielle ENtities}{special_entities}{0.8} %TODO Image (Class Diagramm)
+\quickfigure{Spezielle Entities}{classdiagramm-entities}{0.55}
 
 \subparagraph{SimpleEntity}
 
