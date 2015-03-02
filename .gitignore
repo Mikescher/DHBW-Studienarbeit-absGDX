@@ -15,6 +15,12 @@ Desktop.ini
 *.toc
 *.*(busy)
 *.tps
+*.dvi
+
+# Bibtex
+
+*.bbl
+*.blg
 
 # Output
 

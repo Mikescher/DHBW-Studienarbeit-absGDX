@@ -10,6 +10,11 @@
 \newblock Git.
 \newblock \url{http://git-scm.com/}, 2014.
 
+\bibitem{TRVS}
+{\sc GmbH, T.~C.}
+\newblock Travisci for mikescher/absgdx.
+\newblock \url{https://travis-ci.org/Mikescher/absGDX}, 2015.
+
 \bibitem{HCRST}
 {\sc hamcrest.org}.
 \newblock Java hamcrest.
