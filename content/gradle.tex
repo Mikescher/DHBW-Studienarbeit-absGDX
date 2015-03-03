@@ -6,7 +6,7 @@ Trotzdem sind Libraries und IDE-Dateien wichtig und eine dritte Person, die das 
 
 Um diese Probleme kümmert sich nun ein weiteres Tool namens gradle \cite{GRADLE}. Gradle ist ein Build-Managment-Automatisierung-Tool was bedeutet, dass wir in unser Git-Repository nur noch die gradle Konfigurationsdateien commiten und diese dann jeweils auf den Entwicklerrechnern ausführen. Diese löst dann die Projektabhängigkeiten auf und lädt fehlende Libraries automatisch nach und erstellt außerdem Dateien wie die IDE-Projektdateien automatisch.
 
-\paragraph{Dependency Managment}
+\paragraph{Dependency Management}
 
 In gradle kann man angeben von welchen Bibliotheken oder Projekten ein Programm abhängig ist. Diese Bibliotheken können dann wiederum von anderen Bibliotheken abhängig sein und so bildet sich ein Abhängigkeitsbaum ausgehen vom Anfangsprojekt.
 Gradle lädt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil dass wenn eine Bibliothek öfters im Abhängigkeitsbaum auftaucht sie trotzdem nur einmal geladen werden muss.
