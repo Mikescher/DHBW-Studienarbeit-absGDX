@@ -1,11 +1,79 @@
-%TODO
+Neben dem \keyword{GameLayer} ist der \keyword{MenuLayer} der zweite wichtige Layer Typ. Mit ihm kann man eine einzelne Menüseite darstellen.
+Ein Menü besteht aus einem \keyword{MenuFrame} welcher verschiedene Menüelemente enthält, wie zum Beispiel Buttons, Edits, Label, Images etc.
 
-% MenuLayer
-% - Element Tree
-% - Different Elements
-% - composition over inheritance (Button ...)
+Mit einem MenuLayer kann man beispielsweise das Hauptmenü gestalten oder auch die Levelauswahl. Unser Layersystem ist dabei eine große Hilfe, denn wenn man auf den Layerstack ein Untermenü pushed muss man dieses nur wieder vom Stack entfernen um auf dem Obermenü zu landen.
 
+\paragraph{Komponenten}
 
-% - AgdXmlMenuLayer
+Sämtliche Komponenten sind von der Klasse \keyword{MenuBaseElement} abgeleitet. Jedes MenuElement hat eine feste Position, Größe und eine eindeutige ID. Vom Framework aus sind schon eine Reihe an Standard Komponenten definiert, jedoch könne auch eigene neue erstellt werden.
+Alle Komponenten befinden sich immer innerhalb eines \keyword{MenuFrames} (ausgenommen der \keyword{MenuFrame} selbst) und dieser befindet sich innerhalb eines \keyword{MenuLayers}. In einem Layer ist immer eine Komponente aktuell fokusiert. Der Fokus wird gewechselt wenn auf eine neue Komponente geklickt wird. Die Bedeutung des Fokus ist von der entsprechenden Komponente abhängig und kann sowohl visuelle als auch funktionelle Veränderung bedeuten.
+
+\quickfigure{Klassendiagramm der Menü Elemente}{menuclassdia}{0.85}
+
+Die meisten Komponenten werden durch Komposition anderer Komponenten gebildet. So zeigt der \keyword{MenuButton} beispielsweise seinen Text nicht selbst an sondern besitzt intern ein Label mit dem Text des Buttons. Indem man das rendern so immer wieder auf Subkomponenten auslagert kann man relativ einfach auch komplexere Komponenten bilden. So besteht beispielsweise der \keyword{MenuSettingsTree} aus mehreren \keyword{MenuImages}. \keyword{MenuLabels} und \keyword{MenuCheckboxes}. 
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|X|} 
+\hline
+Klasse & Funktion \\
+\hline\hline
+\keyword{MenuButton} & Ein einfacher Knopf zum Drücken. Das \ti{OnClick}-Event kann mittels eines \keyword{ButtonListeners} abgefangen werden. \\
+\hline
+\keyword{MenuCheckBox} & Eine Optionsbox, welche entweder aktiviert oder deaktiviert ist\\
+\hline
+\keyword{MenuRadioButton} & Eine Optionsbox, welche entweder aktiviert oder deaktiviert ist. Im Kontext des übergeordneten Containers ist immer nur maximal ein RadioButton aktiviert \\
+\hline
+\keyword{MenuEdit} & Ein Text Eingabefeld. Es sind nur Eingaben möglich die von der übergebenen BitmapFont dargestellt werden können. Bei Eingaben länger als die Komponentenbreite entsteht ein Scrolleffekt. \\
+\hline
+\keyword{MenuImage} & Zeigt entweder eine statische Textur an oder eine sich wiederholende Animation \\
+\hline
+\keyword{MenuLabel} & Zeigt einen Text an. Der Text ist entweder fest skaliert oder passt sich den Dimensionen des Labels an\\
+\hline
+\keyword{MenuContainer} & Ein Container welcher mehrere Kindelemente enthält. Die Positionen der Kinder sind relativ zu der des Containers. Möchte man einen Container zum reinen Zweck der logischen Gruppierung kann man direkt diese Klasse verwenden. Ist eine visuelle Gruppierung erwünscht sollte man die Klasse \keyword{MenuPanel} verwenden.\\
+\hline
+\keyword{MenuPanel} & Ein Container welcher eine eigene Textur besitzt.\\
+\hline
+\keyword{MenuFrame} & Der Wurzelcontainer jedes \keyword{MenuLayers}. Er besitzt immer die Breite des aktuellen Anzeigegerätes und kann nicht ausgetauscht werden.\\
+\hline
+\keyword{MenuSettingsTree} & Eine Komponente um einen Baum von \keyword{DepenedentProperties} anzuzeigen. Die einzelnen Knoten könne individuell aktiviert/deaktiviert werden und die einzelnen Unterbäume zusammengeklappt oder ausgeklappt werden.\\
+\hline
+\end{tabularx}
+\end{center}
+
+Einige Elemente benötigen einen Möglichkeit um Schrift anzuzeigen. Hierfür hat jedes \keyword{MenuElement} ein Feld \ti{font} welches vom Typ \keyword{BitmapFont} ist.
+Dieses Feld wird von den Komponenten an ihre Kinder weitervererbt. Es reicht also theoretisch dem \keyword{MenuFrame} ein Font zu geben und der Frame wird es an alle seine Kinder weitergeben. Hat eines der Kinder jedoch einenen eigenen Font definiert erhält dieser Priorität. So ist es auch möglich zwei Containern jeweils unterschiedliche Fonts zu geben und damit ihnen und all ihren Kindern ein unterschiedlichen Aussehen zu spendieren.
+
+\paragraph{Texturen und GUITextureProvider}
+
+Außer dem \keyword{MenuContainer} werden alle Komponenten angezeigt. Standardmäßig haben die Komponenten eine Renderroutine welcher allein mit dem ShapeRenderer auskommt. Dies bedeutet, dass die Komponenten gezeichnet werden mittels farbigen Rechtecken und Linien. Dies ist jedoch eigentlich nur zum Debuggen gedacht. Im Produktiveinsatz braucht jede Komponente eine Reihe an Texturen um gezeichnet zu werden.
+
+Ein \keyword{MenuButton} beispielsweise braucht insgesamt 36 Texturen um gezeichnet zu werden. Er besitzt vier Zustände (normal, gedrückt, fokusiert, deaktiviert) und Jeder dieser Zustände braucht neun Texturen: Die vier Ecken, die vier Kanten und eine für die eigentliche Fläche.
+
+\quickfigure{Die neun Texturen einer Menüfläche}{nine_side_texturing}{0.4}
+
+Diese Unterteilung in neun Texturen sorgt dafür, dass man Elemente in beliebiger Dimensionierung anzeigen kann ohne Texturen verzerren zu müssen. Außerdem ist es hier relativ einfach ein neues UI Kit zur Verfügung zu stellen - alles was man hierfür tun muss ist die Texturen auszutauschen.
+
+Die Verteilung der Texturen erfolgt über eine Instanz der Klasse \keyword{GUITextureProvider}. Dies ist primäre eine HashMap welche einem 3-Tupel aus \ti{Klasse}, \ti{Identifier} und \ti{Modifier} eine Textur zuordnet. So ist beispielsweise der Klasse \ti{MenuButton}, dem Identifier \ti{texture-topleft} und dem Modifier \ti{focused} eine spezielle Textur zugeordnet.
+Den Weg über diese Klasse hat den Vorteil, dass man allen Buttons den gleichen TextureProvider geben kann und sie alle damit die gleiche Button-Textur bekommen. Möchte man einen Button welcher eine andere Textur hat muss man ihm nur einen eigenen TextureProvider geben. Die Identifikation über die Klasse ermöglicht es auch verschiedene Texturen für verschiedene Subklassen von MenuButton zur Verfügung zu stellen und eine einfache Unterscheidung zwischen den Texturen von zum Beispiel einer CheckBox und einem RadioButton zu haben.
+
+Die einzige Ausnahme bilden \keyword{MenuImages}. Da diese im Normalfall alle eine eigene Textur haben wird ihre Anzeigetextur über die Methode \ti{setImage()} gesetzt wird und nicht über den TextureProvider.
+
+\paragraph{Events}
+
+Jedes \keyword{MenuElement} hat eine Liste von \keyword{MenuElementListener}. In diesem Listener sind alle Events integriert welche Element unabhängig auftreten:
+
+\begin{itemize}
+	\item{\textbf{onPointerDown}} Die Maus/der Touchpointer drückt auf dieses Element
+	\item{\textbf{onPointerUp}}   Die Maus/der Touchpointer löst sich von diesem Element
+	\item{\textbf{onClicked}}     Die Maus/der Touchpointer führt ein vollständiges Klick-Manöver aus (PointerDown + PointerUp)
+	\item{\textbf{onHover}}       Die Maus/der Touchpointer betritt die Abgrenzung dieser Komponente
+	\item{\textbf{onHoverEnd}}    Die Maus/der Touchpointer verlässt die Abgrenzung dieser Komponente
+	\item{\textbf{onFocus}}       Diese Komponente erhält den Fokus
+	\item{\textbf{onFocusLost}}   Diese Komponente verliert den Fokus
+\end{itemize}
+
+Zusätzlich können Elemente von dem Interface \keyword{MenuElementListener} erben und somit neue Events einführen welche speziell für ein Element gedacht sind. So gibt es beispielsweise das Interface \keyword{MenuCheckboxListener} welches zu den vorhandenen Methoden noch die Methode \ti{onChecked} hinzufügt.
+
+% - \paragraph{AgdXmlMenuLayer}
 
 % - MenuDesigner
