@@ -387,10 +387,6 @@ Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. F
 
 \quickfigure{Discrete-Time-Issue: Ein Objekt "phased" durch ein anderes}{discrete-time-issue_phasing}{1.0}
 
-\paragraph{Kollisionen mit der Karte}
-
-%TODO Paragraph Tile Collisions
-
 \paragraph{Limitierte Kollisionen}
 
 In unserer aktuellen Implementation kollidiere noch all Entities mit allen. Da ist in soweit kein Problem, dass man in den Event-Handlern überprüfen kann ob die Kollision Sinn macht und wenn nicht sie einfach verwirft.
@@ -405,3 +401,12 @@ Assert.True(a.CanCollideWith(b) == b.canCollideWith(a))
 \end{lstlisting}
 
 Dass diese Bedingung erfüllt ist liegt in der Verantwortung des Programmierers. Eine zweite Methode ist die \ti{canMoveCollide()} Methode. Welche bestimmt mit welchen Entities in der \ti{movePosition()} Methode kollidiert wird. Ohne diese Methode würde das Entity mit jeder anderen CollisionBox kollidieren. Mit ihr lässt sich dies auf die Objekte einschränken mit der das Entity auch wirklich zusammenstoßen soll. Es ist jedoch zu beachten dass \ti{canCollideWith()} eine höhere Priorität hat als \ti{canMoveCollide()}. Wenn also \ti{canCollideWith()} \textbf{false} ist, dann wird \ti{canMoveCollide()} überhaupt nicht mehr abgefragt.
+
+\paragraph{Kollisionen mit der Karte}
+
+Im Gegensatz zu Kollisionen mit anderen Geometrien sind Kollisionen mit der Karte sehr einfach und sogar in konstanter Zeit zu überprüfen (der einzige Faktor ist hier die Geometriegröße).
+Wir haben zuvor für die \keyword{CollisionMap} schon eine Methode entwickelt um festzustellen auf welchen \ti{(CollisionMap-)}tiles eine Geometrie eventuell liegen kann.
+Die gleiche Methode könne wir nun wiederverwenden um zu ermitteln mit welchen MapTiles eine Geometrie eventuell kollidieren kann. Zur exakten Ermittlung erstellen wir \keyword{CollisionGeometrien} für die einzelnen Tiles und lassen sie mit unserer Geometrie kollidieren. Da es eine von Anfang an bekannte Anzahl an Tiles gibt können wir diese Geometrien gleich am Anfang des Programms erzeugen und dann für später speichern. 
+Jedoch fügen wir sie nicht einfach in die CollisionMap ein. Dies würde zwar funktionieren, jedoch würden die vielen Geometrien unserer Kollisionserkennung stark verlangsamen und wie oben schon besprochen müssen sie ja nicht in der Map sein um zu erkennen wann mit ihnen kollidiert wird.
+
+Da auch hier eine Entity nicht mit allen Tiles kollidieren möchte implementiert die Klasse \keyword{Tile} das Interface \keyword{CollisionGeometryOwner}. Und so kann unsere normale Methodik zur Limitierung von Kollisionen angewandt werden. Die Tiles werden dabei automatisch als CollisionGeometryOwner eingetragen.
