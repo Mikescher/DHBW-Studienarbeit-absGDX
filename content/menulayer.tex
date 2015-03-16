@@ -62,18 +62,92 @@ Die einzige Ausnahme bilden \keyword{MenuImages}. Da diese im Normalfall alle ei
 
 Jedes \keyword{MenuElement} hat eine Liste von \keyword{MenuElementListener}. In diesem Listener sind alle Events integriert welche Element unabhängig auftreten:
 
-\begin{itemize}
-	\item{\textbf{onPointerDown}} Die Maus/der Touchpointer drückt auf dieses Element
-	\item{\textbf{onPointerUp}}   Die Maus/der Touchpointer löst sich von diesem Element
-	\item{\textbf{onClicked}}     Die Maus/der Touchpointer führt ein vollständiges Klick-Manöver aus (PointerDown + PointerUp)
-	\item{\textbf{onHover}}       Die Maus/der Touchpointer betritt die Abgrenzung dieser Komponente
-	\item{\textbf{onHoverEnd}}    Die Maus/der Touchpointer verlässt die Abgrenzung dieser Komponente
-	\item{\textbf{onFocus}}       Diese Komponente erhält den Fokus
-	\item{\textbf{onFocusLost}}   Diese Komponente verliert den Fokus
-\end{itemize}
+\begin{description}
+	\item[\textbf{onPointerDown}] \hfill \\  Die Maus/der Touchpointer drückt auf dieses Element
+	\item[\textbf{onPointerUp}]   \hfill \\  Die Maus/der Touchpointer löst sich von diesem Element
+	\item[\textbf{onClicked}]     \hfill \\  Die Maus/der Touchpointer führt ein vollständiges Klick-Manöver aus (PointerDown + PointerUp)
+	\item[\textbf{onHover}]       \hfill \\  Die Maus/der Touchpointer betritt die Abgrenzung dieser Komponente
+	\item[\textbf{onHoverEnd}]    \hfill \\  Die Maus/der Touchpointer verlässt die Abgrenzung dieser Komponente
+	\item[\textbf{onFocus}]       \hfill \\  Diese Komponente erhält den Fokus
+	\item[\textbf{onFocusLost}]   \hfill \\  Diese Komponente verliert den Fokus
+\end{description}
 
 Zusätzlich können Elemente von dem Interface \keyword{MenuElementListener} erben und somit neue Events einführen welche speziell für ein Element gedacht sind. So gibt es beispielsweise das Interface \keyword{MenuCheckboxListener} welches zu den vorhandenen Methoden noch die Methode \ti{onChecked} hinzufügt.
 
-% - \paragraph{AgdXmlMenuLayer}
+\paragraph{Menüs mit AGDXML definieren}
 
-% - MenuDesigner
+Bisher haben wir Menüs manuell im Code erstellt. Dies hat zwei Nachteile. Einerseits kann es sehr kompliziert werden komplexere Menüs zusammenzustellen- Andererseits sind diese Menüs statisch und können sich nicht an verschiedene Größen oder dynamische Größenänderungen anpassen.
+
+Also Lösung hierfür gibt es den \keyword{AgdxmlLayer}, welcher vom \keyword{MenuLayer} ableitet. Dieser bekommt eine Menüdefinition in Form einer speziellen XML Datei. Mittels dieser Definition wird dann dynamisch ein Menü erstellt. Die Menüdefinition kann entweder auf fixen Maßen beruhen oder die Komponenten dynamisch und relativ zur verfügbaren Fläche definieren.
+
+\subparagraph{Das AGDXML Format}
+
+\quickfigure{Der AGDXML Tag Tree}{agdxmltree-class}{0.95}
+
+Das AGDXML Format besteht aktuell aus acht verschiedenen Tags die jeweils einem MenuElement zugeordnet sind. Der Root-Tag des AGDXML Dokumentes muss immer \textbf{<frame>} sein. Darunter kann man mittels anderer Tags Menükomponenten erzeugen. Es gibt einige Attribute, welche alle Tags (außer dem \textbf{<frame>} Tag) haben. Zum Beispiel kann man für alle Komponenten die Position, Höhe und Breite festlegen. Hierbei kann man entweder ein konstantes Maß in der Einheit Pixel angeben oder einen Prozentwert, welcher relativ zum übergeordneten Element interpretiert wird. Diese Prozentwerte sind die erste Möglichkeit um dynamische Menüs zu erzeugen. Außerdem kann man für alle Komponenten die ID festlegen, so wie den \keyword{GUITextureProvider} und die Sichtbarkeit.
+
+Der TextureProvider wird in einem AGDXML Baum automatisch vererbt. Möchte man also allen Komponenten den gleichen Provider zur Verfügung stellen so muss man diesen nur im \textbf{<frame>} Tag definieren und er wird nach unten im Baum an alle Komponenten weitergegeben. 
+Angegeben wird der \keyword{GUITextureProvider} über einen \ti{identifier} Dieser muss im Programmcode mittels der Methode \ti{addAgdxmlGuiTextureProvider(String key, GUITextureProvider value)} einem TextureProvider zugeordnet werden.
+
+Auch Events kann man in AGDXML registrieren, hierzu muss man in der AGDXML Datei nur den Methodennamen angeben. Über \ti{Type Introspection} wird automatisch die passende Methode in der Klasse welche von \keyword{AgdxmlLayer} ableitet gesucht. Dabei ist zu beachten, dass eine Methode mit richtigem Namen und richtiger Parameterliste existieren muss, sonst wird eine Exception vom Type \keyword{AgdxmlParsingException} geworfen. Dies vereinfacht die Definition von Events erheblich - da man Methoden nicht umständlich doppelt registrieren muss, sondern sie einfach deklarieren kann und in der AGDXML Datei angeben.
+
+Der wirklich große Vorteil von AGDXML ist jedoch der \textbf{<grid>} Tag. Mit ihm kann man einen dynamischen Container erzeugen. Mithilfe der Tags \textbf{<columndefinitions>} und \textbf{<rowdefinitions>} kann man das Grid in ein Raster unterteilen. Und mit den Pseudo-Attributen \ti{grid.row} und \ti{grid.column} können Elemente in dieses Raster eingebettet werden. Sind keine zusätzlichen Attribute angegeben füllt ein Element immer seine gesamte Rasterzelle aus. Jedoch kann dies auch mit den Attributen \ti{position}, \ti{width} und \ti{height} manipuliert werden. Als Spalten-/Zellenmaße gibt es drei verschiedene Definitionsmöglichkeiten:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|l|X|} 
+\hline
+Name & Schreibweise & Funktion \\
+\hline\hline
+PIXEL & Zahlenwert alleine angeben & Die Spalte/Reihe bekommt exakte die festgelegten Maße \\
+\hline
+PERCENTAGE &  Zahlenwert mit angefügtem Prozentzeichen & Die Größe der Spalte/Reihe ist prozentual abhängig von der Breite/Höhe des gesamten Grid-Elements\\
+\hline
+WEIGHT & Zahlenwert mit angefügtem Stern & Der verbleibende Freiraum (nach PIXEL und PERCENTAGE) wird gemäß der Gewichtung verteilt. Eine Reihe mit doppeltem Gewicht ist auf jeden Fall doppelt so hoch wie eine mit nur einfachem Gewicht.\\
+\hline
+\end{tabularx}
+\end{center}
+
+Die einzelnen Definitionen werden am beste in Kombination genutzt. So kann man ein Grid mit 3 Reihen definieren bei dem zwei gleich groß sind und die dritte hundert Pixel hoch.
+
+Einige Attribute sind Farbdefinitionen. Hier kann man entweder direkt einen Hexadezimal-Wert angeben (zum Beispiel \textbf{\#FF8800}). Alternativ kann man auch direkt einen Wert aus einer Liste an vordefinierten Farbkonstanten benutzen (zum Beispiel \textbf{BLACK} oder \textbf{MAGENTA}).
+
+Zuletzt gibt es einige Attribute welche ein Padding definieren. Dies sind vier Werte welche den vier Seiten eines Rechtecks entsprechen. Diese Werte kann man in unterschiedlichen Formaten angeben:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|l|} 
+\hline
+``2, 8, 2, 8'' &  Man gibt alle vier Werte in der Reihenfolge \textbf{top} - \textbf{left} - \textbf{bottom} - \textbf{right} an. \\
+\hline
+``2, 8'' &  Man gibt zuerst den \textbf{top-bottom} Wert an und dann den \textbf{left-right} Wert.\\
+\hline
+``2'' &  Man setzt alle vier Attribute auf den gleichen Wert.\\
+\hline
+``2\%, 4\%, 2\%, 4\%'' &  Man kann die oberen Methoden auch mit den Prozent Schreibweise kombinieren\\
+\hline
+\end{tabularx}
+\end{center}
+
+Eine \ti{(extrem einfach gehaltene)} AGDXML Datei könnte beispielsweise so aussehen:
+
+\begin{lstlisting}[caption=Eine Beispiel AGDXML Menü Definition, title=\hspace{0 pt}, language=xml]
+<?xml version="1.0" encoding="UTF-8"?>
+<frame textures="provider1" >
+	<grid container="true">
+		<grid.columndefinitions width="20, 2*, 10, 1*, 20" />
+		<grid.rowdefinitions height="8\%, 40, 4\%, 1*, 4\%" />
+
+		<label grid.row="1" grid.column="1" content="Hello, World!"/>
+		<image grid.row="3" grid.column="3" texture="ani_01" animation="750" id="myImage"/>
+		<edit  grid.row="3" grid.column="1" text="Playername" textColor="BLACK" halign="LEFT" />
+	</grid>
+</frame>
+\end{lstlisting}
+
+\subparagraph{Der AGDXML Menudesigner}
+
+Als zusätzliches Hilfsmittel für AGDXML Dateien gibt es den \ti{AGDXML-Menudesigner}. Die ist ein WYSIWYG Editor für AGDXML Dateien.
+
+\dospace
+\quickfigure{Screenshot des AGDXML Menudesigner}{menudesigner}{0.9}
+
+Der Vorteil des Menudesigners ist es, dass man direkt - während dem Schreiben - sehen kann ob ein syntaktischer Fehler in der AGDXML Datei ist und wie das resultierende Format ungefähr Aussehen wird. Außerdem kann man Sehen wie sich das Menü unter verschiedenen Auflösungen verhält.
