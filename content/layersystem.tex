@@ -1,6 +1,6 @@
 Unser Spiel kann sich während seiner Laufzeit in verschiedenen Phasen befinden. Darunter zum Beispiel eine \ti{Level laden} Phase, eine \ti{Hauptmenü} Phase oder eine \ti{Spiel} Phase.
 
-Die Verwaltung dieser Phasen erfolgt über die sogenannten Layer. Alles in einem absGDX Programm muss sich innerhalb eines Layers befinden, standardmäßig gibt es den \keyword{MenuLayer} und den \keyword{GameLayer} es können jedoch auch eigene Layer von der Stammklasse \keyword{AgdxLayer} abgeleitet werden. ZU jedem Zeitpunkt ist nur ein Layer aktiv, dieser bekommt sämtliche Eingabe Events mit und dessen \ti{update()} und \ti{render()} Methoden werden aufgerufen.
+Die Verwaltung dieser Phasen erfolgt über die sogenannten Layer. Alles in einem absGDX Programm muss sich innerhalb eines Layers befinden, standardmäßig gibt es den \keyword{MenuLayer} und den \keyword{GameLayer} es können jedoch auch eigene Layer von der Stammklasse \keyword{AgdxLayer} abgeleitet werden. Zu jedem Zeitpunkt ist nur ein Layer aktiv, dieser bekommt sämtliche Eingabe Events mit und dessen \ti{update()} und \ti{render()} Methoden werden aufgerufen.
 
 Organisiert werden die verschiedenen Layer in einem Stack.
 
@@ -8,11 +8,11 @@ Organisiert werden die verschiedenen Layer in einem Stack.
 
 Diese Organisation hat vor allem beim Menübaum Vorteile: Geht man - wie im obigen Beispiel - vom Hauptmenü in das Levelmenü ist das Hauptmenü immer noch auf dem Stack, jedoch nicht mehr TOS \ti{(Top of Stack)} und wird somit nicht gerendert. Verlässt man nun aber das Levelmenü wieder, beispielsweise über den Zurück Knopf muss nur der oberste MenuLayer vom Stack entfernt werden und man ist wieder zurück auf dem Hauptmenü. Auch wenn man im oberen Beispiel das Spiel verlässt landet man automatisch wieder zurück im Levelmenü um von dort aus entweder ins Hauptmenü zu gehen oder ein neues Level zu starten.
 
-Für diese Operationen gibt es in der Klasse \keyword{AgdxGame} die Methoden \ti{pushLayer()} und \ti{popLayer()}. Falls diese ganze Funktionalität nicht erwünscht ist kann auch einfach die Methode \ti{setLayer()} benutzt werden. Diese leert den kompletten Stack und setzt den neuen Layer als einziges Element auf ihn. Verwendet man konsistent nur die Methode \ti{setLayer()} hat man keinerlei Funktionalitäten des Stacks und kann arbeiten als gäbe es eine einzige Variable welche festlegt welcher Layer aktuell benutzt wird.
+Für diese Operationen gibt es in der Klasse \keyword{AgdxGame} die Methoden \ti{pushLayer()} und \ti{popLayer()}. Falls diese ganze Funktionalität nicht erwünscht ist, kann auch einfach die Methode \ti{setLayer()} benutzt werden. Diese leert den kompletten Stack und setzt den neuen Layer als einziges Element auf ihn. Verwendet man konsistent nur die Methode \ti{setLayer()} hat man keinerlei Funktionalitäten des Stacks und kann arbeiten als gäbe es eine einzige Variable welche festlegt welcher Layer aktuell benutzt wird.
 
 \paragraph{Der GameLayer}
 
-Der wohl wichtigste Layer ist der \keyword{GameLayer}. In ihm spielst sich das eigentliche Spiel ab. Um ein eigenes Spiel zu entwickeln muss man zuerst eine Klasse von GameLayer ableiten und auf den Layer Stack pushen.
+Der wohl wichtigste Layer ist der \keyword{GameLayer}. In ihm spielt sich das eigentliche Spiel ab. Um ein eigenes Spiel zu entwickeln muss man zuerst eine Klasse von GameLayer ableiten und auf den Layer Stack pushen.
 
 Der GameLayer sorgt für die Verwaltung der Entities, der Karte und auch der Kollisionsgeometrien auf welche in einem späteren Kapitel genauer eingegangen wird.
 

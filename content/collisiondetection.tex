@@ -94,11 +94,11 @@ public boolean doGeometriesIntersect(CollCircle a, CollCircle b) {
 Den Vorteil einer Kreis-Kreis Kollision kann man auch auf alle anderen Geometrien anwenden indem man alle Geometrien als umschließende Kreise abschätzt und diese zuerst kollidieren lässt. Nur wenn die umschließenden Kreise sich überschneiden muss man dann den komplizierteren Schritt machen und die genauen Geometrien kollidieren lassen.
 
 Außer der Kreis-Kreis Kollision gibt es auch noch das Problem zu erkennen ob sich eine Kreisgeometrie und einen Rechtecksgeometrie schneiden.
-Den Algorithmus um diese Kollision zu erkennen ist im nachfolgenden Paragraph \ti{"CollisionBox"} beschreiben.
+Den Algorithmus um diese Kollision zu erkennen ist im nachfolgenden Paragraph \ti{"CollisionBox"} beschrieben.
 
 Der dritte Fall ist die Kollision des Kreises mit einem Dreieck.
 
-Hier muss man 3 Fälle beachten. Entweder der Kreis schneidet einer der Ecken, eine der Kanten oder der Kreis ist komplett innerhalb des Dreieckes. Wider verwenden wir hier den Trick den Abstand in quadriertem Zustand zu vergleichen da dies 2 Aufrufe von \ti{sqrt} spart.
+Hier muss man 3 Fälle beachten. Entweder der Kreis schneidet einer der Ecken, eine der Kanten oder der Kreis ist komplett innerhalb des Dreieckes. Wieder verwenden wir hier den Trick den Abstand in quadriertem Zustand zu vergleichen da dies 2 Aufrufe von \ti{sqrt} spart.
 
 \quickfigure{3 Möglichkeiten einer Kreis-Dreieck Kollision}{circle-triangle-coll}{0.8}
 
@@ -120,7 +120,7 @@ public boolean doGeometriesIntersect(CollisionTriangle a, CollisionCircle b) {
 
 \subparagraph{CollisionBox}
 
-Unsere zweite Standard Geometrie ist das Rechteck. Es ist zu beachten dass dies kein frei drehbares Rechteck ist sondern eines das an den Koordinatenachsen ausgerichtet ist. Deshalb wird es auch nur von \ti{width}, \ti{height} und \ti{center} definiert.
+Unsere zweite Standard Geometrie ist das Rechteck. Es ist zu beachten, dass dies kein frei drehbares Rechteck ist sondern eines, dass an den Koordinatenachsen ausgerichtet ist. Deshalb wird es auch nur von \ti{width}, \ti{height} und \ti{center} definiert.
 
 Diese Geometrie wird wohl am meisten verwendet da einerseits Kollisionen zwischen zwei Rechtecken sehr schnell zu berechnen sind und andererseits es sich oft natürlich anfühlt Objekte in ein Rechteck zusammenzufassen. Um zu erkennen ob zwei Rechtecke sich überschneiden dreht man die Frage zuerst um. Zwei Rechtecke überschneiden sich nicht wenn die Rechtecke übereinander/untereinander oder nebeneinander liegen. Negiert man dies bekommt man ganz einfach heraus ob sich zwei Rechtecke schneiden:
 
@@ -189,18 +189,18 @@ public boolean isIntersectingWith(CollisionTriangle other) {
 
 \paragraph{Optimierung mit der Collisionmap}
 
-Das grundlegende Problem dass dieser Algorithmus bis jetzt noch hat ist dass mit steigender Geometrie Anzahl die Anzahl der Vergleiche quadratisch ansteigt. 
+Das grundlegende Problem, dass dieser Algorithmus bis jetzt noch hat ist dass mit steigender Geometrie Anzahl die Anzahl der Vergleiche quadratisch ansteigt. 
 Es müssen aktuell nämlich jede \keyword{CollisionGeometry} mit jeder anderen getestet werden und überprüft werden ob sie sich überschneiden.
 Dies hat den Aufwand $\mathcal O(n^2)$.
 Die meisten dieser Operationen sind offensichtlich unnötig - wenn sich zwei Geometrien auf unterschiedlichen Seiten der Karte befinden können sie in keinem Fall miteinander kollidieren (den Fall von Entities die fast so groß wie die Karte sind ausgeschlossen).
 
 Unsere Lösung liegt darin die Datenstruktur zu ändern. Bisher wurden die CollisionGeometrien in einer einzigen großen Liste gespeichert, jetzt speichern wir sie in einem zweidimensionalen Raster.
-Man muss sich das so vorstellen dass man die Karte in ein Raster unterteilt ähnlich dem Vorgehen bei der \keyword{TileMap}. Jedes dieser Raster-Felder wird von einem Objekt der Klasse \keyword{CollisionMapTile} dargestellt und jedes Objekt enthält eine Liste der CollisionGeometrien die auf diesem Tile sind.
-Das bedeutet das jedes mal wenn eine CollisionGeometry hinzugefügt wird oder sich bewegt, die Tiles berechnet werden auf denen die Geometrie sich befindet. Die CollisionGeometry wird dann in die Listen aller dieser Tiles hinzugefügt. Möchte man nun wissen ob eine Geometrie mit einer anderen kollidiert geht man alle Tiles durch auf denen diese Geometrie liegt. Den eigentlichen Überschneidung-Test-Code führt man dann auf allen Geometrien aus die man in diesem Tiles findet. Die vorherigen Optimierungen, wie dass man zuerst eine Kreiskollision durchführt, bleiben immer noch intakt. Mit dieser Methode haben wir die Anzahl der zu überprüfenden Geometrien von allen enthaltenen auf ein paar in der Nähe eingeschränkt.
+Man muss sich das so vorstellen, dass man die Karte in ein Raster unterteilt ähnlich dem Vorgehen bei der \keyword{TileMap}. Jedes dieser Raster-Felder wird von einem Objekt der Klasse \keyword{CollisionMapTile} dargestellt und jedes Objekt enthält eine Liste der CollisionGeometrien die auf diesem Tile sind.
+Das bedeutet, dass jedes mal wenn eine CollisionGeometry hinzugefügt wird oder sich bewegt, die Tiles berechnet werden auf denen die Geometrie sich befindet. Die CollisionGeometry wird dann in die Listen aller dieser Tiles hinzugefügt. Möchte man nun wissen ob eine Geometrie mit einer anderen kollidiert geht man alle Tiles durch auf denen diese Geometrie liegt. Den eigentlichen Überschneidung-Test-Code führt man dann auf allen Geometrien aus die man in diesem Tiles findet. Die vorherigen Optimierungen, wie dass man zuerst eine Kreiskollision durchführt, bleiben immer noch intakt. Mit dieser Methode haben wir die Anzahl der zu überprüfenden Geometrien von allen enthaltenen auf ein paar in der Nähe eingeschränkt.
 
 Diese \keyword{CollisionMap} muss jedoch immer aktuell gehalten werden, jedes mal wenn eine Geometrie hinzugefügt/bewegt/entfernt wird muss die jeweilige Methode aufgerufen werden um die \keyword{CollisionMap} zu aktualisieren. Dies ist auch der technische Grund warum sowohl bei \keyword{Entity} als auch bei \keyword{CollisionGeometry} der \ti{position}-Vektor nicht öffentlich ist sondern nur durch Setter verändert werden kann. Denn dadurch kann man diese Events abfangen und an die \keyword{CollisionMap} weitergeben.
 
-Eine Frage ist nun wie die \keyword{CollisionMapTiles} skaliert werden sollen. Der Standard Ansatz unseres Frameworks ist es da die \keyword{CollisionMapTiles} gleich groß wie die normalen Map \keyword{Tiles} zu haben.
+Eine Frage ist nun wie die \keyword{CollisionMapTiles} skaliert werden sollen. Der Standard Ansatz unseres Frameworks ist es die \keyword{CollisionMapTiles} gleich groß wie die normalen Map \keyword{Tiles} zu haben.
 Dies ist als Standard Ansatz in soweit gut, dass normalerweise eine Map weder nur ein paar Tiles noch eine extreme Anzahl Tiles hat und meist sind maximal eine Hand voll Entities gleichzeitig auf einer Tile.
 Trotzdem bieten wir dem Benutzer die Möglichkeit die Tilegröße manuell anzupassen.
 Dafür gibt es im \keyword{CollisionMap}-Konstruktor den Parameter \ti{expTileScale}.
@@ -238,8 +238,8 @@ Jedoch muss man hier auch den Ausnahmefall beachten. Eine Geometrie muss nicht z
 Für diesen Fall haben wir einen zweiten 3x3 \keyword{CollisionMapTile}-Array welcher die 8 Bereiche um die Karte herum bezeichnet (Oben, Oben-Rechts, Rechts, Unten-Rechts, Unten, Unten-Link, Links, Oben-Links). Zwar hat man für den Fall von Kollisionen außerhalb der Karte keinen Vorteil durch die \keyword{CollisionMap}, sondern effektiv wieder den gleichen Fall wie vor deren Einführung. Aber dafür sind auch dort Kollisionserkennung möglich.
 
 Neben der Tile-Position muss nun auch der Radius berechnet werden, alle CollisionTiles innerhalb dieses Radius werden dann mit der entsprechenden Geometrie gefüllt. Dieser Collision-Radius berechnet sich aus dem umschließenden Radius der Geometrie mit der Formel $ceil(r_{geometry} * 2^{expTileScale})$.
-Dieser Radius ist immer mindestens 1, was dazu führt das jede Geometrie immer mindestens auf 9 Tiles liegt. In den meisten Fällen liegt die Geometrie nicht wirklich auf allen diesen Tiles. Dies ist jedoch kein Problem da die endgültige Kollisionserkennung immer noch durch die genauen Formeln berechnet wird.
-Es ist nur wichtig dass es keine Tiles gibt auf denen die Geometrie liegt die aber nicht diese enthalten.
+Dieser Radius ist immer mindestens 1, was dazu führt, dass jede Geometrie immer mindestens auf 9 Tiles liegt. In den meisten Fällen liegt die Geometrie nicht wirklich auf allen diesen Tiles. Dies ist jedoch kein Problem da die endgültige Kollisionserkennung immer noch durch die genauen Formeln berechnet wird.
+Es ist nur wichtig, dass es keine Tiles gibt auf denen die Geometrie liegt, die aber nicht diese enthalten.
 
 Eine weitere Optimierung kann man beim Bewegen von Geometrien implementieren. Normalerweise werden, wenn eine Geometrie bewegt werden bei allen Tiles auf denen sie vorher gelegen ist die Einträge entfernt und bei allen neuen die Einträge hinzugefügt. Falls die Geometrie jedoch auf der gleichen \keyword{CollisionMapTile} bleibt muss die Map nicht aktualisiert werden. Deshalb wird in der Methode moveGeometry() zuerst überprüft ob eine Änderung passiert ist und nur dann die Map aktualisiert:
 
@@ -256,7 +256,7 @@ public boolean moveGeometry(float prevCenterX, float prevCenterY, CollisionGeome
 }
 \end{lstlisting}
 
-Eine weitere Möglichkeit die Kollisionserkennung zu optimieren ist durch Einführung von Pseudo-Geometrien. Möchte eine Geometrie nur selbst mit anderen kollidieren aber nicht als Kollisionsobjekt dienen muss es sich nicht in die \keyword{CollisionMap} eintragen. Ein Beispiel hierfür wäre eine Kugel-Entity.
+Eine weitere Möglichkeit die Kollisionserkennung zu optimieren ist durch Einführung von Pseudo-Geometrien. Möchte eine Geometrie nur selbst mit anderen kollidieren aber nicht als Kollisionsobjekt dienen, muss es sich nicht in die \keyword{CollisionMap} eintragen. Ein Beispiel hierfür wäre eine Kugel-Entity.
 Diese besitzt eine \keyword{CollisionGeometry} um zu erkennen wann sie etwas getroffen hat. Jedoch gibt es normalerweise kein Fall in dem eine andere Entity wissen müsste ob die mit einer Kugel kollidiert.
 Deshalb kann man einen Performancevorteil erlangen indem man die Kugel-Geometrie nicht in die \keyword{CollisionMap} einträgt und stattdessen selber verwaltet. Es gilt zu beachten dass man dies nicht mit zu vielen Entity-Typen machen sollten um nicht den Überblick zu verlieren wer mit wem kollidieren kann.
 Außerdem muss die Kugel in jedem Schritt selbst ihre Kollisionen überprüfen, da es sonst keiner für sie tut.
@@ -271,7 +271,7 @@ Außerdem wird jedes mal wenn die Entity sich  nach Kollisionen überprüft. Fal
 Um die Vorteile der einzelnen Optimierungen darzustellen, hier eine Tabelle mit Messwerten unter verschiedenen Bedingungen.
 
 In jedem Test wurden eine gewisse Anzahl an Entities mit jeweils einer \keyword{CollisionGeometry} erstellt und gleichmäßig auf einer 128x128 Karte verteilt.
-Jedes mal wird die Zeit gemessen die ein Update-Vorgang braucht in dem für jede Geometrie berechnet wird mit welchen anderen Geometrien sie kollidiert. Falls die Zeit so groß war das wir kein Ergebnis bekamen wurde \ti{NaN} eingetragen
+Jedes mal wird die Zeit gemessen die ein Update-Vorgang braucht, in dem für jede Geometrie berechnet wird mit welchen anderen Geometrien sie kollidiert. Falls die Zeit so groß war, dass wir kein Ergebnis bekamen, wurde \ti{NaN} eingetragen
 
 \begin{itemize}
 \item{\bf{Test 1}:} Rechteckige Hitboxen
@@ -296,16 +296,16 @@ Anzahl Geo's      & Test 1      & Test 2      & Test 3      & Test 4      & Test
 
 \vspace*{1 cm}
 
-Ein paar Dinge kann man direkt aus dieser Tabelle erkennen. Einerseits den offensichtlich extremen Vorteil der \keyword{CollisionMap} im Gegensatz zu allen anderen Ansätzen. Außerdem gibt es einen erkennbaren Performance Einbruch durch Verwendung von \ti{sqrt}. Der Unterschied zwischen Kreis und Rechteck Kollision ist fast nicht da - dies ist in soweit erklärbar dass beides mathematisch einfach zu berechnen ist.
+Ein paar Dinge kann man direkt aus dieser Tabelle erkennen. Einerseits den offensichtlich extremen Vorteil der \keyword{CollisionMap} im Gegensatz zu allen anderen Ansätzen. Außerdem gibt es einen erkennbaren Performance Einbruch durch Verwendung von \ti{sqrt}. Der Unterschied zwischen Kreis und Rechteck Kollision ist fast nicht da - dies ist in soweit erklärbar, dass beides mathematisch einfach zu berechnen ist.
 
 \quickfigure{Performance Graph der CollisionMap}{performance-collisionmap}{1.0}
 
 \paragraph{Bewegung mit Kollisionen}
 
-Kollisionserkennung ist nicht nur gut um zu erkennen wann zwei Entities kollidieren sondern auch um dies zu verhindern. Hat man beispielsweise eine vom Spieler gesteuerte Figur möchte man nicht dass diese stirbt wenn sie in einer Wand endet, sondern dass sie dies überhaupt nicht kann.
+Kollisionserkennung ist nicht nur gut um zu erkennen wann zwei Entities kollidieren, sondern auch um dies zu verhindern. Hat man beispielsweise eine vom Spieler gesteuerte Figur möchte man nicht, dass diese stirbt wenn sie in einer Wand endet, sondern dass sie dies überhaupt nicht kann.
 Dafür hat die Klasse \keyword{Entity} außer der setPosition() Methode auch noch die movePosition()-Methode. Diese bewegt das Entity entweder die komplette Strecke oder nur partiell falls zwischenzeitlich eine Kollision stattfindet.
 
-Um dies zu zu schaffen bewegt man das Entity und all seine Geometrien zuerst die komplette Strecke. Dann sucht man die erste fremde Geometrie mit denen eine eigene Geometrie kollidiert. Für diese Geometrie berechnet man dann die Entfernung die man rückwärts gehen muss dass sich die beiden Geometrien nicht mehr überschneiden. Dies wiederholt man solange bis es für keine eigene Geometrie mehr eine Überschneidung gibt. Jedoch führt man dies nicht für die ganze Bewegung aus sondern einmal für die Bewegung in X-Richtung und dann noch einmal in Y-Richtung. X und Y Bewegung sind somit unabhängig und es ist möglich beispielsweise an einer Wand "entlang zu gleiten" indem die X-Bewegung verhindert wird aber die Y-Bewegung immer noch ausgeführt.
+Um dies zu zu schaffen bewegt man das Entity und all seine Geometrien zuerst die komplette Strecke. Dann sucht man die erste fremde Geometrie mit denen eine eigene Geometrie kollidiert. Für diese Geometrie berechnet man dann die Entfernung die man rückwärts gehen muss, bis sich die beiden Geometrien nicht mehr überschneiden. Dies wiederholt man solange bis es für keine eigene Geometrie mehr eine Überschneidung gibt. Jedoch führt man dies nicht für die ganze Bewegung aus sondern einmal für die Bewegung in X-Richtung und dann noch einmal in Y-Richtung. X und Y Bewegung sind somit unabhängig und es ist möglich beispielsweise an einer Wand "entlang zu gleiten" indem die X-Bewegung verhindert wird aber die Y-Bewegung immer noch ausgeführt.
 
 Mathematisch interessant ist hierbei die Algorithmen um den minimalen Abstand zu berechnen. Wir brauchen eine Methode die zwei Geometrien, positioniert durch ihren Mittelpunkt, bekommt und uns den minimalen Abstand in X oder Y Richtung sagt bei denen dies sich gerade nicht schneiden. Dies führt zu unterschiedlichen Methoden für jede Art der Kollision:
 
@@ -343,7 +343,7 @@ Es ist interessant, dass dies der einzige Fall bei dem der minimal X-Abstand una
 
 \subparagraph{Dreieck-Kreis Abstand}
 
-Den Abstand zwischen einem Dreieck und einem Kreis zu berechnen ist etwas komplizierter als die vorangegangenen Beispiele. Zur Vereinfachung brechen wir das Problem in drei Kreis-Strecke Abstände auf. Aus allen validen Abständen die wir so bekommen nehmen wir dann den, dessen absoluter Wert minimal ist. Hierbei ist es wichtig dass man nur die validen Abstände  betrachtet. Kollidiert der Kreis zum Beispiel niemals mit der dritten Kante, egal wie weit er sich auf der X-Achse bewegt, darf dieser Abstand auch nicht beachtet werden. 
+Den Abstand zwischen einem Dreieck und einem Kreis zu berechnen ist etwas komplizierter als die vorangegangenen Beispiele. Zur Vereinfachung brechen wir das Problem in drei Kreis-Strecke Abstände auf. Aus allen validen Abständen die wir so bekommen nehmen wir dann den, dessen absoluter Wert minimal ist. Hierbei ist es wichtig, dass man nur die validen Abstände  betrachtet. Kollidiert der Kreis zum Beispiel niemals mit der dritten Kante, egal wie weit er sich auf der X-Achse bewegt, darf dieser Abstand auch nicht beachtet werden. 
 Da wir bereits mit Gleitkommazahlen arbeiten, haben für den Keine-Kollision Fall den Wert \keyword{NaN} genommen.
 
 \quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Dreieckes (1)}{x-touch-dist_4-1}{0.6}
@@ -381,7 +381,7 @@ Nun gibt es in der Klasse \keyword{CollisionListener} auch noch Events für solc
 
 Ein Problem können hier Entities mit mehreren \keyword{CollisonGeometries} sein. Hierbei muss drauf geachtet werden, dass alle Geometrien in der Kollision beachtet werden und jeweils der größte "Rücksetz-Wert" benutzt wird.
 
-Ein weiteres Problem sind entstehende Rundungsfehler bei Verwendung von FloatingPoint Zahlen. Führt man den Algorithmus exakt so wie oben beschrieben aus kann es vorkommen dass sich die beiden Geometrien auch nach dem Rücksetzen immer noch leicht schneiden. Der einzige Weg um dieses Problem herum ist es einen delta Wert in der Berechnung des minimalen Abstands einzuführen. Damit wird nicht mehr der minimale Abstand zurückgeliefert sondern der minimale Abstand plus einen delta Wert. Somit können sich Entities nicht mehr "wirklich" berühren sondern nur noch bis maximal delta Einheiten nähern.
+Ein weiteres Problem sind entstehende Rundungsfehler bei Verwendung von FloatingPoint Zahlen. Führt man den Algorithmus exakt so wie oben beschrieben aus kann es vorkommen, dass sich die beiden Geometrien auch nach dem Rücksetzen immer noch leicht schneiden. Der einzige Weg um dieses Problem herum ist es einen delta Wert in der Berechnung des minimalen Abstands einzuführen. Damit wird nicht mehr der minimale Abstand zurückgeliefert sondern der minimale Abstand plus einen delta Wert. Somit können sich Entities nicht mehr "wirklich" berühren sondern nur noch bis maximal delta Einheiten nähern.
 
 Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. Falls die Update rate niedrig genug ist kann es vorkommen, dass ein Objekt links neben einem anderen ist und sich dann schnell genug nach rechts bewegt um im nächsten Schritt rechts neben dem Objekt zu sein. Obwohl sich das Entity nun direkt durch ein anderes bewegt hat, wurde an keiner Stelle eine Kollision bemerkt. Zwar gibt es mathematische Ansätze dieses Problem zu lösen, diese gehen jedoch auf Kosten der Performance. Einfacher ist es eine konstante Update-Rate aufrecht zu erhalten und keine extrem dünne Entities zu verwenden, wo Kollisionen wichtig sind.
 
@@ -389,18 +389,18 @@ Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. F
 
 \paragraph{Limitierte Kollisionen}
 
-In unserer aktuellen Implementation kollidiere noch all Entities mit allen. Da ist in soweit kein Problem, dass man in den Event-Handlern überprüfen kann ob die Kollision Sinn macht und wenn nicht sie einfach verwirft.
+In unserer aktuellen Implementation kollidiere noch all Entities mit allen. Das ist in soweit kein Problem, dass man in den Event-Handlern überprüfen kann ob die Kollision Sinn macht und wenn nicht sie einfach verwirft.
 
 Jedoch kann es trotzdem hilfreich sein die Kollisionen im Vorfeld zu Filtern. Dafür gibt es in der Klasse \keyword{CollisionGeometryOwner} die Methode \ti{canCollideWith()}. Bevor eine Kollision ausgeführt wird, wird überprüft ob die beiden Geometrien auch wirklich miteinander kollidieren können. 
-Problematisch wird es jedoch da, die Methode kommutativ sein soll.
-Dies bedeutet dass a.canCollideWith(b) das gleiche Ergebnis wie b.canCollideWith(a) liefert. 
+Problematisch wird es jedoch, da die Methode kommutativ sein soll.
+Dies bedeutet, dass a.canCollideWith(b) das gleiche Ergebnis wie b.canCollideWith(a) liefert. 
 
 \doinline
 \begin{lstlisting}[caption=Kommutative Eigenschaft von canCollideWith, title=\hspace{0 pt}, language=java]
 Assert.True(a.CanCollideWith(b) == b.canCollideWith(a))
 \end{lstlisting}
 
-Dass diese Bedingung erfüllt ist liegt in der Verantwortung des Programmierers. Eine zweite Methode ist die \ti{canMoveCollide()} Methode. Welche bestimmt mit welchen Entities in der \ti{movePosition()} Methode kollidiert wird. Ohne diese Methode würde das Entity mit jeder anderen CollisionBox kollidieren. Mit ihr lässt sich dies auf die Objekte einschränken mit der das Entity auch wirklich zusammenstoßen soll. Es ist jedoch zu beachten dass \ti{canCollideWith()} eine höhere Priorität hat als \ti{canMoveCollide()}. Wenn also \ti{canCollideWith()} \textbf{false} ist, dann wird \ti{canMoveCollide()} überhaupt nicht mehr abgefragt.
+Dass diese Bedingung erfüllt ist liegt in der Verantwortung des Programmierers. Eine zweite Methode ist die \ti{canMoveCollide()} Methode. Welche bestimmt mit welchen Entities in der \ti{movePosition()} Methode kollidiert wird. Ohne diese Methode würde das Entity mit jeder anderen CollisionBox kollidieren. Mit ihr lässt sich dies auf die Objekte einschränken mit der das Entity auch wirklich zusammenstoßen soll. Es ist jedoch zu beachten, dass \ti{canCollideWith()} eine höhere Priorität hat als \ti{canMoveCollide()}. Wenn also \ti{canCollideWith()} \textbf{false} ist, dann wird \ti{canMoveCollide()} überhaupt nicht mehr abgefragt.
 
 \paragraph{Kollisionen mit der Karte}
 

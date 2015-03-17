@@ -9,15 +9,15 @@ Um diese Probleme kümmert sich nun ein weiteres Tool namens gradle \cite{GRADLE
 \paragraph{Dependency Management}
 
 In gradle kann man angeben von welchen Bibliotheken oder Projekten ein Programm abhängig ist. Diese Bibliotheken können dann wiederum von anderen Bibliotheken abhängig sein und so bildet sich ein Abhängigkeitsbaum ausgehen vom Anfangsprojekt.
-Gradle lädt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil dass wenn eine Bibliothek öfters im Abhängigkeitsbaum auftaucht sie trotzdem nur einmal geladen werden muss.
+Gradle lädt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil, dass wenn eine Bibliothek öfters im Abhängigkeitsbaum auftaucht sie trotzdem nur einmal geladen werden muss.
 
-Gradle unterstützt viele verschiedene Repositories wo nach fehlenden Bibliotheken gesucht werden kann, standardmäßig wird jedoch die \ti{Maven Central Repository} \cite{MCENTRAL} benutzt.
-In dieser Repository sind sehr viele der frei verfügbaren java Libraries in vielen Versionen enthalten und können einfach über zum Beispiel gradle geladen werden.
+Gradle unterstützt viele verschiedene Repositories in welcher nach fehlenden Bibliotheken gesucht werden kann, standardmäßig wird jedoch die \ti{Maven Central Repository} \cite{MCENTRAL} benutzt.
+In dieser Repository sind sehr viele der frei verfügbaren java Libraries in vielen Versionen enthalten und können zum Beispiel einfach über gradle geladen werden.
 
 \paragraph{Konfiguration}
 
 Die Konfiguration geschieht über \keyword{build.gradle} Dateien welche in der Sprache \keyword{Groovy} geschrieben sind.
-absGDX ist ein Multiprojekt, das bedeutet es besteht aus mehreren Gradle Projekten mit jeweils eigenen Konfigurationen die voneinander abhängen.
+absGDX ist ein Multiprojekt, dies bedeutet, dass es  aus mehreren Gradle Projekten besteht mit jeweils eigenen Konfigurationen die voneinander abhängen.
 
 In der folgenden Grafik kann man unseren Abhängigkeitsbaum sehen. Die orange markierten Felder sind unsere Projekte und die anderen sind externe Abhängigkeiten.
 
@@ -50,7 +50,7 @@ In diesem Beispiel setzen wir die Einstellungen für projektspezifische Formatie
 
 \paragraph{Verwendung in unserem Projekt}
 
-Um Problemen mit verschiedenen Versionen von gradle entgegen zu wirken ist in unserer git Repository nicht nur die build.gradle Dateien vorhanden sondern auch der \ti{gradle Wrapper}. Dies ist eine vollständige unabhängige Version von gradle die man anstatt der lokal installierten verwenden soll. Damit ist garantiert dass jeder die gleiche Version von gradle verwendet.
+Um Problemen mit verschiedenen Versionen von gradle entgegen zu wirken ist in unserer git Repository nicht nur die build.gradle Dateien vorhanden sondern auch der \ti{gradle Wrapper}. Dies ist eine vollständige unabhängige Version von gradle die man anstatt der lokal installierten verwenden soll. Damit ist garantiert, dass jeder die gleiche Version von gradle verwendet.
 
 Ausgeführt wird sie dann über die Kommandozeile mit Befehlen wie
 

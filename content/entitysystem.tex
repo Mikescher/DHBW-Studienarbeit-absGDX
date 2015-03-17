@@ -23,16 +23,16 @@ Zusätzlich hat jede Entity auch noch einen \ti{Z-Layer} gesetzt welcher bestimm
 
 Ein wichtiges Feature der Entities ist es Kollisionen mit anderen Entities zu erkennen, auf die technischen Einzelheiten wird im Paragraph \keyword{Kollisionserkennung} genauer eingegangen.
 
-Aus der Sicht eines Entities ist es einfach so dass man mithilfe der Methode \ti{addCollisionGeo(float relativeX, float relativeY, CollisionGeometry geo)} dem Entity eine Kollisionsgeometrie zuordnen kann. Diese kann Kollisionen mit anderen Kollisionsgeometrien erkennen.
+Aus der Sicht eines Entities ist es einfach, so dass man mithilfe der Methode \ti{addCollisionGeo(float relativeX, float relativeY, CollisionGeometry geo)} dem Entity eine Kollisionsgeometrie zuordnen kann. Diese kann Kollisionen mit anderen Kollisionsgeometrien erkennen.
 Der Vorteil dieser Methode ist es, dass Programme die ganz oder teilweise keine Kollisionserkennung brauchen keinen Performance Nachteil haben wenn diese (unnütz) im Hintergrund berechnet wird.
 
-In den meisten Fällen werden jedoch keine sonderlich komplexen Geometrien eingesetzt, und noch seltener hat ein Entity mehrere Geometrien, die ihm zugeordnet sind.
+In den meisten Fällen werden jedoch keine sonderlich komplexen Geometrien eingesetzt und noch seltener hat ein Entity mehrere Geometrien, die ihm zugeordnet sind.
 Deshalb gibt es drei Methoden um schnell und einfach die gebräuchlichsten Fälle abzudecken:
 
 \begin{itemize}
-	\item \keyword{addFullCollisionBox():} Fügt ein Collision Rechteck hinzu mit gleichen Ausmaßen wie das Entity
-	\item \keyword{addFullCollisionCircle():} Fügt ein Collision Kreis hinzu, welcher das Entity komplett ausfüllt
-	\item \keyword{addFullCollisionTriangle(AlignCorner4 align):} Fügt ein Collision Dreieck hinzu, welches drei Ecken des Entities benutzt \ti{(Abhängig von dem übergebenen Alignment)}.
+	\item \keyword{addFullCollisionBox():} Fügt ein Kollisions Rechteck hinzu mit gleichen Ausmaßen wie das Entity
+	\item \keyword{addFullCollisionCircle():} Fügt ein Kollisions Kreis hinzu, welcher das Entity komplett ausfüllt
+	\item \keyword{addFullCollisionTriangle(AlignCorner4 align):} Fügt ein Kollisions Dreieck hinzu, welches drei Ecken des Entities benutzt \ti{(Abhängig von dem übergebenen Alignment)}.
 \end{itemize}
 
 Jede dieser Geometrien wird zwar wiederum vom GameLayer verwaltet, kennt aber sein jeweiliges Vater-Entity. Und sobald eine Kollision erkannt wird, wird das Entity über eine Event-Methode benachrichtigt. Dies ist im Grunde ein \ti{Listener-Pattern} bei dem das Entity automatisch als Listener als seiner Geometrien eingetragen wird, hierfür besitzt jedes Entity auch die Interfaces \keyword{CollisionListener} und \keyword{CollisionGeometryOwner}.
@@ -47,20 +47,20 @@ Jede dieser Geometrien wird zwar wiederum vom GameLayer verwaltet, kennt aber se
 \end{itemize}
 
 Das \keyword{active} bedeutet jeweils, dass die Kollision durch eine Bewegung der eigenen Geometrie ausgelöst wurde, und das \keyword{passiv} entsprechend dass der Grund die Bewegung der anderen Geometrie war.
-Ist die Veränderung der Position Teil einer Bewegung wird die Methode \ti{onActiveMovementCollide} oder \ti{onPassiveMovementCollide} aufgerufen. Wurde vorher festgelegt dass die beiden Entities sich nicht überschneiden dann entspricht dies einem Zusammenstoß, bei dem das bewegende Entity zum Stillstand gekommen ist und als Resultat beide Entity sich nur berühren \ti{nicht schneiden}.
-Ist dies andererseits das Resultat eines direkten Aufrufs von \ti{setPosition(float x, float y)} dann werden die Methoden \ti{onActiveCollide} oder \ti{onPassivCollide} aufgerufen.
+Ist die Veränderung der Position Teil einer Bewegung wird die Methode \ti{onActiveMovementCollide} oder \ti{onPassiveMovementCollide} aufgerufen. Wurde vorher festgelegt, dass die beiden Entities sich nicht überschneiden dann entspricht dies einem Zusammenstoß, bei dem das bewegende Entity zum Stillstand gekommen ist und als Resultat beide Entity sich nur berühren \ti{nicht schneiden}.
+Ist dies andererseits das Resultat eines direkten Aufrufs von \ti{setPosition(float x, float y)}, dann werden die Methoden \ti{onActiveCollide} oder \ti{onPassivCollide} aufgerufen.
 
 \paragraph{Framerate unabhängige Bewegung}
 
 Eine der grundsätzlichen Aufgaben eines Entities ist es sich zu bewegen. Als Benutzer dieses Frameworks hat man dazu zwei grundsätzliche Optionen.
 Einerseits kann man über \ti{setPosition(float x, float y)} das Entity in jedem Update Zyklus manuell auf eine Position setzen.
 Dies hat jedoch Nachteile. 
-Man muss sich bei dieser Methode selbst darum kümmern dass die Bewegung unabhängig von der Updaterate ist, den auch mit nur halb so vielen Updates pro Sekunde sollte sich jedes Entity immer noch gleich schnell bewegen. Andernfalls wäre das Spiel nur auf einem Rechner mit gleichen oder ähnlichen UPS \ti{Updates per second} wie denen des Entwicklerrechners spielbar.
+Man muss sich bei dieser Methode selbst darum kümmern, dass die Bewegung unabhängig von der Updaterate ist, denn auch mit nur halb so vielen Updates pro Sekunde sollte sich jedes Entity immer noch gleich schnell bewegen. Andernfalls wäre das Spiel nur auf einem Rechner mit gleichen oder ähnlichen UPS \ti{Updates per second} wie denen des Entwicklerrechners spielbar.
 Außerdem erschwert dies das Programmieren der allgemeinen Spiellogik. In den meisten Fällen denkt man über Objekte nicht in der Form von "An diesem Zeitpunkt sind sie an diesem Ort" sondern eher mit welcher Geschwindigkeit sie sich in welche Richtung bewegen oder wie stark sie beschleunigen.
 
-Um dies zu Lösen hat unser Entity - wie oben schon erwähnt - die Eigenschaften \keyword{speed} und \keyword{List<accelerations>}. Als Programmierer kann man nun entweder den Vektor Geschwindigkeit (\keyword{speed}) beeinflussen um dem Entity eine Geschwindigkeit und eine Richtung vorzugeben, oder man gibt ihm eine oder mehrere Beschleunigungen (\keyword{accelerations}) welche ihrerseits wiederum Vektoren sind welche die Geschwindigkeit beeinflussen. Die genaue Berechnung der Position wird dann von Entity selber übernommen und Framerate unabhängig berechnet. Ein zusätzlicher Vorteil dieses Weges ist, dass man besser mit Kollisionen arbeiten kann. Hat man festgelegt, dass sich zwei Entities nicht überschneiden dürfen, dann bewegen sich dies nicht ineinander. Es werden die Entities stattdessen nur soweit bewegt bis sie sich berühren und danach wird die Geschwindigkeit auf null gesetzt.
+Um dies zu Lösen hat unser Entity - wie oben schon erwähnt - die Eigenschaften \keyword{speed} und \keyword{List<accelerations>}. Als Programmierer kann man nun entweder den Vektor Geschwindigkeit (\keyword{speed}) beeinflussen um dem Entity eine Geschwindigkeit und eine Richtung vorzugeben, oder man gibt ihm eine oder mehrere Beschleunigungen (\keyword{accelerations}) welche ihrerseits wiederum Vektoren sind welche die Geschwindigkeit beeinflussen. Die genaue Berechnung der Position wird dann von Entity selber übernommen und Framerate unabhängig berechnet. Ein zusätzlicher Vorteil dieses Weges ist, dass man besser mit Kollisionen arbeiten kann. Hat man festgelegt, dass sich zwei Entities nicht überschneiden dürfen, dann bewegen sich diese nicht ineinander. Es werden die Entities stattdessen nur soweit bewegt bis sie sich berühren und danach wird die Geschwindigkeit auf null gesetzt.
 
-Intern wird deshalb nach jedem \ti{update()} die Methode \ti{updateMovements(float delta)} aufgerufen. \keyword{delta} ist hierbei die Zeit (in millisekunden) die seit dem letzten Update vergangen ist, bei 60 FPS sollte die ungefähr 17 ms sein. Zur Sicherheit ist dieser Wert bei 100ms gedeckelt. Damit einzelne Lag Spikes nicht dazu führen dass innerhalb eines Frames Objekte eine sehr große Distanz zurücklegen, dies würde auch die Kollisionserkennung stark beeinträchtigen.
+Intern wird deshalb nach jedem \ti{update()} die Methode \ti{updateMovements(float delta)} aufgerufen. \keyword{delta} ist hierbei die Zeit (in millisekunden) die seit dem letzten Update vergangen ist, bei 60 FPS sollte die ungefähr 17 ms sein. Zur Sicherheit ist dieser Wert bei 100ms gedeckelt. Damit einzelne Lag Spikes nicht dazu führen, dass innerhalb eines Frames Objekte eine sehr große Distanz zurücklegen, dies würde auch die Kollisionserkennung stark beeinträchtigen.
 
 \subparagraph{Beweis Korrektheit}
 
@@ -105,7 +105,7 @@ Schauen wir uns im Vergleich dazu die echten physikalischen Zusammenhänge an. D
   x(t) &= x_0 + \int_0^t {v(t)}\,\mathrm{d}t
 \end{align*}
 
-Die Berechnung von Geschwindigkeit v und Position x benötigt jeweils ein Integral über eine kontinuierliche Funktion, da wir uns aber in einem zeit diskreten Raum befinden könne wir hierfür das Riemann-Integral einsetzen. %TODO cite{} Riemann Referenz !!
+Die Berechnung von Geschwindigkeit v und Position x benötigt jeweils ein Integral über eine kontinuierliche Funktion, da wir uns aber in einem Zeit diskreten Raum befinden könne wir hierfür das Riemann-Integral einsetzen. %TODO cite{} Riemann Referenz !!
 
 \quickfigure{Riemann-Integral über die Beschleunigung eiens Entities}{Riemann_acc-speed}{0.85}
 
@@ -144,7 +144,7 @@ Daraus ergeben sich dann also die Formeln
 
 Welches wieder unserem ursprünglichen Algorithmus entspricht. Wir haben also bewiesen, dass unabhängig von der Update rate unser Algorithmus im Zeit diskreten Raum für $\dt \rightarrow 0$ korrekt ist. Zwar ist $\dt $ in unserem Fall größer null, jedoch stimmt unsere Simulation annähernd immer noch mit der Realität überein, und mehr wollten wir ja auch nicht erreichen.
 
-Es ist noch festzuhalten, dass damit auch die Einheiten der einzelnen Attribute klar ist. die Position wird in Tiles festgehalten und die Geschwindigkeit somit in $\frac{Tiles}{s}$ und die Beschleunigung entsprechend in $\frac{Tiles}{s^2}$.
+Es ist noch festzuhalten, dass damit auch die Einheiten der einzelnen Attribute klar ist. Die Position wird in Tiles festgehalten und die Geschwindigkeit somit in $\frac{Tiles}{s}$ und die Beschleunigung entsprechend in $\frac{Tiles}{s^2}$.
 
 \paragraph{Spezielle Entities}
 

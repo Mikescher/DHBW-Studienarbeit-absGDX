@@ -16,7 +16,7 @@ Die einzelnen Tiles müssen von der abstrakten Klasse \keyword{Tile} abgeleitet 
 
 \paragraph{Ermitteln der absoluten Größe}
 
-Intern besitzen alle Tiles die Dimension 1.0 x 1.0. Beim eigentlichen Anzeigen müssen diese Werte jedoch auf eine konkrete Pixelzahl skaliert werden. Dies kann komplex werden da besonders mobile Geräte in einer Vielzahl an Auflösungen und Verhältnissen kommen. Außerdem kann es anwendungsspezifische Vorgaben geben, wie beispielsweise eine minimal Anzahl an Tiles die auf jeden Fall sichtbar sein sollten.
+Intern besitzen alle Tiles die Dimension 1.0 x 1.0. Beim eigentlichen Anzeigen müssen diese Werte jedoch auf eine konkrete Pixelzahl skaliert werden. Dies kann komplex werden da besonders mobile Geräte in einer Vielzahl an Auflösungen und Verhältnissen kommen. Außerdem kann es anwendungsspezifische Vorgaben geben, wie beispielsweise eine minimale Anzahl an Tiles die auf jeden Fall sichtbar sein sollten.
 Um dies zu lösen gibt es verschiedene Ansätze, jeweils repräsentiert durch eine Klasse abgeleitet von \keyword{AbstractMapScaleResolver}.
 Ein MapScaleResolver berechnet aus den Kartendimensionen und den Dimensionen des Anzeigegerätes die echte Höhe und Breite eines Tiles in pixel.
 Standardmäßig sind in absGDX sechs verschiedene MapScaleResolver enthalten:
@@ -32,8 +32,8 @@ Hier wird immer die komplette Karte angezeigt, falls das Verhältnis von Kartenb
 \quickfigure{Visualisierung des ShowCompleteMapScaleResolver}{tilemap_complete}{1.0}
   
 \subparagraph{MaximumBoundaryMapScaleResolver} 
-Bei dieser Lösung wird eine Grenzfläche festgelegt die \textbf{immer} angezeigt wird, beispielsweise 3 mal 3 Tiles. 
-Es kann vorkommen dass mehr Tiles angezeigt werden (z.B.: 3x3.5 Tiles), es ist jedoch garantiert dass die Grenzfläche selbst immer zu sehen ist.
+Bei dieser Lösung wird eine Grenzfläche festgelegt die \textbf{immer} angezeigt wird, beispielsweise drei mal drei Tiles. 
+Es kann vorkommen dass mehr Tiles angezeigt werden (z.B.: 3x3.5 Tiles), es ist jedoch garantiert, dass die Grenzfläche selbst immer zu sehen ist.
 
 \quickfigure{Visualisierung des MaximumBoundaryMapScaleResolver}{tilemap_maximum}{1.0}
   
@@ -63,7 +63,7 @@ Ein Tile kann niemals kleiner als eine angegebene Anzahl Pixel werden, diese Reg
 
 Das Rendern der Karte wird von dem aktuellen Layer übernommen, dies ist in den meisten Fällen ein GameLayer da nur dieser eine TiledMap besitzt.
 In den meisten Fällen ist nicht die ganze Map sichtbar da der aktuelle MapScaleResolver die Tiles groß genug macht um mehr als das gesamte Display auszufüllen. Deshalb gibt es im \keyword{GameLayer} einen \ti{MapOffset}. Dieser gibt an wie weit die Karte in X und Y Richtung verschoben ist.
-Beim Rendern ist nun darauf zu achten dass man nur die Tiles rendert die ganz oder teilweise sichtbar sind, man könnte zwar auch einfach alle anzeigen dies wäre jedoch nicht sehr performant. Es ist jedoch einfach zu berechnen welche Tiles aktuell sichtbar sind:\cite[S 232f.]{DGIJ}
+Beim Rendern ist nun darauf zu achten, dass man nur die Tiles rendert die ganz oder teilweise sichtbar sind, man könnte zwar auch einfach alle anzeigen dies wäre jedoch nicht sehr performant. Es ist jedoch einfach zu berechnen welche Tiles aktuell sichtbar sind:\cite[S 232f.]{DGIJ}
 
 \doinline
 \begin{lstlisting}[caption=Ermitteln der aktuell sichtbare Tiles, title=\hspace{0 pt}, language=java]
@@ -94,7 +94,7 @@ TileMaps kann man mit dem Programm Tiled erstellen \cite{TILED} welche TMX Datei
 
 TMX unterstützt verschiedene Karten und Tilegrößen, mehrere Layer und auch fest eingebundene Tilesets. Die eigentlichen Daten sind entweder in XML, CSV oder als base64-binär Daten kodiert. Zusätzlich kann entweder keine, \ti{gzip} oder \ti{zlib} Kompression vorliegen\cite{TMXDOC}.
 
-Als XML Parser haben wir uns für die XMLReader Library entschieden, welche schon in LibGDX integriert ist und auf allen Zielplattformen funktioniert. XMLReader ist ein java-XML-DOM Parser, dies bedeutet dass die komplette Datei analysiert und in den Speicher geladen wird. Dies macht das Auswerten der Datei sehr einfach, verbraucht aber mehr Arbeitsspeicher als beispielsweise ein SAX-Parser. Da die TMX Dateien jedoch nicht sehr groß sind im Verhältnis zum gewöhnlich verfügbaren Arbeitsspeicher sollte dies keine Probleme bereiten.
+Als XML Parser haben wir uns für die XMLReader Library entschieden, welche schon in LibGDX integriert ist und auf allen Zielplattformen funktioniert. XMLReader ist ein java-XML-DOM Parser, dies bedeutet, dass die komplette Datei analysiert und in den Speicher geladen wird. Dies macht das Auswerten der Datei sehr einfach, verbraucht aber mehr Arbeitsspeicher als beispielsweise ein SAX-Parser. Da die TMX Dateien jedoch nicht sehr groß sind im Verhältnis zum gewöhnlich verfügbaren Arbeitsspeicher sollte dies keine Probleme bereiten.
 
 Das Parsen einer TMX Datei wird von der Klasse \keyword{TmxParser} übernommen. Nach dem Laden der XML Datei geht dieser zuerst die einzelnen Layer von dem niedrigsten angefangen durch. Für jeden Layer müssen die Daten dekodiert werden. Sind sie in gzip oder zlib komprimiert muss man sie zuerst dekomprimieren. Sind die Daten dann in XML kodiert kann der XOM Parser einfach ebenfalls die Daten parsen. Auch CSV kodierte Daten können recht einfach mit der in java enthaltenen \keyword{String.split} Funktion analysiert werden.
 Bei Base64 Daten ist der Prozess jedoch komplizierter. Zuerst muss der String als Reihe von Bytes interpretiert werden. Danach gruppiert man jeweils 3 bytes zusammen und interpretiert sie als Little-Endian unsigned 32bit-Integer. Der entstehende Int32-Array sind dann die GIDs der Tiles.
