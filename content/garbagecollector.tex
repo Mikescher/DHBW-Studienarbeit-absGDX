@@ -1,2 +1,9 @@
 % Vermeiden
 % Vector problem
+
+Wie schon im paragraph ``Immutable Objects'' angesprochen ist ein Flaschenhals der Performance der GarbageCollector.
+Vor allem auf den mobilen Plattformen, welche ja unser hauptsächliches Produktionsziel sind, wird der GC sehr häufig aufgerufen. Dies daran, dass wir auf einem Handy viel weniger Hauptspeicher zur Verfügung haben als auf einem Desktop PC und der Garbagecollector deshalb öfters neuen Speicher frei machen muss \ti{(Bei unseren tests hatten wir 13 MB max Heapspace auf einem Smartphone und 123 MB auf einem PC)}.
+
+\quickfigure{Verlauf des RAMs unter Betrachtung des GC}{garbagecollectorgraph}{0.95}
+
+Das Resultat für uns besteht darin, dass wir versuchen sehr sparsam mit dem Speicher umzugehen. Es wird versucht die Lifetime von Objekten zu erhöhen, so dass wir sie über einen großen Zeitraum immer wieder verwenden. Dafür vor allem hilfreich sind Object-pools. Dies sind Sammlungen an häufig benutzen Objekten, welche man sich aus dem Pool nehmen kann ohne eine neue Instanz erzeugen zu müssen.
