@@ -1,2 +1,6 @@
-% float vs double
-% Only render visible tiles / entities
+Da die entstehenden Programme hauptsächlich auf Android laufen müssen ist die Performance des Frameworks ein wichtiges Feature.
+
+Deshalb haben wir an vielen Stellen uns GEdanken darüber gemacht wie man bestimmte Operationen performant ausführen kann. Einige Optimierungen wurden uns bereits von LibGDX vorgegeben. Zum Beispiel wird über das gesamte Framework hinweg \textbf{float} als Datentyp für Positionen und Berechnungen benutzt, einfach weil die Genauigkeit von Single-Precision-Floatingpoint ausreicht für alle unsere Bedürfnisse.
+
+Da wir das Rendern von Texturen über die LibGDX Klasse \keyword{BatchRenderer} ausführen bekommen wir auch hier automatisch eine Optimierung geliefert. Der \keyword{BatchRenderer} versucht nämlich selbständig mehrere Draw Calls zu bündeln und somit die Renderzeit zu verringern.
+

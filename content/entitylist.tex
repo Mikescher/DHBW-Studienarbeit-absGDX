@@ -1,2 +1,35 @@
-% Entities: ArrayList <> LinkedList
-% SortedLinkedList (=> Sort on add, O notation) // http://stackoverflow.com/a/322742/1761622
+Um sämtliche Entities verwalten zu könne braucht der \keyword{GameLayer} eine Datenstruktur um diese zu sammeln. Die offensichtliche Lösung hierfür ist eine Listen Implementation. Um nicht von einer speziellen Implementation abhängig zu sein bietet Java das \keyword{List<T>} Interface an.
+
+Ein Problem, dass wir auch gleich mit der EntityListe lösen wollen ist der Z-Layer der Entities. Entities besitzen die \ti{Z-Layer} Eigenschaft um zu definieren welcher Entities visuell vorne liegen. In OpenGL/LibGDX müssen wir das so lösen, dass Entities die weiter vorne liegen als letztes gerendert werden. Würden wir die Entities ohne Ordnung in der Liste speichern, müsste man diese jedes mal neu sortieren bevor man die Entities rendert. 
+Unsere Lösung hierfür ist zu garantieren, dass die Liste nach jedem Insert/Delete nach Z-Layer sortiert bleibt. Und da die leere Liste per Definition schon sortiert ist bedeutet dies, dass unsere Entityliste an jedem Punkt im Programm \ti{(außer mitten währen eines Inserts/Deletes)} sortiert ist. Beim rendern muss man die Entities dann nur noch in der Reihenfolge in der sie auch in der Liste sind rendern.
+
+Wir führen hauptsächlich drei verschiedene Operationen auf der Liste aus:
+
+\begin{itemize}
+\item\textbf{insert:} Wir fügen neue Entities in die Liste ein (Zusätzlich muss die Liste hier auch eventuell neu sortiert werden)
+\item\textbf{delete:} Wir löschen Entities aus der Liste (Die Liste bleibt dabei automatisch sortiert)
+\item\textbf{iterate:} An mehreren Stellen iterieren wir durch die ganze Liste um eine Aktion auf allen Entities auszuführen
+\end{itemize}
+
+Unsere erste Optimierung ist, dass wir neue Entities nicht wahllos ans Ende der Liste anfügen und dann sortieren. Stattdessen iterieren wir durch die Liste bis wir die richtige Position für das Entity gefunden haben, dann fügen wir das Entity an diese Stelle in der Liste ein.
+
+Die Standardimplementation von Listen in Java ist die \keyword{ArrayList}. Wir benutzen jedoch die Klasse \keyword{LinkedList} welche anstatt auf einem dynamischen Array auf einer doppelt verlinkten Liste basiert.
+
+\begin{table}[h]
+\begin{tabular}{|r|l|l|}
+\hline
+Aktion          & LinkedList             & ArrayList        \\ \hline
+Insert          & $ \mathcal O(n)       $ & $ \mathcal O(1) $ \\ \hline
+Insert+Sort     & $ \mathcal O(n + n^2) $ & $ \mathcal O(n) $ \\ \hline
+Delete          & $ \mathcal O(n)       $ & $ \mathcal O(1) $ \\ \hline
+Iterate         & $ \mathcal O(n)       $ & $ \mathcal O(n) $ \\ \hline
+Access by index & $ \mathcal O(1)       $ & $ \mathcal O(n) $ \\ \hline
+\end{tabular}
+\end{table} %TODO Referenz für O-Notation Werte  /* http://stackoverflow.com/a/322742/1761622 */
+
+Wie wir sehen hat die \keyword{LinkedList} vor allem beim Einfügen \ti{mit Erhalten der Sortiert Eigenschaft} einen Vorteil. Besitzt man schon einen Iterator an die Stelle an die man ein Element einfügen möchte ist das Einfügen in einer \keyword{LinkedList} $\mathcal O(1)$. Bei einer \keyword{ArrayList} ist es hingegen $\mathcal O(n)$, da im Extremfall alle Elemente einen Speicherbereich nach rechts verschoben werden müssen.
+Der große Vorteil von ArrayListen ist der Random-Zugriff per Index. Dieser wird in unserem Framework aber nie benutzt, in fast allen Fällen iterieren wir durch alle Entities um auf allen eine Aktion auszuführen.
+
+Um eine einfache Möglichkeit anzubieten diese automatisch sortierte Liste zu verwenden haben wir die die Klasse \keyword{SortedLinkedEntityList} geschrieben. Intern verwendet diese eine \keyword{LinkedList} um ihre Daten zu speichern. Diese Implementation ist beim Einfügen von vielen Entities bis zu viermal schneller als eine ArrayListe mit gleicher Funktion:
+
+\quickfigure{Performancevergleich LinkedList vs. ArrayList}{entity_insert}{0.95}
