@@ -1,2 +1,12 @@
 % Vermeiden
-% Vector problem
+% Vector problem 
+
+Eines unserer großen anfänglichen Probleme war die Objekterzeugung im Renderloop. Es ist zwar sehr angenehm Klassen wie zum Beispiel \keyword{Vector2} immutable \ti{(unveränderlich)} zu gestalten, so dass ihr Wert nach der Erstellung nicht mehr geändert werden kann.
+Dies führt jedoch dazu, dass viele dieser Objekte erstellt und gleich danach wieder verworfen werden. Für eine einfache Vektoraddition müssen zum Beispiel drei Vektoren allokiert werden, zwei für die Summanden und einer für das Ergebnis.
+Dies kann vor allem dann problematisch wenn die render/update Methode nicht länger als 16 Millisekunden brauchen darf um eine FPS von 60 zu erreichen.
+
+Die offensichtliche Lösung ist es für solche Objekte keine immutablen Klassen zu verwenden, deshalb kann unsere \keyword{Vector2} und \keyword{Vector3} Klasse auch nach dem Erzeugen noch verändert werden.
+
+Dies birgt natürlich auch Gefahren. Beispielsweise hat ein Entity ein Objekt vom Typ \keyword{Vector2} welche seine Position speichert. Ruft man nun \ti{getPosition()} auf wird dieser Vektor zurückgegeben. Das Entity vertraut nun darauf , dass die Methode welche \ti{getPosition()} aufruft nur lesend auf den Vektor zugreift \ti{(dies wird auch nochmal im javadoc beschrieben)}. Falls sich die aufrufende Methode jedoch nicht daran hät kann es zu undefiniertem Verhalten kommen.
+
+Der Performancevorteil durch veränderliche Objekte ist auf dem Dektop nicht sehr stark zu bemerken, jedoch auf der mobilen Plattform macht dies den Unterschied ob man 60 FPS mit seinem Programm erreicht.

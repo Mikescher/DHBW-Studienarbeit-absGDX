@@ -1,1 +1,1 @@
-*see [absGDX](https:://www.github.com/Mikescher/absGDX)*
+*see [absGDX](https://www.github.com/Mikescher/absGDX)*
