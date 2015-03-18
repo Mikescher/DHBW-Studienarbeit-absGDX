@@ -8,6 +8,7 @@
 .\settings.tex
 .\title.tex
 .\mainbib.bib
+.\content\backgrounds.tex
 .\content\ci.tex
 .\content\cocos2d.tex
 .\content\collisiondetection.tex
