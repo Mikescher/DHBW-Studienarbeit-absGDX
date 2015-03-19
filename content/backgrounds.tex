@@ -1,7 +1,7 @@
-In verschiedenen Fällen kann es vorkommen dass Bildschirmbereiche nicht von einer Textur bedeckt sind. Zum Beispiel sorgt der \keyword{ShowCompleteMapScaleResolver} fast immer dafür, dass man den ``Hintergrund'' hinter den MapTiles sieht. Außerdem haben \keyword{EmptyTiles} keine Textur zum rendern und so kann man auch durch sie hindurchsehen. Und auch normale Tile Texturen könne transparente Stellen besitzen.
+In verschiedenen Fällen kann es vorkommen, dass Bildschirmbereiche nicht von einer Textur bedeckt sind. Zum Beispiel sorgt der \keyword{ShowCompleteMapScaleResolver} fast immer dafür, dass man den ``Hintergrund'' hinter den MapTiles sieht. Außerdem haben \keyword{EmptyTiles} keine Textur zum rendern und so kann man auch durch sie hindurchsehen. Auch normale Tile Texturen könne transparente Stellen besitzen.
 
 Die Frage ist also, was hinter den Tiles ist: Hierfür gibt es die Hintergrundobjekte, mit ihnen kann man einen Hintergrund definieren.
-Dies kann zum Beispiel bei Maps aus der Seitenansicht benutzt werden um einen Himmel darzustellen.
+Dies kann zum Beispiel bei Maps aus der Seitenansicht benutzt werden, um einen Himmel darzustellen.
 
 \quickfigure{Eine Seitensansichts-Map mit Hintergrund}{sidescroller_background}{0.7}
 
@@ -21,12 +21,12 @@ Außerdem kann man diesen Hintergrund benutzen um einfach eine einfarbige Fläch
 
 \paragraph{ParallaxBackground}
 
-Dieser Hintergrundtyp ist ein parallax-scrollender Hintergrund. Dies bedeutet dass er aus nur einer einzigen Textur besteht, welche sich mit dem Kartenoffset zusammen bewegt. Um einen echten parallaxen Effekt zu bekommen muss man mehrere dieser Hintergründe benutzen, welche sich unterschiedlich schnell bewegen. Dies erzeugt dann die Illusion von mehreren Ebenen, die unterschiedlich weit weg vom Spieler sind.
+Dieser Hintergrundtyp ist ein parallax-scrollender Hintergrund. Dies bedeutet, dass er aus nur einer einzigen Textur besteht, welche sich mit dem Kartenoffset zusammen bewegt. Um einen echten parallaxen Effekt zu bekommen muss man mehrere dieser Hintergründe benutzen, welche sich unterschiedlich schnell bewegen. Dies erzeugt dann die Illusion von mehreren Ebenen, die unterschiedlich weit weg vom Spieler sind.
 
-Die Geschwindigkeit mit der sich ein Hintergrund im Verhältnis zum Spieler (und damit im Verhältnis zur Karte) bewegt hängt von seinen Dimensionen ab. Der Hintergund scrollt genau so schnell dass er bei einem X-Offset von 0\% links am Bildschirm anliegt und bei einem Offset von 100\% rechts am Bildschirm.
+Die Geschwindigkeit mit der sich ein Hintergrund im Verhältnis zum Spieler (und damit im Verhältnis zur Karte) bewegt hängt von seinen Dimensionen ab. Der Hintergund scrollt genau so schnell, dass er bei einem X-Offset von 0\% links am Bildschirm anliegt und bei einem Offset von 100\% rechts am Bildschirm.
 
 \quickfigure{Erklärung zu Hintergründen mit Bewegungsparallaxe}{parallax}{0.775}
 
-Wie man sieht ist es für die Textur wichtig mindestens so breit und hoch wie der Bildschirm zu sein. Für einen ``normalen'' parallaxen Effekt sollte di eTextur auch kleiner als die Karte sein. Ist sie im Gegensatz breiter \ti{(oder höher)} als die Karte gelten immer noch die gleichen Regeln wie zuvor, was dazu führt dass der Hintergrund sich in die entgegengesetzte Richtung wie die Karte bewegt.
+Wie man sieht ist es für die Textur wichtig mindestens so breit und hoch wie der Bildschirm zu sein. Für einen ``normalen'' parallaxen Effekt sollte die Textur auch kleiner als die Karte sein. Ist sie im Gegensatz breiter \ti{(oder höher)} als die Karte gelten immer noch die gleichen Regeln wie zuvor, was dazu führt, dass der Hintergrund sich in die entgegengesetzte Richtung wie die Karte bewegt.
 
 %TODO Referenz zu Bewegungsparallaxe
