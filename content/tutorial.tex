@@ -1,0 +1,465 @@
+Der folgende Paragraph wurde automatisiert generiert. Für eine passendere Darstellung sehen Sie sich bitte das gerenderte Markdown direkt (z.B: auf GitHub) an.
+
+
+\subsection{absGDX - Quick Guide (First Steps)}
+
+In this short guide you will learn the basic skill set to develop a mobile game with absGDX.
+This guide is nowhere near complete - it is only a starting point for your development. If you want to get deeper into absGDX look at the javadoc, the example programs and perhaps the (documented) source code.
+
+\paragraph{Set up }
+
+First download the LibGDX Setup app from their \hyperlink{http://libgdx.badlogicgames.com/}{website}. Create a LibGDX project with the sub projects \fcolorbox{mdlightergray}{mdlightergray}{Desktop} and \fcolorbox{mdlightergray}{mdlightergray}{Android}.
+Then download the \fcolorbox{mdlightergray}{mdlightergray}{absGDX.jar} from the \hyperlink{https://github.com/Mikescher/absGDX}{github repository} and put it into the LibGDX project folder \textit{(I put it into an sub-folder named "lib")}.
+Now you need to add the absGDX dependency to our core project, open the \fcolorbox{mdlightergray}{mdlightergray}{build.gradle} file in the project root folder and add to the core project a new dependency:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=groovy]
+project(":core") {
+    apply plugin: "java"
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    	compile files("lib/absGDX-framework-??.??.jar")
+    }
+}
+\end{lstlisting}
+
+Now execute \fcolorbox{mdlightergray}{mdlightergray}{gradlew cleanEclipse eclipse} to generate the new eclipse project files or \fcolorbox{mdlightergray}{mdlightergray}{gradlew cleanIdea idea} to generate IntelliJ Idea project files.
+You can now program your project on the desktop (and also execute it there). If you want to build it for android run \fcolorbox{mdlightergray}{mdlightergray}{gradlew android:assembleRelease}
+
+\paragraph{absGDX Basics}
+
+absGDX is only an extension to LibGDX, so your code will still be in the core project. It is generally recommended to have at least a little bit of knowledge of LibGDX.
+For the basics you need \textit{(at least)} these three files:
+
+\begin{itemize}
+\item A font-file to display the debugtext (you can use the consolefont.fnt from this \hyperlink{https://github.com/Mikescher/absGDX/tree/master/android/assets}{repository}). Put this file in the \fcolorbox{mdlightergray}{mdlightergray}{android/assets} folder to put it into the assembly resources
+\item A \fcolorbox{mdlightergray}{mdlightergray}{Textures.java} file to organize and load all your texture-assets:
+\end{itemize}
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public final class Textures {
+	public static Texture exampleTex;
+	public static TextureRegion[][] example;
+	public static void init() {
+		exampleTex = new Texture("example.png");
+		example = TextureHelper.load2DArray(exampleTex, 64, 32);
+	}
+\end{lstlisting}
+
+\begin{itemize}
+\item A class derived from \fcolorbox{mdlightergray}{mdlightergray}{AgdxGame}. This will be your application object and everything you will do happens inside of this class:
+\end{itemize}
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class DemoGame extends AgdxGame {	
+	@Override
+	public void onCreate() {
+		Textures.init();
+		
+		setDebugFont(new BitmapFont(Gdx.files.internal("consolefont.fnt")));
+	}
+	@Override
+	public void onUpdate(float delta) {
+		// Show debug stuff via [F1]
+		if (Gdx.input.isKeyJustPressed(Keys.F1)) settings.debugEnabled.doSwitch();
+	}
+}
+\end{lstlisting}
+
+\paragraph{A top-down game}
+
+Now to the basic game building. Derive a class from \fcolorbox{mdlightergray}{mdlightergray}{GameLayer} for your game and push this layer in the AgdxGame constructor onto the layer stack \textit{(the layers are organized in an stack - only the top-most layer will be active)}
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public void onCreate() {
+	Textures.init();
+	
+	pushLayer(new TDLayer(this));
+	
+	setDebugFont(new BitmapFont(Gdx.files.internal("consolefont.fnt")));
+}
+\end{lstlisting}
+
+\subparagraph{The map}
+
+A game is build out of tiles \textit{(= maptiles)} and entities. You need to supply the GameLayer super-constructor with the map, either you create the map manually in the code or you load it from the resources.
+First the generation via code:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public TDLayer(AgdxGame owner) {
+	super(owner, loadMap());
+}
+private static TileMap loadMap() {
+	TileMap t = TileMap.createEmptyMap(16, 16);
+	for (int x = 0; x < 16; x++) {
+		for (int y = 0; y < 16; y++) {
+			t.setTile(x, y, new TDTile());
+		}
+	}
+}
+\end{lstlisting}
+
+This is not really feasible for bigger maps, so you can also create you maps with the \hyperlink{http://www.mapeditor.org/}{Tiled Map Editor} and save them as tmx-files in the assets folder.
+Now you need to map the TMX-GID's to different TileClasses. But if you have a lot of different tiles with no special functionality (except the different textures) you can add a default mapping. And if you use an AutoTile as the fallback value, it will automatically find its textures from an provided tileset (the same as you used in Tiled)
+\textbf{loadMap:}
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+private static TileMap loadMap() {
+	TmxMapLoader loader = new TmxMapLoader(Gdx.files.internal("demomap.tmx"));
+	
+	loader.addMapping(1290, MyTile.class);
+	loader.addMapping(1291, OtherTile.class);
+	loader.addMapping(1258, PlayerTile.class);
+	
+	loader.addDefaultMapping(MyAutoTile.class);
+	
+	try {
+		return loader.start();
+	} catch (TmxMapParsingException e) {
+		e.printStackTrace();
+		return null;
+	}
+}
+\end{lstlisting}
+
+\textbf{MyAutoTile.java}
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class MyAutoTile extends AutoTile {
+	public MyAutoTile(HashMap<String, String> properties) {
+		super(Textures.texmap, 16, 16, properties);
+	}
+	@Override
+	public void update(float delta) {
+		// NOP
+	}
+	@Override
+	public boolean canMoveCollideWith(CollisionGeometryOwner other) {
+		return false;
+	}
+}
+\end{lstlisting}
+
+\textbf{MyTile.java}
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class MyTile extends Tile {
+	public MyTile() {
+		super(Textures.tex\_mytile);
+	}
+	@Override
+	public void update(float delta) {
+		// NOP
+	}
+	@Override
+	public boolean canMoveCollideWith(CollisionGeometryOwner other) {
+		return false;
+	}
+}
+\end{lstlisting}
+
+If you want to only partially show the map you need to set the MapScaleResolver:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+	public TDLayer(AgdxGame owner) {
+		super(owner, loadMap());
+		setMapScaleResolver(new SectionMapScaleResolver(32, 18, 0.5f, 20f));
+	}
+\end{lstlisting}
+
+The MapScaleResolver determines how much of the Map is shown, you can either define your own, or use one of the premade ones:
+
+\begin{itemize}
+\item \textbf{FixedMapScaleResolver:} Use a fixed size
+\item \textbf{ShowCompleteMapScaleResolver:} Always show the complete map
+\item \textbf{MaximumBoundaryMapScaleResolver:} Always show at least n tiles, if the aspect ratio forces it show more ... but never less
+\item \textbf{MinimumBoundaryMapScaleResolver:} Never show a more than tiles, if the aspect ratio forces it show less ... but never more
+\item \textbf{LimitedMinimumBoundaryMapScaleResolver:} A MinimumBoundaryMapScaleResolver, but it always show at least x% of the boundary
+\item \textbf{SectionMapScaleResolver} A LimitedMinimumBoundaryMapScaleResolver, but with an fixed minimum size of a single tile.
+\end{itemize}
+
+For more information you can look at the documentary of these classes. In our example we never show more than 32x18 tiles. We never cut away more than 50% of this boundary and one tile is at least 20x20 pixel in size.
+
+\subparagraph{The entities}
+
+Tiles are pretty static, to have dynamic objects you need to add entities to your gameworld. To create entities derive fromthe class \fcolorbox{mdlightergray}{mdlightergray}{Entity}.
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class MyEntity extends Entity {
+	public MyEntity() {
+		super(Textures.tex\_entity, 2, 2);
+		setPosition(7, 7);
+	}
+	@Override
+	public void onLayerAdd(GameLayer layer) {}
+	
+	@Override
+	public void beforeUpdate(float delta) {}
+}
+\end{lstlisting}
+
+And to add the Entity call the \fcolorbox{mdlightergray}{mdlightergray}{addEntity()} method on the GameLayer:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public TDGameLayer(AgdxGame owner) {
+	super(owner, loadMap());
+	setMapScaleResolver(new SectionMapScaleResolver(32, 18, 0.5f, 20f));
+	addEntity(new MyEntity());
+}
+\end{lstlisting}
+
+Entities have an integrated frame-independent movement system. You can set their speed an acceleration and their movement is calculated by the framework:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+private Vector2 acceleration = addNewAcceleration();
+public MyEntity() {
+	super(Textures.tex\_entity, 2, 2);
+	setPosition(7, 7);
+}
+@Override
+public void onLayerAdd(GameLayer layer) {
+	speed.set(0.001f, 0);
+}
+@Override
+public void beforeUpdate(float delta) {
+	if (getPositionX() < 20)
+		acceleration.set(0.00001f, 0f);
+	else
+		acceleration.setZero();
+}
+\end{lstlisting}
+
+Entities have a lot of different properties and features, it is recommended to read the documentary for this class \textit{(an the other ones you want to use)}. Here a few examples:
+You can provide the entity an animation instead of an static texture:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+super(Textures.tex\_animation, 500f, 2, 2.53f); // tex\_animation is an array
+\end{lstlisting}
+
+You can dynamically scale/rotate/flip the texture
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+@Override
+public float getTextureScaleX() { 
+	return 1f;
+}
+@Override
+public float getTextureScaleY() {
+	return -1f;
+}
+@Override
+public float getTextureRotation() {
+	return 45;
+}
+\end{lstlisting}
+
+You can automatically scroll the map to an entity (so this entity is on-screen)
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class TDGameLayer extends GameLayer {
+	/\textit{  ...  }/
+	
+	@Override
+	public void onUpdate(float delta) {
+		scrollMapToEntity(myEntity, 2);
+	}
+}
+\end{lstlisting}
+
+\subparagraph{Collision Detection}
+
+absGDX features an own collision-detection and movement-collision system.
+In every tile and entity you have the methods \fcolorbox{mdlightergray}{mdlightergray}{canCollideWith(CollisionGeometryOwner other)} and \fcolorbox{mdlightergray}{mdlightergray}{canMoveCollideWith(CollisionGeometryOwner other)}. With \fcolorbox{mdlightergray}{mdlightergray}{canCollideWith} you set determine if two objects can generally collide with each other \textit{(= throw the collision event)} and with \fcolorbox{mdlightergray}{mdlightergray}{canMoveCollideWith} you determine if two objects can move into each other. If they can't then the object will stop when they "crash" into each other. It is your responsibility to assure that \fcolorbox{mdlightergray}{mdlightergray}{a.canCollideWith(b) == b.canCollideWith(a)}, otherwise strange and unwanted behaviour can occur.
+Tiles have an rectangular collisionGeometry by default, entities have no collision-geometry by default. To add a new geometry call the \fcolorbox{mdlightergray}{mdlightergray}{addGeometry()} method. There are three different types of geometries:
+
+\begin{itemize}
+\item CollisionRectangle
+\item CollisionCircle
+\item CollisionTriangle
+\end{itemize}
+
+One Entity can have multiple geometries, and by combination you can create arbitrary complex collision models.
+If you want only a simple geometry use teh helper method \fcolorbox{mdlightergray}{mdlightergray}{addFullCollisionBox()}, \fcolorbox{mdlightergray}{mdlightergray}{addFullCollisionCircle} or \fcolorbox{mdlightergray}{mdlightergray}{addFullCollisionTriangle}:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class MyEntity extends Entity {
+	public MyEntity() {
+		super(Textures.tex\_entity, 2, 2);
+		setPosition(7, 7);
+		addFullCollisionBox();
+	}
+	@Override
+	public void onLayerAdd(GameLayer layer) {}
+	
+	@Override
+	public void beforeUpdate(float delta) {}
+}
+\end{lstlisting}
+
+The collision events are provided through methods in the Tile and Entity class. If an collision occurs between two objects on the source object the \textit{active} method is called and on the other the \textit{passive} method. Also if it is an movement collision (\fcolorbox{mdlightergray}{mdlightergray}{canMoveCollideWith == true}) the method with the suffix \fcolorbox{mdlightergray}{mdlightergray}{Movement} is called:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+	@Override
+	public void onActiveCollide(CollisionGeometryOwner passiveCollider, CollisionGeometry myGeo, CollisionGeometry otherGeo) {
+		// COLLISION
+	}
+	@Override
+	public void onPassiveCollide(CollisionGeometryOwner activeCollider, CollisionGeometry myGeo, CollisionGeometry otherGeo) {
+		// COLLISION
+	}
+	@Override
+	public void onActiveMovementCollide(CollisionGeometryOwner passiveCollider, CollisionGeometry myGeo, CollisionGeometry otherGeo) {
+		// COLLISION
+	}
+	@Override
+	public void onPassiveMovementCollide(CollisionGeometryOwner activeCollider, CollisionGeometry myGeo, CollisionGeometry otherGeo) {
+		// COLLISION
+	}
+\end{lstlisting}
+
+\paragraph{A sidescroller}
+
+It looks like a sidescroller should be generally different from a top-down game. But everything stays the same except you have gravity on your entities.
+To have objects with gravity derive your entities from \fcolorbox{mdlightergray}{mdlightergray}{PhysicsEntity} and set their mass to any value except zero.
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class MyEntity2 extends PhysicsEntity {
+	public MyEntity2() {
+		super(Textures.tex\_entity, 2, 2);
+		setPosition(x, y);
+	}
+	@Override
+	public void onLayerAdd(GameLayer layer) {
+		addFullCollisionBox();
+		setMass(10);
+	}
+}
+\end{lstlisting}
+
+The gravity is just an constant acceleration downwards with \fcolorbox{mdlightergray}{mdlightergray}{mass * PhysicsEntity.GRAVITY\_CONSTANT}
+The other important thing about an sidescroller is  that most tiles should be impassable by the player-entity (\fcolorbox{mdlightergray}{mdlightergray}{canMoveCollideWith() == true}). So the player and NPC entities actually collide with the floor etc.
+
+\paragraph{A simple menu}
+
+In addition to the concrete game you will need most of the time an menu to display before and after the actual gameplay.
+
+\subparagraph{A manual menu}
+
+If you derive your layer from \fcolorbox{mdlightergray}{mdlightergray}{MenuLayer} you get an Menu. A Menu is build from multiple MenuElements \textit{(all elements have the base class MenuBaseElement)}.
+The framework provides you with an basic set of elements (buttons, edits, panels etc). Every MenuLayer has the root element, you can start adding your elements on this root element:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class DemoMenu extends MenuLayer {
+	public ManualMenu(AgdxGame owner) {
+		super(owner, new BitmapFont(Gdx.files.internal("consolefont.fnt")));
+		final MenuLabel l = new MenuLabel();
+		l.setBoundaries(75, 30, 450, 40);
+		l.setContent("menu demo");
+		getRoot().addChildren(l);
+		final MenuRadioButton rb1 = new MenuRadioButton(prov);
+		rb1.setBoundaries(25, 145, 250, 30);
+		rb1.setContent("Option 1");
+		getRoot().addChildren(rb1);
+		final MenuRadioButton rb2 = new MenuRadioButton(prov);
+		rb2.setBoundaries(25, 185, 250, 30);
+		rb2.setContent("Option 2");
+		getRoot().addChildren(rb2);
+		
+		final MenuButton bnext = new MenuButton(prov);
+		bnext.setBoundaries(400, 25, 175, 40);
+		bnext.setContent("example");
+		bnext.setColor(Color.WHITE);
+		bnext.addButtonListener(new MenuButtonListener() {
+			@Override
+			public void onClicked(MenuBaseElement element, String identifier) { System.out.println("TRIGGERED"); }
+		});
+		getRoot().addChildren(bnext);
+	}
+	@Override
+	public void onResize() {
+		getRoot().setWidth(owner.getScreenWidth());
+		getRoot().setHeight(owner.getScreenHeight());
+		
+		root.setPosition((getRoot().getWidth() - root.getWidth())/2, (getRoot().getHeight() - root.getHeight())/2);
+	}
+}
+\end{lstlisting}
+
+Most elements need an set of textures to display them. For this purpose you can give every element an \fcolorbox{mdlightergray}{mdlightergray}{GUITextureProvider} which contains the needed texture (for example from an UI Kit).
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+GUITextureProvider prov = new GUITextureProvider();
+prov.setMenuButtonTexture(Textures.tex\_buttongui[0], VisualButtonState.NORMAL);
+prov.setMenuButtonTexture(Textures.tex\_buttongui[1], VisualButtonState.HOVERED);
+prov.setMenuButtonTexture(Textures.tex\_buttongui[2], VisualButtonState.PRESSED);
+prov.setMenuButtonTexture(Textures.tex\_buttongui[3], VisualButtonState.DISABLED);
+prov.setMenuPanelTexture(Textures.tex\_panelgui);
+prov.setMenuEditTexture(Textures.tex\_textfield, false);
+prov.setMenuEditTexture(Textures.tex\_textfield\_focus, true);
+\end{lstlisting}
+
+You should set the needed textures for every component you use \textit{(see javadoc)}, otherwise the default style will be used.
+
+\subparagraph{An AGDXML menu}
+
+Instead of defining the menu layout in code, with a lot of instructions, you can create an AGDXML file as an layout definition and load it from the assets.
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=xml]
+<?xml version="1.0" encoding="UTF-8"?>
+<frame textures="provider1" >
+	<grid container="true">
+		<grid.columndefinitions width="20, 2\textit{, 10, 1}, 20" />
+		<grid.rowdefinitions   height="8%, 40, 4%, 1*, 4%" />
+		
+		<label grid.row="1" grid.column="1" content="read me"/>
+		<image grid.row="3" grid.column="3" texture="ani\_01" animation="750" id="myImage001"/>
+		<edit grid.row="3" grid.column="1" text="edit me" textColor="BLACK" halign="LEFT" />
+		<button grid.row="2" gird.column="3" text="click me" onCLicked="onBtnClicked" />
+	</grid>
+</frame>
+\end{lstlisting}
+
+For simpler usage you can use the menudesigner tool (int this repository) to create these files. It shows you syntactical errors and provides a live preview of your layout. It also displays the possible tags and parameters.
+On other big advantage of this method is that you can make dynamic layout that automatically fit into different screen sizes. In the above example you can see a panel-definition that is grid-seperated. The sub-components are aligned at these rows and columns. \textit{(For more information see the AGDXML documentation and teh menudesigner)}.
+To load an AGDXML file you need to derivate your MenuLayer from the class \fcolorbox{mdlightergray}{mdlightergray}{AgdxmlLayer}. Be aware that you still need to provide an GUITextureProvider to show the elements with their respective textures:
+
+\doinline
+\begin{lstlisting}[caption=Markdown Tutorial: fenced code block, title=\hspace{0 pt}, language=java]
+public class DemoMenu extends AgdxmlLayer {
+	public DemoMenu(AgdxGame owner) throws AgdxmlParsingException {
+		super(owner, new BitmapFont(Gdx.files.internal("consolefont.fnt")), Gdx.files.internal("demomenu.agdxml"));
+	}
+	@Override
+	public void initialize() {
+		GUITextureProvider prov = new GUITextureProvider();
+		/\textit{ ... }/
+		
+		addAgdxmlGuiTextureProvider("provider1", prov);
+		addAgdxmlImageTexture("ani\_01", Textures.tex\_animation);
+	}
+	@SuppressWarnings("unused") // event listener
+	public void onBtnClicked(MenuBaseElement element, String identifier) {
+		System.out.println("button clicked");
+	}
+\end{lstlisting}

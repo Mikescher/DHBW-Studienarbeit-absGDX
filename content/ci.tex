@@ -1,4 +1,4 @@
-Zusammen mit den Unittests und Git wenden wir auch noch eine dritte Praktik an: \ti{Continuous Integration}.
+gZusammen mit den Unittests und Git wenden wir auch noch eine dritte Praktik an: \ti{Continuous Integration}.
 Jedes mal wenn jemand auf den main-Branch unseres Repositories pushed wird automatisch ein Skript auf einem Buildserver ausgeführt.
 Dieses Skript \ti{cloned} die Repository lokal auf den Buildserver und versucht den Code zu kompilieren. Dies wird zusätzlich vereinfacht durch unsere Benutzung von Gradle und dem gradlewrapper. Wir müssen nur \keyword{gradlew} mit den jeweiligen Parametern aufrufen und Gradle lädt automatisch alle benötigten Dependencies nach und buildet das Projekt.
 
