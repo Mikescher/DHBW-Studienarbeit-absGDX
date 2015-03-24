@@ -7,10 +7,10 @@ Zusätzlich gibt es verschiedene Optionen die angeben wie das Framework sich ver
 
 \paragraph{Framework Optionen}
 
-Eine Instanz der Klasse \keyword{DependentProperty} repräsentiert einen einzelnen Wert. Dies ist meist ein Wahrheitswert kann aber auch ein String oder eine Zahl sein.
+Eine Instanz der Klasse \keyword{DependentProperty} repräsentiert einen einzelnen Wert. Dies ist meist ein Wahrheitswert kann aber auch ein String, eine Farbe oder eine Zahl sein.
 Der besondere Vorteil ist, dass jede Property von einer anderen abhängig sein kann. Eine Einstellung ist nur dann aktiv wenn alle Einstellungen von denen er abhängig ist ebenfalls aktiv sind. Daraus entsteht dann ein Abhängigkeitsbaum der einzelnen Einstellungen.
 
-\quickfigure{Die absGDX Einstellungen in Baumdarstellung}{settings_deptree}{0.7} %TODO Update Graph (many new settings)
+\quickfigure{Die absGDX Einstellungen in Baumdarstellung}{settings_deptree}{0.9} %TODO Update Graph (many new settings)
 
 Dies ist beispielsweise für die Debugoptionen in absGDX nützlich: Wird die übergeordnete Option \ti{debugmode} deaktiviert sind auch alle anderen untergeordneten Debugoptionen deaktiviert. 
 Ist die Einstellung ein Boolean entscheidet sich ob sie aktiv ist einfach mittels ihres Wertes. 
@@ -19,12 +19,7 @@ Bei String-Properties werden alle Werte außer \keyword{null} als wahr gewertet 
 Zusätzlich zu den normalen DependentProperties gibt es auch noch speziellere Subklassen:
 
 \begin{itemize}
-\item \keyword{ConstantBooleanProperty:} Dies ist eine BooleanProperty die nicht mehr veränderlich ist. Dies ist nützlich für zur Compile-zeit festgelegte Werte (wie ob der Debugmode überhaupt möglich ist)
+\item \keyword{ConstantBooleanProperty:} Dies ist eine BooleanProperty die nicht mehr veränderlich ist. Dies ist nützlich für zur Compilezeit festgelegte Werte (wie ob der Debugmode überhaupt möglich ist)
 \item \keyword{MetaProperty:} Diese Einstellung ist immer wahr und dient der Kategorisierung mehrere anderer Einstellungen unter sich.
 \item \keyword{RootProperty:} Dies ist ähnlich einer \keyword{MetaProperty} kann jedoch keine Abhängigkeiten haben und bildet somit die Wurzel des Baumes.
-%TODO Es gibt noch mehr Properties - seit neustem
 \end{itemize}
-
-\paragraph{Laden und Speichern}
-
-%TODO Loading and Saving
