@@ -7,6 +7,6 @@ Dies kann vor allem dann problematisch wenn die render/update Methode nicht län
 
 Die offensichtliche Lösung ist es für solche Objekte keine immutablen Klassen zu verwenden, deshalb kann unsere \keyword{Vector2} und \keyword{Vector3} Klasse auch nach dem Erzeugen noch verändert werden.
 
-Dies birgt natürlich auch Gefahren. Beispielsweise hat ein Entity ein Objekt vom Typ \keyword{Vector2} welche seine Position speichert. Ruft man nun \ti{getPosition()} auf wird dieser Vektor zurückgegeben. Das Entity vertraut nun darauf , dass die Methode welche \ti{getPosition()} aufruft nur lesend auf den Vektor zugreift \ti{(dies wird auch nochmal im javadoc beschrieben)}. Falls sich die aufrufende Methode jedoch nicht daran hät kann es zu undefiniertem Verhalten kommen.
+Dies birgt natürlich auch Gefahren. Beispielsweise hat ein Entity ein Objekt vom Typ \keyword{Vector2} welche seine Position speichert. Ruft man nun \ti{getPosition()} auf wird dieser Vektor zurückgegeben. Das Entity vertraut nun darauf, dass die Methode welche \ti{getPosition()} aufruft nur lesend auf den Vektor zugreift \ti{(dies wird auch nochmal im javadoc beschrieben)}. Falls sich die aufrufende Methode jedoch nicht daran hält, kann es zu undefiniertem Verhalten kommen.
 
 Der Performancevorteil durch veränderliche Objekte ist auf dem Dektop nicht sehr stark zu bemerken, jedoch auf der mobilen Plattform macht dies den Unterschied ob man 60 FPS mit seinem Programm erreicht.

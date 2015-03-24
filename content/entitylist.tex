@@ -1,7 +1,7 @@
 Um sämtliche Entities verwalten zu könne braucht der \keyword{GameLayer} eine Datenstruktur um diese zu sammeln. Die offensichtliche Lösung hierfür ist eine Listen Implementation. Um nicht von einer speziellen Implementation abhängig zu sein bietet Java das \keyword{List<T>} Interface an.
 
 Ein Problem, dass wir auch gleich mit der EntityListe lösen wollen ist der Z-Layer der Entities. Entities besitzen die \ti{Z-Layer} Eigenschaft um zu definieren welcher Entities visuell vorne liegen. In OpenGL/LibGDX müssen wir das so lösen, dass Entities die weiter vorne liegen als letztes gerendert werden. Würden wir die Entities ohne Ordnung in der Liste speichern, müsste man diese jedes mal neu sortieren bevor man die Entities rendert. 
-Unsere Lösung hierfür ist zu garantieren, dass die Liste nach jedem Insert/Delete nach Z-Layer sortiert bleibt. Und da die leere Liste per Definition schon sortiert ist bedeutet dies, dass unsere Entityliste an jedem Punkt im Programm \ti{(außer mitten währen eines Inserts/Deletes)} sortiert ist. Beim rendern muss man die Entities dann nur noch in der Reihenfolge in der sie auch in der Liste sind rendern.
+Unsere Lösung hierfür ist zu garantieren, dass die Liste nach jedem Insert/Delete nach Z-Layer sortiert bleibt. Und da die leere Liste per Definition schon sortiert ist, bedeutet dies, dass unsere Entityliste an jedem Punkt im Programm \ti{(außer mitten währen eines Inserts/Deletes)} sortiert ist. Beim rendern muss man die Entities dann nur noch in der Reihenfolge in der sie auch in der Liste sind rendern.
 
 Wir führen hauptsächlich drei verschiedene Operationen auf der Liste aus:
 
@@ -27,9 +27,9 @@ Access by index & $ \mathcal O(1)       $ & $ \mathcal O(n) $ \\ \hline
 \end{tabular}
 \end{table} %TODO Referenz für O-Notation Werte  /* http://stackoverflow.com/a/322742/1761622 */
 
-Wie wir sehen hat die \keyword{LinkedList} vor allem beim Einfügen \ti{mit Erhalten der Sortiert Eigenschaft} einen Vorteil. Besitzt man schon einen Iterator an die Stelle an die man ein Element einfügen möchte ist das Einfügen in einer \keyword{LinkedList} $\mathcal O(1)$. Bei einer \keyword{ArrayList} ist es hingegen $\mathcal O(n)$, da im Extremfall alle Elemente einen Speicherbereich nach rechts verschoben werden müssen.
+Wie wir sehen, hat die \keyword{LinkedList} vor allem beim Einfügen \ti{mit Erhalten der Sortiert Eigenschaft} einen Vorteil. Besitzt man schon einen Iterator an die Stelle an die man ein Element einfügen möchte, ist das Einfügen in einer \keyword{LinkedList} $\mathcal O(1)$. Bei einer \keyword{ArrayList} ist es hingegen $\mathcal O(n)$, da im Extremfall alle Elemente einen Speicherbereich nach rechts verschoben werden müssen.
 Der große Vorteil von ArrayListen ist der Random-Zugriff per Index. Dieser wird in unserem Framework aber nie benutzt, in fast allen Fällen iterieren wir durch alle Entities um auf allen eine Aktion auszuführen.
 
-Um eine einfache Möglichkeit anzubieten diese automatisch sortierte Liste zu verwenden haben wir die die Klasse \keyword{SortedLinkedEntityList} geschrieben. Intern verwendet diese eine \keyword{LinkedList} um ihre Daten zu speichern. Diese Implementation ist beim Einfügen von vielen Entities bis zu viermal schneller als eine ArrayListe mit gleicher Funktion:
+Um eine einfache Möglichkeit anzubieten diese automatisch sortierte Liste zu verwenden haben wir die Klasse \keyword{SortedLinkedEntityList} geschrieben. Intern verwendet diese eine \keyword{LinkedList} um ihre Daten zu speichern. Diese Implementation ist beim Einfügen von vielen Entities bis zu viermal schneller als eine ArrayListe mit gleicher Funktion:
 
 \quickfigure{Performancevergleich LinkedList vs. ArrayList}{entity_insert}{0.95}

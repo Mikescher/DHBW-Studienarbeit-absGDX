@@ -1,8 +1,8 @@
 % Vermeiden
 % Vector problem
 
-Wie schon im paragraph ``Immutable Objects'' angesprochen ist ein Flaschenhals der Performance der GarbageCollector.
-Vor allem auf den mobilen Plattformen, welche ja unser hauptsächliches Produktionsziel sind, wird der GC sehr häufig aufgerufen. Dies daran, dass wir auf einem Handy viel weniger Hauptspeicher zur Verfügung haben als auf einem Desktop PC und der Garbagecollector deshalb öfters neuen Speicher frei machen muss \ti{(Bei unseren tests hatten wir 13 MB max Heapspace auf einem Smartphone und 123 MB auf einem PC)}.
+Wie schon im paragraph ``Immutable Objects'' angesprochen, ist ein Flaschenhals der Performance der GarbageCollector.
+Vor allem auf den mobilen Plattformen, welche ja unser hauptsächliches Produktionsziel sind, wird der GC sehr häufig aufgerufen. Dies liegt daran, dass wir auf einem Handy viel weniger Hauptspeicher zur Verfügung haben als auf einem Desktop PC und der Garbagecollector deshalb öfters neuen Speicher frei machen muss \ti{(Bei Tests wurden 13 MB max Heapspace auf einem Smartphone und 123 MB auf einem PC gemessen)}.
 
 \quickfigure{Verlauf des RAMs unter Betrachtung des GC}{garbagecollectorgraph}{0.95}
 
