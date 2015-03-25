@@ -78,7 +78,7 @@ public Rectangle getVisibleMapBox() {
 
 \paragraph{Laden aus dem TMX Format}
 
-TileMaps kann man mit dem Programm Tiled erstellen \cite{TILED} welche TMX Dateien erstellt. Da dies ein bekanntes Format ist habe wir auch in absGDX die Funktion implementiert solche Dateien zu laden. Eine TMX Datei ist eine einfache xml Datei mit einem vorgegebenen Format \cite{TMXDOC}:
+TileMaps kann man mit dem Programm Tiled erstellen \footnote{\url{http://www.mapeditor.org/}} welche TMX Dateien erstellt. Da dies ein bekanntes Format ist habe wir auch in absGDX die Funktion implementiert solche Dateien zu laden. Eine TMX Datei ist eine einfache xml Datei mit einem vorgegebenen Format \footnote{\url{http://mapeditor.org/dtd/1.0/map.dtd}}:
 
 \doinline
 \begin{lstlisting}[caption=Beipiel einer TMX Datei, title=\hspace{0 pt}, language=xml]
@@ -92,7 +92,7 @@ TileMaps kann man mit dem Programm Tiled erstellen \cite{TILED} welche TMX Datei
 </map>
 \end{lstlisting}
 
-TMX unterstützt verschiedene Karten und Tilegrößen, mehrere Layer und auch fest eingebundene Tilesets. Die eigentlichen Daten sind entweder in XML, CSV oder als base64-binär Daten kodiert. Zusätzlich kann entweder keine, \ti{gzip} oder \ti{zlib} Kompression vorliegen\cite{TMXDOC}.
+TMX unterstützt verschiedene Karten und Tilegrößen, mehrere Layer und auch fest eingebundene Tilesets. Die eigentlichen Daten sind entweder in XML, CSV oder als base64-binär Daten kodiert. Zusätzlich kann entweder keine, \ti{gzip} oder \ti{zlib} Kompression vorliegen\footnote{\url{https://github.com/bjorn/tiled/wiki/TMX-Map-Format\#data}}.
 
 Als XML Parser haben wir uns für die XMLReader Library entschieden, welche schon in LibGDX integriert ist und auf allen Zielplattformen funktioniert. XMLReader ist ein java-XML-DOM Parser, dies bedeutet, dass die komplette Datei analysiert und in den Speicher geladen wird. Dies macht das Auswerten der Datei sehr einfach, verbraucht aber mehr Arbeitsspeicher als beispielsweise ein SAX-Parser. Da die TMX Dateien jedoch nicht sehr groß sind im Verhältnis zum gewöhnlich verfügbaren Arbeitsspeicher sollte dies keine Probleme bereiten.
 

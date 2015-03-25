@@ -5,7 +5,7 @@
 % Vector compare
 
 Um die Codequalität zu erhöhen haben wir uns entschieden unseren Code mit Unittests abzusichern.
-Die Unittests schreiben wir mit Test-Framework jUnit 4 \cite{JUNIT}. Dies hat den Vorteil, dass es schon fertige Eclipse Plugins gibt um die Tests auszuführen und die Ergebnisse zu visualisieren.
+Die Unittests schreiben wir mit Test-Framework jUnit 4 \footnote{\url{http://junit.org/}}. Dies hat den Vorteil, dass es schon fertige Eclipse Plugins gibt um die Tests auszuführen und die Ergebnisse zu visualisieren.
 
 \quickfigure{Beispiel der jUnit Test Anzeige}{junit-overview}{0.6}
 
@@ -38,7 +38,7 @@ Da wir hier Gleitkommazahlen vergleichen, welche eine endliche Genauigkeit haben
 
 \paragraph{Parametrisierte Tests}
 
-Ein Feature von jUnit 4, dass wir benutzen sind die parametrisierten Tests\cite{JUPT}. 
+Ein Feature von jUnit 4, dass wir benutzen sind die parametrisierten Tests\footnote{\url{https://github.com/junit-team/junit/wiki/Parameterized-tests}}. 
 Hierbei führt man einen Test mehrmals unter verschiedenen Voraussetzungen aus. 
 Wir benutzen dies intensiv bei den Tests der Kollisionserkennung. 
 Jeder Kollisionstest wird mit mehreren verschiedenen Collisionmap-Größen ausgeführt. 
@@ -49,7 +49,7 @@ Und bei Unittests ist die Performance in soweit nicht sehr wichtig da sie nur ab
 \paragraph{Android Build Probleme}
 
 Ein Problem, dass wir mit jUnit jedoch hatten war der Android Build Vorgang. 
-Anfangs waren all unsere Unittests in dem \keyword{absGDX-framework} Projekt. Deshalb war dieses Projekt von jUnit abhängig und jUnit ist seinerseits von der Hamcrest Bibliothek abhängig\cite{HCRST}. 
+Anfangs waren all unsere Unittests in dem \keyword{absGDX-framework} Projekt. Deshalb war dieses Projekt von jUnit abhängig und jUnit ist seinerseits von der Hamcrest Bibliothek abhängig\footnote{\url{http://hamcrest.org/JavaHamcrest/}}. 
 Das Android Projekt \keyword{android}, dass wir zum Kompilieren für Android verwenden ist von den Android Libraries und \keyword{absGDX-framework} abhängig.
 Problematisch wird es hier jedoch da auch die Standard Android Libraries Hamcrest enthalten und Hamcrest im root Ordner der jar/apk eine Datei \ti{LICENSE.txt} anlegen will. Der Android Compiler verbietet es jedoch, dass zwei Libraries die gleiche Datei anlegen wollen (auch wenn es in diesem Fall zweimal die gleiche Bibliothek ist).
 Gradle hat hierfür eine Lösung. Mit der Einstellung packagingOptions.exclude kann man Dateien aus dem Paket ausschließen. Der Eclipse Compiler ist jedoch nicht so intelligent und somit führt das alles dazu, dass wir nur noch mit gradle das Android projekt bauen können und nicht mehr direkt in Eclipse.

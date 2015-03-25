@@ -2,14 +2,14 @@ Zwar commiten wir unser Code mit git in unsere Repository, jedoch nicht alle Dat
 
 Trotzdem sind Libraries und IDE-Dateien wichtig und eine dritte Person, die das Projekt zum ersten mal öffnet sollte diese Dateien nicht erst selbst erstellen beziehungsweise manuell herunterladen müssen.
 
-Um diese Probleme kümmert sich nun ein weiteres Tool namens gradle \cite{GRADLE}. Gradle ist ein Build-Managment-Automatisierung-Tool was bedeutet, dass wir in unser Git-Repository nur noch die gradle Konfigurationsdateien commiten und diese dann jeweils auf den Entwicklerrechnern ausführen. Diese löst dann die Projektabhängigkeiten auf und lädt fehlende Libraries automatisch nach und erstellt außerdem Dateien wie die IDE-Projektdateien automatisch.
+Um diese Probleme kümmert sich nun ein weiteres Tool namens gradle \footnote{\url{http://www.gradle.org/}}. Gradle ist ein Build-Managment-Automatisierung-Tool was bedeutet, dass wir in unser Git-Repository nur noch die gradle Konfigurationsdateien commiten und diese dann jeweils auf den Entwicklerrechnern ausführen. Diese löst dann die Projektabhängigkeiten auf und lädt fehlende Libraries automatisch nach und erstellt außerdem Dateien wie die IDE-Projektdateien automatisch.
 
 \paragraph{Dependency Management}
 
 In gradle kann man angeben von welchen Bibliotheken oder Projekten ein Programm abhängig ist. Diese Bibliotheken können dann wiederum von anderen Bibliotheken abhängig sein und so bildet sich ein Abhängigkeitsbaum ausgehen vom Anfangsprojekt.
 Gradle lädt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil, dass wenn eine Bibliothek öfters im Abhängigkeitsbaum auftaucht sie trotzdem nur einmal geladen werden muss.\cite[S. 55]{BATWG}
 
-Gradle unterstützt viele verschiedene Repositories in welcher nach fehlenden Bibliotheken gesucht werden kann, standardmäßig wird jedoch die \ti{Maven Central Repository} \cite{MCENTRAL} benutzt.
+Gradle unterstützt viele verschiedene Repositories in welcher nach fehlenden Bibliotheken gesucht werden kann, standardmäßig wird jedoch die \ti{Maven Central Repository} \footnote{\url{http://search.maven.org/}} benutzt.
 In dieser Repository sind sehr viele der frei verfügbaren java Libraries in vielen Versionen enthalten und können zum Beispiel einfach über gradle geladen werden.
 
 \paragraph{Konfiguration}
