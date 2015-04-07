@@ -35,10 +35,10 @@
 
 Eine wichtige Funktionalität, die unser Framework übernehmen soll ist es Kollisionen zwischen Entities zu erkennen. Beispielsweise muss ein Spiel erkennen ob das Spieler-Entity gerade mit einem Gegner kollidiert oder ob die Kugel-Entities etwas treffen. Eine solche Kollisionserkennung kann man unterschiedlich komplex implementieren, da unser Framework als primäre Zielplattform jedoch mobile Geräte hat ist hierbei die Performance besonders wichtig.
 
-Das Ziel ist es nun ein Algorithmus zu entwickeln, welcher folgende Eigenschaften erfüllt:
+Das Ziel ist es nun ein Algorithmus zu entwickeln, welcher folgende Eigenschaften erfüllt:\cite[S 73]{KRAY}
 
 \begin{itemize}
-\item Der Algorithmus sollte auch bei vielen Entities auf der Karte noch schnell sein und die \ti{Update-Time} nicht unnötig erhöhen
+\item Der Algorithmus sollte auch bei vielen Entities auf der Karte noch schnell sein und die \ti{Update-Time} nicht unnötig erhöhen \cite[S 14f]{KRAY}
 \item Der Algorithmus sollte genau sein und weder \ti{False-Positives} noch \ti{False-Negatives} haben. Zwar kann es Anwendungen geben, wo eine genaue Erkennung nicht immer nötig ist, doch da unser Framework für eine Vielzahl an Anwendungen funktionieren soll muss der Algorithmus exakt sein.
 \item Es sollte möglich sein Entities ohne Kollisionserkennung hinzuzufügen ohne dass diese Einfluss auf die \ti{Update-Time} haben.
 \end{itemize}
@@ -171,7 +171,7 @@ public boolean doGeometriesIntersect(CollisionTriangle a, CollisionBox b) {od
 
 \subparagraph{CollisionTriangle}
 
-Kollisionsgeometrien in der Form von Dreiecken sind unsere letzte Möglichkeit. Es ist zu Beachten, dass diese auch am aufwendigsten zu berechnen sind. Trotzdem kann man mit ihrer Hilfe nahezu beliebig komplexe Strukturen darstellen. Genauer gesagt ist es mit Polynom Triangulation möglich jedes Polygon in Dreiecke zu zerlegen. %TODO Ref zu Polynom Triangualation
+Kollisionsgeometrien in der Form von Dreiecken sind unsere letzte Möglichkeit. Es ist zu Beachten, dass diese auch am aufwendigsten zu berechnen sind. Trotzdem kann man mit ihrer Hilfe nahezu beliebig komplexe Strukturen darstellen. Genauer gesagt ist es mit Polynom Triangulation möglich jedes Polygon in Dreiecke zu zerlegen.  \cite[S 32]{KRAY}
 
 Den Fall Kollision mit einem Kreis beziehungsweise mit einem Rechteck haben wir in den vorherigen Kapiteln schon besprochen. Das einzige was noch übrig bleibt ist die Kollision mit einem anderen Dreieck. Hierbei ist die Vorgehensweise jedoch die Gleiche wie bei der Dreieck-Rechteck Kollision. Wir suchen nach Kanten die sich überschneiden und beachten die beiden Sonderfälle in denen eine Geometrie komplett innerhalb der anderen liegt.
 
@@ -381,9 +381,9 @@ Nun gibt es in der Klasse \keyword{CollisionListener} auch noch Events für solc
 
 Ein Problem können hier Entities mit mehreren \keyword{CollisonGeometries} sein. Hierbei muss drauf geachtet werden, dass alle Geometrien in der Kollision beachtet werden und jeweils der größte "Rücksetz-Wert" benutzt wird.
 
-Ein weiteres Problem sind entstehende Rundungsfehler bei Verwendung von FloatingPoint Zahlen. Führt man den Algorithmus exakt so wie oben beschrieben aus kann es vorkommen, dass sich die beiden Geometrien auch nach dem Rücksetzen immer noch leicht schneiden. Der einzige Weg um dieses Problem herum ist es einen delta Wert in der Berechnung des minimalen Abstands einzuführen. Damit wird nicht mehr der minimale Abstand zurückgeliefert sondern der minimale Abstand plus einen delta Wert. Somit können sich Entities nicht mehr "wirklich" berühren sondern nur noch bis maximal delta Einheiten nähern.
+Ein weiteres Problem sind entstehende Rundungsfehler bei Verwendung von FloatingPoint Zahlen. Führt man den Algorithmus exakt so wie oben beschrieben aus kann es vorkommen, dass sich die beiden Geometrien auch nach dem Rücksetzen immer noch leicht schneiden. Der einzige Weg um dieses Problem herum ist es einen delta Wert in der Berechnung des minimalen Abstands einzuführen.\cite[S 18]{KRAY} Damit wird nicht mehr der minimale Abstand zurückgeliefert sondern der minimale Abstand plus einen delta Wert. Somit können sich Entities nicht mehr "wirklich" berühren sondern nur noch bis maximal delta Einheiten nähern.
 
-Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. Falls die Update rate niedrig genug ist kann es vorkommen, dass ein Objekt links neben einem anderen ist und sich dann schnell genug nach rechts bewegt um im nächsten Schritt rechts neben dem Objekt zu sein. Obwohl sich das Entity nun direkt durch ein anderes bewegt hat, wurde an keiner Stelle eine Kollision bemerkt. Zwar gibt es mathematische Ansätze dieses Problem zu lösen, diese gehen jedoch auf Kosten der Performance. Einfacher ist es eine konstante Update-Rate aufrecht zu erhalten und keine extrem dünne Entities zu verwenden, wo Kollisionen wichtig sind.
+Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}. Falls die Update rate niedrig genug ist kann es vorkommen, dass ein Objekt links neben einem anderen ist und sich dann schnell genug nach rechts bewegt um im nächsten Schritt rechts neben dem Objekt zu sein. Obwohl sich das Entity nun direkt durch ein anderes bewegt hat, wurde an keiner Stelle eine Kollision bemerkt. Zwar gibt es mathematische Ansätze dieses Problem zu lösen, diese gehen jedoch auf Kosten der Performance.\cite[S 11ff]{KRAY} Einfacher ist es eine konstante Update-Rate aufrecht zu erhalten und keine extrem dünne Entities zu verwenden, wo Kollisionen wichtig sind.
 
 \quickfigure{Discrete-Time-Issue: Ein Objekt "phased" durch ein anderes}{discrete-time-issue_phasing}{1.0}
 
