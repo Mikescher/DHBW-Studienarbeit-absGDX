@@ -1,2 +1,2 @@
-compiler: pdflatex
+compiler: lualatex
 root_file: main.tex

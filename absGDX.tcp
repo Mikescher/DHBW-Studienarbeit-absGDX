@@ -6,7 +6,7 @@ Version=4
 MainFile=main.tex
 UseBibTeX=1
 UseMakeIndex=0
-ActiveProfile=LaTeX ⇨ PDF
+ActiveProfile=LuaLaTeX ⇨ PDF
 ProjectLanguage=de
 ProjectDialect=DE
 
