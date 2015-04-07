@@ -1,0 +1,13 @@
+Aus diesen verschiedenen Möglichkeiten haben wir als Basis für unser Framework LibGDX ausgewählt.
+
+Wir haben uns dagegen entschieden Cocos2D zu verwenden, da der native Code zwar Vorteile hat, eines unserer Ziele es jedoch war das Entwickeln von Spielen für den Entwickler zu vereinfachen, und dies geht mit einer interpretierten Sprache einfacher. Außerdem kommt Cocos2D schon mit einer so gut ausgebauten Sammlung an Werkzeugen für zweidimensionale Spiele, dass wir entweder nur sehr wenig selber zu programmieren hätten oder an vielen Stellen schon bestehende Funktionalitäten neu Schreiben müssten.
+
+MonoGame wäre unsere beste Wahl gewesen wenn es nicht einen starken Nachteil unter Android gäbe: Für Android gibt es keine kostenlose .NET VM und somit keinen kostenlosen Weg Programme die mit MonoGame geschrieben wurden auf Android auszuführen. Die einzigen bestehenden .NET Implementierungen unter Android sind kostenpflichtig und scheiden somit für uns aus.
+
+Unity ist zwar eine sehr potente Spiele Engine, macht es jedoch durch das abgeschlossene Ökosystem mit eigener IDE etc. nicht besonders einfach etwas eigenes darauf aufzubauen. Außerdem ist es primär eine 3D Engine mit sehr vielen Features für den dreidimensionalen Raum. Hier eine 2D Engine aufzubauen würde primär bedeuten Features wegzuschneiden und deshalb haben wir uns gegen Unity3D als Basis für unser Framework entschieden.
+
+Zum Schluss blieb nur noch LibGDX übrig:
+Wir haben uns für LibGDX entschieden weil es all unseren Anforderungen gerecht wurde, man kann Code (in Java) schreiben und sowohl für die DalvikVM als auch für die JVM kompilieren. LibGDX ermöglicht es mittels eines eigenen Wrappers plattformunabhängig auf OpenGL zuzugreifen, Trotzdem haben wir noch relativ direkten Zugriff auf die OpenGL API und können unser eigenes Rendering betreiben. Dies sorgt auch dafür, dass es leicht für uns ist OpenGL als zweidimensionalen Renderer zu benutzen.
+Da LibGDX Gradle als Build Tool verwendet ist es ebenfalls einfach LibGDX als Dependency in unserem eigenen Projekt einzubinden und somit stellt es kein Problem dar ein eigenes Framework zu bauen welches LibGDX als Grundlage für seine Plattformunabhängigkeit nimmt.
+
+Es ist noch zu erwähnen, dass LibGDX durchaus ein paar allgemein gehaltene Funktionen besitzt um die Spiele Entwicklung zu vereinfachen. Diese Benutzen wir jedoch nicht, da dass Ziel mit unserem Framework ist, einen viel spezielleren Fall (2D Tiled Games) abzudecken.
