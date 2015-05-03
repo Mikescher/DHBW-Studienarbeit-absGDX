@@ -6,6 +6,18 @@ MonoGame wäre unsere beste Wahl gewesen wenn es nicht einen starken Nachteil un
 
 Unity ist zwar eine sehr potente Spiele Engine, macht es jedoch durch das abgeschlossene Ökosystem mit eigener IDE etc. nicht besonders einfach etwas eigenes darauf aufzubauen. Außerdem ist es primär eine 3D Engine mit sehr vielen Features für den dreidimensionalen Raum. Hier eine 2D Engine aufzubauen würde primär bedeuten Features wegzuschneiden und deshalb haben wir uns gegen Unity3D als Basis für unser Framework entschieden.
 
+\begin{table}[h]
+\begin{tabular}{|l|l|c|c|c|c|l|l|}
+\hline
+          & Sprache   & Erweiterbar & Kostenlos & Performance & Auf PC testbar & Dynamik & Ausführung      \\ \hline
+Cocos2D-x & \ccB \CPP & \ccY O      & \ccG +    & \ccG +      & \ccG +         & \ccG 2D & \ccR Compile    \\ \hline
+MonoGame  & \ccB \CS  & \ccG +      & \ccR -    & \ccY O      & \ccG +         & \ccG 3D & \ccG JIT        \\ \hline
+Unity3D   & \ccB \CS  & \ccR -      & \ccG +    & \ccY O      & \ccG +         & \ccG 3D & \ccR Compile    \\ \hline
+LibGDX    & \ccB Java & \ccG +      & \ccG +    & \ccR -      & \ccG +         & \ccG 3D & \ccG JIT        \\ \hline
+\end{tabular}
+\caption{Vergleich verschiedener Spieleframeworks und Engines}
+\end{table}
+
 Zum Schluss blieb nur noch LibGDX übrig:
 Wir haben uns für LibGDX entschieden weil es all unseren Anforderungen gerecht wurde, man kann Code (in Java) schreiben und sowohl für die DalvikVM als auch für die JVM kompilieren. LibGDX ermöglicht es mittels eines eigenen Wrappers plattformunabhängig auf OpenGL zuzugreifen, Trotzdem haben wir noch relativ direkten Zugriff auf die OpenGL API und können unser eigenes Rendering betreiben. Dies sorgt auch dafür, dass es leicht für uns ist OpenGL als zweidimensionalen Renderer zu benutzen.
 Da LibGDX Gradle als Build Tool verwendet ist es ebenfalls einfach LibGDX als Dependency in unserem eigenen Projekt einzubinden und somit stellt es kein Problem dar ein eigenes Framework zu bauen welches LibGDX als Grundlage für seine Plattformunabhängigkeit nimmt.
