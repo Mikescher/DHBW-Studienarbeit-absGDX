@@ -1,0 +1,31 @@
+Für unser Framework haben wir uns im Voraus einige Punkte als Ziele zurechtgelegt. Dies sind vor allem Features welche uns von vorhandenen Spiele Frameworks unterscheiden sollen.
+
+\begin{itemize}
+	\item \tb{Schnelles Prototyping}
+	
+Unser Framework soll es erlauben eine Idee schnell in einen Prototyp umzusetzen. Dazu gehört einerseits, dass unser Framework dem Programmierer viel Arbeit abnimmt die in allen 2D Spielen vorhanden ist. Andererseits soll das Projekt schnell und einfach auszuführen sein. Am besten sollte das Projekt neben Android auch auf dem PC ausführbar sein und kurze Buildzeiten haben.
+
+	\item \tb{Abstraktion der darunterliegenden Plattform}
+	
+Unser Framework soll die Ein und Ausgabeoperationen der darunterliegenden Plattform abstrahieren. Der Zugriff auf Sensoren und Ausgabegeräte soll nicht über niedrigere Schichten passieren sondern über die Abstraktion welches unser Framework bietet.
+
+	\item \tb{Abstraktion des Low-Level Renderings (OpenGL)}
+	
+Jegliche Interaktion mit der Grafikkarte soll unser Framework abstrahieren. Der Benutzer soll nur den aktuellen Spielezustand \ti{(Gamestate)} über die Karte und die Entities (jeweils mit ihren Texturen) definieren. Das Zeichnen dieser Szenerie wird dann komplett vom Framework übernommen und eventuell optimiert.
+
+	\item \tb{Aufteilung des Gamestates in eine Map und einer Entityliste} \ti{(siehe \ref{sec:F1} und \ref{sec:F2})}
+	
+Alle Spiele sollen über eine Kombination von Karte (mit \keyword{MapTiles}) und Entityliste (mit \keyword{Entities}) darstellbar sein. Dies bedeutet sämtliche Logik und der komplette Gamestate ist in diesen beiden Konstrukten vorhanden. Was für unser Framework bedeutet, dass sowohl \keyword{MapTile} als auch \keyword{Entity} vielseitig genug sein müssen um alle Variationen von Spielen darstellen zu können.
+
+	\item \tb{Direkt integrierte 2D Physics} \ti{(siehe \ref{sec:F4})}
+	
+Über die Benutzung von Karte und Entityliste soll außerdem ein einfaches Physikmodell simuliert werden. Das bedeutet, dass man ohne größeren Mehraufwand Kollisionserkennung und Bewegung seinen Entities (wenn gewünscht) hinzufügen kann.
+
+	\item \tb{Direkt integrierte Multiplayer Unterstützung}
+	
+Ebenso wie die 2D Physics soll man auch ohne größeren Mehraufwand sein lokales Programm in ein Client-Server Programm umwandeln können. Mit diesem kann der Programmierer dann einen Mehrspieler in sein Programm integrieren.
+
+	\item \tb{Einfache Erstellung von dynamischen Menüs} \ti{(siehe \ref{sec:F8})}
+	
+Unser Framework soll die Möglichkeit enthalten Menüs zu integrieren. Da unsere Zielplattform Smartphones sind müssen diese Menüs dynamisch genug sein um sich an verschiedene Auflösungen und Seitenverhältnisse anzupassen. Außerdem sollen sämtliche Standardkomponenten (Labels, Edits, Buttons) vorhanden sein sowie die Möglichkeit zur Erweiterung bieten.
+\end{itemize}
