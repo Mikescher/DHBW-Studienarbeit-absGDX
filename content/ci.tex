@@ -1,6 +1,6 @@
-gZusammen mit den Unittests und Git wenden wir auch noch eine dritte Praktik an: \ti{Continuous Integration}.
-Jedes mal wenn jemand auf den main-Branch unseres Repositories pushed wird automatisch ein Skript auf einem Buildserver ausgeführt.
-Dieses Skript \ti{cloned} die Repository lokal auf den Buildserver und versucht den Code zu kompilieren. Dies wird zusätzlich vereinfacht durch unsere Benutzung von Gradle und dem gradlewrapper. Wir müssen nur \keyword{gradlew} mit den jeweiligen Parametern aufrufen und Gradle lädt automatisch alle benötigten Dependencies nach und buildet das Projekt.
+Zusammen mit den Unittests und Git wenden wir auch noch eine dritte Praktik an: \ti{Continuous Integration}.
+Immer wenn jemand auf den main-Branch unseres Repositories pusht wird automatisch ein Skript auf einem Buildserver ausgeführt.
+Dieses Skript \ti{clont} das Repository lokal auf den Buildserver und versucht den Code zu kompilieren. Dies wird zusätzlich vereinfacht durch unsere Benutzung von Gradle und dem gradlewrapper. Wir müssen nur \keyword{gradlew} mit den jeweiligen Parametern aufrufen und Gradle lädt automatisch alle benötigten Dependencies nach und buildet das Projekt.
 
 Als Buildserver benutzen wir den kostenlosen Online-Buildservice TravisCI \footnote{\url{https://travis-ci.org/Mikescher/absGDX}} welcher mit einer Textdatei ".travis.yml" im Repository root konfiguriert wird.
 
@@ -27,14 +27,14 @@ notifications:
     on_failure: always
 \end{lstlisting}
 
-Unser Skript ruft zuerst das OS command \keyword{chmod -x} auf der gradlewrapper Datei auf um sicherzustellen, dass wir die Rechte haben die Datei auszuführen. Dies ist nötig da unser CI Server Linux als Betriebssystem hat.
-Danach wird als erster Befehl \ti{gradlew desktop:assemble} aufgerufen. Dies führt den gradle Task \ti{desktop:assemble} aus, es wird versucht das Projekt zu einer jar zu kompilieren. Schlägt dies fehl, weil zum Beispiel gepushed wurde ohne den Code vorher getestet zu haben, dann schlägt das ganze Skript fehl und es wird eine Email an alle \ti{recipients} geschickt.
+Unser Skript ruft zuerst das OS command \keyword{chmod -x} auf der gradlewrapper Datei auf, um sicherzustellen, dass wir die Rechte haben die Datei auszuführen. Dies ist nötig da unser CI Server Linux als Betriebssystem hat.
+Danach wird als erster Befehl \ti{gradlew desktop:assemble} aufgerufen. Dies führt den gradle Task \ti{desktop:assemble} aus, es wird versucht das Projekt zu einer jar zu kompilieren. Schlägt dies fehl, weil zum Beispiel gepusht wurde, ohne den Code vorher getestet zu haben, dann schlägt das ganze Skript fehl und es wird eine Email an alle \ti{recipients} geschickt.
 
-Eigentlich müsste an dieser Stelle auch \ti{android:assemble} aufgerufen werden, leider ist dies auf dem Linux Server von Travis nicht möglich. Den Fall, dass das Projekt nur auf Android nicht mehr lauffähig ist haben wir also nicht automatische abgedeckt und dies müssen wir manuell testen.
+Eigentlich müsste an dieser Stelle auch \ti{android:assemble} aufgerufen werden. Leider ist dies auf dem Linux Server von Travis nicht möglich. Den Fall, dass das Projekt nur auf Android nicht mehr lauffähig ist haben wir also nicht automatische abgedeckt und dies müssen wir manuell testen.
 
-Nach dem erfolgreichen Build Vorgang werden die anderen Punkte unter \ti{script} abgearbeitet. Hier liegt die zweite Stärke von \ti{Continuous Integration} wir führen für alle Subprojekte die Unittests aus, vor allem für \keyword{absGDX-test}, in welchem sich alle Tests unseres Frameworks befinden.
+Nach dem erfolgreichen Build Vorgang werden die anderen Punkte unter \ti{script} abgearbeitet. Hier liegt die zweite Stärke von \ti{Continuous Integration}. Wir führen für alle Subprojekte die Unittests aus, vor allem für \keyword{absGDX-test}, in welchem sich alle Tests unseres Frameworks befinden.
 Es ist also gesichert, dass bei jedem Push auf den Main Branch automatisiert überprüft wird, ob das Projekt "broken" ist, sowohl vom reinen Compiler Standpunkt als auch von den Unittests her und in beiden Fällen werden alle Teilnehmer des Projektes jeweils per E-Mail über den Zustand informiert.
 
-Zusätzlich können sowohl Teilnehmer des Projektes als auch Personen die es benutzen wollen sich online den aktuellen Zustand ansehen:
+Zusätzlich können sowohl Teilnehmer des Projektes als auch Personen, die es benutzen wollen sich online den aktuellen Zustand ansehen:
 
 \quickfigure{Beispiel der Online Ansicht von TravisCI}{travis-results}{0.8}
