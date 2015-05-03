@@ -11,7 +11,7 @@ Das Erzeugen der entsprechenden HTML, CSS, und JS Dateien wird komfortabler Weis
 > gradlew absGDX-framework:javadoc
 \end{lstlisting}
 
-Die nächste Frage ist wo man das javadoc hosten soll. Hierfür gibt es bei unserem git Hoster GitHub die sogenannten \ti{GitHub-pages}. Mit ihnen kann man eine beliebige HTML Seite für jede Repository anlegen. Dafür pushed man die entsprechenden Dateien in ein eigenen Branch \textbf{gh-pages}. Unter der URL \ti{http://USERNAME.github.io/REPOSITORY/} kann man dann auf diese Webseite zugreifen. In unserem Fall kann man unter \href{http://mikescher.github.io/absGDX/javadoc/}{http://mikescher.github.io/absGDX/javadoc/} online die Dokumentation einsehen.
+Die nächste Frage ist wo man das javadoc hosten soll. Hierfür gibt es bei unserem git Hoster GitHub die sogenannten \ti{GitHub-pages}. Mit ihnen kann man eine beliebige HTML Seite für jede Repository anlegen. Dafür pusht man die entsprechenden Dateien in ein eigenen Branch \textbf{gh-pages}. Unter der URL \ti{http://USERNAME.github.io/REPOSITORY/} kann man dann auf diese Webseite zugreifen. In unserem Fall kann man unter \href{http://mikescher.github.io/absGDX/javadoc/}{http://mikescher.github.io/absGDX/javadoc/} online die Dokumentation einsehen.
 
 Trotzdem ist es müßig nach jeder Änderung die Dokumentation neu zu erstellen und hochzuladen. Dieser Prozess wartet nur darauf, dass man dies irgendwann einmal vergisst.
 Wir können jedoch unser Continuous Integration Skript verwenden um nicht nur das Projekt zu überprüfen sondern auch um automatisiert bei jedem \ti{push} auf das Repository die javadoc Dateien zu aktualisieren.
@@ -39,7 +39,7 @@ Danach kopieren wir die generierten Dateien in das Verzeichnis "tmp\_jd" und klo
 Die gerade geklonten Dateien löschen wir jedoch sofort wieder und ersetzen sie mit den Neuen. 
 Für unveränderte Dateien ist das effektiv eine No-Operation, nur geänderte Dateien wurden mit den neueren Versionen ersetzt. 
 Diese geänderten Exemplare werden dann mit \textbf{"git add"} zum index hinzugefügt. 
-Danach werden sie mit \textbf{"git commit"} committed und mit \textbf{"git push"} zum Remote (Github) gepushed.
+Danach werden sie mit \textbf{"git commit"} committed und mit \textbf{"git push"} zum Remote (Github) gepusht.
 
 \doinline
 \begin{lstlisting}[caption=Das Javadoc Publish Bashscript, title=\hspace{0 pt}, language=bash]
