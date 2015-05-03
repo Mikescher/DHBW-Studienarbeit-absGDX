@@ -9,7 +9,11 @@ Die Unittests schreiben wir mit Test-Framework jUnit 4 \footnote{\url{http://jun
 
 \quickfigure{Beispiel der jUnit Test Anzeige}{junit-overview}{0.6}
 
+<<<<<<< HEAD
 Das Ziel der Unittests ist es einen Großteil der Funktionen und Methoden des Frameworks zu testen, in dem sie mit verschiedenen Parametern getestet werden und dann überprüft wird ob die Ergebnisse stimmen.
+=======
+Das Ziel der Unittests ist es einen Großteil der Funktionen und Methoden des Frameworks zu testen in dem sie mit verschiedenen Parametern getestet werden und dann überprüft wird ob die Ergebnisse stimmen. \cite[S 62]{JUNIT}
+>>>>>>> f6ec095d251a3a989780b41a2bb20709ad93f825
 Besonders bei der Kollisionserkennung ist dies nützlich, da wir so überprüfen können ob nach Änderungen an der \keyword{Collisionmap} beispielsweise noch alle Kollisionen erkannt werden. Und es gibt sehr viele verschiedene Fälle von Kollisionen die überprüft werden müssen.
 
 \paragraph{Eigene Asserts}
@@ -17,7 +21,7 @@ Besonders bei der Kollisionserkennung ist dies nützlich, da wir so überprüfen
 Da das Ergebnis meist in Form eines \keyword{Vector2} vorliegt, haben wir eine Assert Methode geschrieben, welche überprüft ob zwei Vektoren gleich sind
 
 \doinline
-\begin{lstlisting}[caption=Eine Assert Methode für zwe Vektoren, title=\hspace{0 pt}, language=java]
+\begin{lstlisting}[caption=Eine Assert Methode für zwei Vektoren, title=\hspace{0 pt}, language=java]
 public static void assertEqualsExt(Rectangle expected, Rectangle actual, float epsilon) {
 	boolean a = !fcomp(expected.x, actual.x, epsilon);
 	boolean b = !fcomp(expected.y, actual.y, epsilon);

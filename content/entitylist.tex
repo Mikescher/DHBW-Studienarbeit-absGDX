@@ -25,6 +25,7 @@ Delete          & $ \mathcal O(n)       $ & $ \mathcal O(1) $ \\ \hline
 Iterate         & $ \mathcal O(n)       $ & $ \mathcal O(n) $ \\ \hline
 Access by index & $ \mathcal O(1)       $ & $ \mathcal O(n) $ \\ \hline
 \end{tabular}
+\caption{Vergleich der Performance verschiedener Operationen bei verschiedenen Listen Implementationen}
 \end{table} %TODO Referenz für O-Notation Werte  /* http://stackoverflow.com/a/322742/1761622 */
 
 Wie wir sehen, hat die \keyword{LinkedList} vor allem beim Einfügen \ti{mit Erhalten der Sortiert Eigenschaft} einen Vorteil. Besitzt man schon einen Iterator an die Stelle an die man ein Element einfügen möchte, ist das Einfügen in einer \keyword{LinkedList} $\mathcal O(1)$. Bei einer \keyword{ArrayList} ist es hingegen $\mathcal O(n)$, da im Extremfall alle Elemente einen Speicherbereich nach rechts verschoben werden müssen.
