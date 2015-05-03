@@ -84,12 +84,12 @@ private void updateMovement(float delta) {
 }
 \end{lstlisting}
 
-Das erste was wir uns klarmachen müssen ist, dass wir die Bewegungen beziehungsweise Beschleunigungen in X und Y Richtung unabhängig betrachten. Somit können wir das Problem auf eindimensionale herunterbrechen.
+Das erste was wir uns klarmachen müssen ist, dass wir die Bewegungen beziehungsweise Beschleunigungen in X und Y Richtung unabhängig betrachten. Somit können wir das Problem auf eindimensionale herunterbrechen. \cite{EMFGAIA}[S. 602]
 
 Fassen wir zusammen was wir im obigen Code tun:
 Zuerst bilden wir die Summe aus allen Beschleunigungen um eine Gesamtbeschleunigung zu erhalten
 Die Geschwindigkeit erhalten wir dann indem wir die Beschleunigung mit \keyword{delta} multiplizieren und zur bisherigen Geschwindigkeit addieren.
-Genauso erhalten wir die neue Position in dem wir zur alten Position die aktuelle Geschwindigkeit multipliziert mit \keyword{delta} addieren
+Genauso erhalten wir die neue Position in dem wir zur alten Position die aktuelle Geschwindigkeit multipliziert mit \keyword{delta} addieren. \cite{EMFGAIA}[S. 607ff]
 
 \begin{align*}
     a &= \sum_{i=1}^{k}{a_i}  \\
@@ -107,10 +107,9 @@ Schauen wir uns im Vergleich dazu die echten physikalischen Zusammenhänge an. D
 
 Die Berechnung von Geschwindigkeit v und Position x benötigt jeweils ein Integral über eine kontinuierliche Funktion, da wir uns aber in einem Zeit diskreten Raum befinden könne wir hierfür das Riemann-Integral einsetzen\cite{RINT}.
 
-\quickfigure{Riemann-Integral über die Beschleunigung eiens Entities}{Riemann_acc-speed}{0.85}
+\quickfigure{Riemann-Integral über die Beschleunigung eines Entities}{Riemann_acc-speed}{0.85}
 
-
-Dies berechnet ein Integral indem es in Abschnitte unterteilt wird und für diese Abschnitte Rechtecke bildet. Da wir in unserem Fall im Zeitpunkt t immer die Werte im Zeitraum $[t - \dt , t)$ berechnen brauchen wir das Obersummen Riemann Integral.
+Dies berechnet ein Integral indem es in Abschnitte unterteilt wird und für diese Abschnitte Rechtecke bildet. Da wir in unserem Fall im Zeitpunkt t immer die Werte im Zeitraum $[t - \dt , t)$ berechnen brauchen wir das Obersummen Riemann Integral. \cite{EMFGAIA}[S. 609ff]
 
 \begin{align*}
   a(t) &= \sum_{i=1}^{k}{a_i(t)}  \\

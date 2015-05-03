@@ -91,7 +91,7 @@ public boolean doGeometriesIntersect(CollCircle a, CollCircle b) {
 }
 \end{lstlisting}
 
-Den Vorteil einer Kreis-Kreis Kollision kann man auch auf alle anderen Geometrien anwenden indem man alle Geometrien als umschließende Kreise abschätzt und diese zuerst kollidieren lässt. Nur wenn die umschließenden Kreise sich überschneiden muss man dann den komplizierteren Schritt machen und die genauen Geometrien kollidieren lassen.
+Den Vorteil einer Kreis-Kreis Kollision kann man auch auf alle anderen Geometrien anwenden indem man alle Geometrien als umschließende Kreise abschätzt und diese zuerst kollidieren lässt. Nur wenn die umschließenden Kreise sich überschneiden muss man dann den komplizierteren Schritt machen und die genauen Geometrien kollidieren lassen. \cite{EMFGAIA}[S. 590f]
 
 Außer der Kreis-Kreis Kollision gibt es auch noch das Problem zu erkennen ob sich eine Kreisgeometrie und einen Rechtecksgeometrie schneiden.
 Den Algorithmus um diese Kollision zu erkennen ist im nachfolgenden Paragraph \ti{"CollisionBox"} beschrieben.
@@ -120,7 +120,7 @@ public boolean doGeometriesIntersect(CollisionTriangle a, CollisionCircle b) {
 
 \subparagraph{CollisionBox}
 
-Unsere zweite Standard Geometrie ist das Rechteck. Es ist zu beachten, dass dies kein frei drehbares Rechteck ist sondern eines, dass an den Koordinatenachsen ausgerichtet ist. Deshalb wird es auch nur von \ti{width}, \ti{height} und \ti{center} definiert.
+Unsere zweite Standard Geometrie ist das Rechteck. Es ist zu beachten, dass dies kein frei drehbares Rechteck ist sondern eines, dass an den Koordinatenachsen ausgerichtet ist. Deshalb wird es auch nur von \ti{width}, \ti{height} und \ti{center} definiert. \cite{EMFGAIA}[S. 564ff]
 
 Diese Geometrie wird wohl am meisten verwendet da einerseits Kollisionen zwischen zwei Rechtecken sehr schnell zu berechnen sind und andererseits es sich oft natürlich anfühlt Objekte in ein Rechteck zusammenzufassen. Um zu erkennen ob zwei Rechtecke sich überschneiden dreht man die Frage zuerst um. Zwei Rechtecke überschneiden sich nicht wenn die Rechtecke übereinander/untereinander oder nebeneinander liegen. Negiert man dies bekommt man ganz einfach heraus ob sich zwei Rechtecke schneiden:
 
@@ -307,7 +307,7 @@ Dafür hat die Klasse \keyword{Entity} außer der setPosition() Methode auch noc
 
 Um dies zu zu schaffen bewegt man das Entity und all seine Geometrien zuerst die komplette Strecke. Dann sucht man die erste fremde Geometrie mit denen eine eigene Geometrie kollidiert. Für diese Geometrie berechnet man dann die Entfernung die man rückwärts gehen muss, bis sich die beiden Geometrien nicht mehr überschneiden. Dies wiederholt man solange bis es für keine eigene Geometrie mehr eine Überschneidung gibt. Jedoch führt man dies nicht für die ganze Bewegung aus sondern einmal für die Bewegung in X-Richtung und dann noch einmal in Y-Richtung. X und Y Bewegung sind somit unabhängig und es ist möglich beispielsweise an einer Wand "entlang zu gleiten" indem die X-Bewegung verhindert wird aber die Y-Bewegung immer noch ausgeführt.
 
-Mathematisch interessant ist hierbei die Algorithmen um den minimalen Abstand zu berechnen. Wir brauchen eine Methode die zwei Geometrien, positioniert durch ihren Mittelpunkt, bekommt und uns den minimalen Abstand in X oder Y Richtung sagt bei denen dies sich gerade nicht schneiden. Dies führt zu unterschiedlichen Methoden für jede Art der Kollision:
+Mathematisch interessant ist hierbei die Algorithmen um den minimalen Abstand zu berechnen. Wir brauchen eine Methode die zwei Geometrien, positioniert durch ihren Mittelpunkt, bekommt und uns den minimalen Abstand in X oder Y Richtung sagt bei denen dies sich gerade nicht schneiden \cite{EMFGAIA}[S. 542]. Dies führt zu unterschiedlichen Methoden für jede Art der Kollision:
 
 \subparagraph{Kreis-Kreis Abstand}
 
@@ -355,7 +355,7 @@ Der Winkel \textbeta  ist der Komplementwinkel zu \textalpha, es gilt also $\alp
 \quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Dreieckes (2)}{x-touch-dist_4-2}{0.6}
 
 Als nächstes möchten wir den Punkt ausrechnen an dem der Kreis die Strecke berühren würde. An dieser Stelle liegt die Gerade tangential zum Kreis. Mittels des Winkels \textbeta  können wir also diesen Punkt ermitteln und auch seine Lage relativ zum Kreismittelpunkt (\ti{dcx} und \ti{dcy}).
-Zwar kann es immer zwei Punkte auf gegenüberliegenden Seiten des Kreises geben, dies kann jedoch unterschieden werden indem man sich anschaut ob der Kreis rechts oder links neben der Strecke liegt. Je nachdem muss \ti{dcx} positiv oder negativ sein.
+Zwar kann es immer zwei Punkte auf gegenüberliegenden Seiten des Kreises geben, dies kann jedoch unterschieden werden indem man sich anschaut ob der Kreis rechts oder links neben der Strecke liegt. Je nachdem muss \ti{dcx} positiv oder negativ sein. \cite{EMFGAIA}[S. 542f]
 
 \quickfigure{Berechnung des minimalen X-Abstands eines Kreises und eines Dreieckes (3)}{x-touch-dist_4-3}{0.6}
 
