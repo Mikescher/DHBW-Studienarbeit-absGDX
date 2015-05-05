@@ -1,14 +1,14 @@
-Da wir an diesem Projekt zu zweit programmieren war es notwendig, den Code zentral auf einem Server zu haben, so dass wir beide Zugriff darauf haben.
+Da wir an diesem Projekt zu zweit programmieren, war es notwendig den Code zentral auf einem Server speichern, so dass wir beide Zugriff darauf haben.
 Außerdem brauchten wir ein System, um Konflikte zu regeln, falls wir zum Beispiel zeitgleich die gleiche Datei verändern wollten.
 
-Deshalb haben wir beschlossen, ein \ti{Revision Control System} zu verwenden. Genauer gesagt git\footnote{\url{http://git-scm.com/}}. Mittels git ist der Code in einer Repository organisiert in der die Änderungen jeweils mit Commits eingepflegt werden. Auf Github haben wir ein Remote-Repository angelegt auf das wir beide unsere Änderungen pushen. Somit bekommt jeder die Änderungen des jeweils anderen mit und falls ein Konflikt auftritt kann und muss dieser ebenfalls in git oder mit einem externen Tools gelöst werden. Dieses System sorgt damit dafür, dass man einfach zusammen an einem Projekt arbeiten kann.
+Deshalb haben wir beschlossen, ein \ti{Revision Control System} zu verwenden, genauer gesagt git\footnote{\url{http://git-scm.com/}}. Mittels git ist der Code in einer Repository organisiert, in der die Änderungen jeweils mit Commits eingepflegt werden. Auf Github haben wir ein Remote-Repository angelegt, auf das wir beide unsere Änderungen pushen. Somit bekommt jeder die Änderungen des jeweils anderen mit und falls ein Konflikt auftritt, kann und muss dieser ebenfalls in git oder mit einem externen Tools gelöst werden. Dieses System sorgt damit dafür, dass man einfach zusammen an einem Projekt arbeiten kann.
 
 \quickfigure{Git Network Graph mit smartgit}{git_network_graph}{0.7}
 
-Außerdem bietet git noch den Vorteil dass man Änderungen durch die einzelnen Commits zurückverfolgen kann und den Code unter Umständen auch auf einen alten Stand zurücksetzen kann. Besonders beim Suchen nach Fehlern kann man so den Commit identifiziern bei dem dieser das erste mal aufgetreten ist. 
+Außerdem bietet git noch den Vorteil, dass man Änderungen durch die einzelnen Commits zurückverfolgen kann und den Code unter Umständen auch auf einen alten Stand zurücksetzen kann. Besonders beim Suchen nach Fehlern kann man so den Commit identifiziern, bei dem dieser das erste mal aufgetreten ist. 
 
-Git ist an sich ein dezentrales Protokoll und jeder Teilnehmer hat eine eigenständige Kopie der Repository auf seinem Gerät. Das bedeutet falls einer unserer Rechner ausfällt - oder sogar der zentrale Server von Github, sind keine Daten verloren gegangen da der Code und die komplette History immer noch bei den übrigen Personen vorhanden ist. Dies ist jedoch kein Ersatz für ein Backup, da es trotzdem möglich ist die Repository zu zerstören oder die History zu fälschen.\cite[S 5f]{PGIT}
+Git ist an sich ein dezentrales Protokoll und jeder Teilnehmer hat eine eigenständige Kopie der Repository auf seinem Gerät. Das bedeutet, falls einer unserer Rechner ausfällt - oder sogar der zentrale Server von Github, sind keine Daten verloren gegangen, da der Code und die komplette History immer noch bei den übrigen Personen vorhanden sind. Dies ist jedoch kein Ersatz für ein Backup, da es trotzdem möglich ist, die Repository zu zerstören oder die History zu fälschen.\cite[S 5f]{PGIT}
 
-Zwar kann man git direkt über eine Kommandozeile bedienen, jedoch ist es oft einfacher und übersichtlicher dafür spezielle Programme zu benutzen die einem Änderungen und die History visualisieren können. Wir benutzen dafür das Programm smartgit, da dies für Open Source Projekte kostenlos ist.
+Zwar kann man git direkt über eine Kommandozeile bedienen, jedoch ist es oft einfacher und übersichtlicher dafür spezielle Programme zu benutzen, die einem Änderungen und die History visualisieren können. Wir benutzen dafür das Programm smartgit, da dies für Open Source Projekte kostenlos ist.
 
 \quickfigure{Screenshot SmartGit}{smartgit}{0.7}

@@ -1,30 +1,30 @@
-Zwar commiten wir unser Code mit git in unsere Repository, jedoch nicht alle Dateien. Es gibt eine Reihe an Dateien die nur temporär sind und beispielsweise bei jedem Kompiliervorgang neu erzeugt werden. Es wäre sinnlos solche Dateien in die Versionskontrolle aufzunehmen, vor allem da sie sich immer ändern würden und so die History mit unnötigen Daten belasten würden. Es gibt jedoch auch Dateien die zwar wichtig sind, trotzdem aber nicht in die Versionskontrolle gehören. Dies sind einerseits Konfigurationsdateien mit lokalen Pfaden die ungültig auf anderen System wären, IDE spezifische Dateien die unnütz für Nutzer anderer IDE's wären oder externe Libraries die oftmals zu groß sind um sie alle in die Repository zu commiten.
+Zwar commiten wir unser Code mit git in unsere Repository, jedoch nicht alle Dateien. Es gibt eine Reihe an Dateien, die nur temporär sind und beispielsweise bei jedem Kompiliervorgang neu erzeugt werden. Es wäre sinnlos, solche Dateien in die Versionskontrolle aufzunehmen, vor allem da sie sich immer ändern würden und so die History mit unnötigen Daten belasten würden. Es gibt jedoch auch Dateien, die zwar wichtig sind, trotzdem aber nicht in die Versionskontrolle gehören. Dies sind einerseits Konfigurationsdateien mit lokalen Pfaden, die ungültig auf anderen System wären, IDE spezifische Dateien die unnütz für Nutzer anderer IDE's wären oder externe Libraries, die oftmals zu groß sind, um sie alle in die Repository zu commiten.
 
-Trotzdem sind Libraries und IDE-Dateien wichtig und eine dritte Person, die das Projekt zum ersten mal öffnet sollte diese Dateien nicht erst selbst erstellen beziehungsweise manuell herunterladen müssen.
+Trotzdem sind Libraries und IDE-Dateien wichtig und eine dritte Person, die das Projekt zum ersten mal öffnet, sollte diese Dateien nicht erst selbst erstellen beziehungsweise manuell herunterladen müssen.
 
-Um diese Probleme kümmert sich nun ein weiteres Tool namens gradle \footnote{\url{http://www.gradle.org/}}. Gradle ist ein Build-Managment-Automatisierung-Tool was bedeutet, dass wir in unser Git-Repository nur noch die gradle Konfigurationsdateien commiten und diese dann jeweils auf den Entwicklerrechnern ausführen. Diese löst dann die Projektabhängigkeiten auf und lädt fehlende Libraries automatisch nach und erstellt außerdem Dateien, wie die IDE-Projektdateien, automatisch.
+Um diese Probleme kümmert sich nun ein weiteres Tool namens gradle \footnote{\url{http://www.gradle.org/}}. Gradle ist ein Build-Managment-Automatisierung-Tool. Dies bedeutet, dass wir in unser Git-Repository nur noch die gradle Konfigurationsdateien commiten und diese dann jeweils auf den Entwicklerrechnern ausführen. Diese löst dann die Projektabhängigkeiten auf, lädt fehlende Libraries automatisch nach und erstellt außerdem Dateien, wie die IDE-Projektdateien, automatisch.
 
 \paragraph{Dependency Management}
 
 In gradle kann man angeben von welchen Bibliotheken oder Projekten ein Programm abhängig ist. Diese Bibliotheken können dann wiederum von anderen Bibliotheken abhängig sein und so bildet sich ein Abhängigkeitsbaum, ausgehend vom Anfangsprojekt.
-Gradle lädt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil, falls eine Bibliothek öfters im Abhängigkeitsbaum auftaucht sie trotzdem nur einmal geladen werden muss.\cite[S. 55]{BATWG}
+Gradle lädt dann diese Bibliotheken, falls sie noch nicht auf dem Rechner vorhanden sind. Dies hat auch den Vorteil, falls eine Bibliothek öfters im Abhängigkeitsbaum auftaucht, sie trotzdem nur einmal geladen werden muss.\cite[S. 55]{BATWG}
 
-Gradle unterstützt viele verschiedene Repositories in welcher nach fehlenden Bibliotheken gesucht werden kann, standardmäßig wird jedoch die \ti{Maven Central Repository} \footnote{\url{http://search.maven.org/}} benutzt.
+Gradle unterstützt viele verschiedene Repositories, in welcher nach fehlenden Bibliotheken gesucht werden kann. Standardmäßig wird jedoch die \ti{Maven Central Repository} \footnote{\url{http://search.maven.org/}} benutzt.
 In dieser Repository sind sehr viele der frei verfügbaren java Libraries in vielen Versionen enthalten und können zum Beispiel einfach über gradle geladen werden.
 
 \paragraph{Konfiguration}
 
-Die Konfiguration geschieht über \keyword{build.gradle} Dateien welche in der Sprache \keyword{Groovy} geschrieben sind.\cite{GRADLE}[S. 73]
-absGDX ist ein Multiprojekt, dies bedeutet, dass es  aus mehreren Gradle Projekten besteht mit jeweils eigenen Konfigurationen die voneinander abhängen. \cite[S. 79ff]{BATWG}
+Die Konfiguration geschieht über \keyword{build.gradle} Dateien, welche in der Sprache \keyword{Groovy} geschrieben sind.\cite{GRADLE}[S. 73]
+absGDX ist ein Multiprojekt. Dies bedeutet, dass es  aus mehreren Gradle Projekten besteht mit jeweils eigenen Konfigurationen, die voneinander abhängen. \cite[S. 79ff]{BATWG}
 
-In der folgenden Grafik kann man unseren Abhängigkeitsbaum sehen. Die orange markierten Felder sind unsere Projekte und die anderen sind externe Abhängigkeiten.
+In der folgenden Grafik kann man unseren Abhängigkeitsbaum sehen. Die orange markierten Felder sind unsere Projekte, die wei� markierten Felder stellen die externe Abhängigkeiten dar.
 
 \quickfigure{Gradle Dependency Graph absGDX}{dependency-graph-gradle.png}{1.0}
 
-Das Projekt \keyword{absGDX-framework} ist hierbei das eigentliche Framework das wir entwickeln. \keyword{asGDX-test} ist das Testprojekt, es enthält alle Unit-tests für das Framework.
-\keyword{absGDX-core} und die beiden Plattformprojekte \keyword{desktop} und \keyword{android} sind zum testen und debuggen. Wird das Framework später für ein Projekt benutzt kommen in diese Projekte der eigentliche Code und \keyword{absGDX-framework} wird als Dependency eingebunden. Während wir jedoch das Framework noch entwickeln sind diese Projekte notwendig damit wir es auch ausprobieren können.
+Das Projekt \keyword{absGDX-framework} ist hierbei das eigentliche Framework, das wir entwickeln. \keyword{asGDX-test} ist das Testprojekt. Es enthält alle Unit-tests für das Framework.
+\keyword{absGDX-core} und die beiden Plattformprojekte \keyword{desktop} und \keyword{android} sind zum Testen und Debuggen. Wird das Framework später für ein Projekt benutzt, kommt in diese Projekte der eigentliche Code und \keyword{absGDX-framework} wird als Dependency eingebunden. Während wir jedoch das Framework noch entwickeln, sind diese Projekte notwendig, damit wir es auch ausprobieren können.
 
-Da wir alle an dem Projekt mit der Eclipse IDE entwickeln haben wir ein paar extra Eclipse Einstellungen in die build.gradle Dateien ausgelagert:
+Da wir alle an dem Projekt mit der Eclipse IDE entwickeln, haben wir ein paar extra Eclipse Einstellungen in die build.gradle Dateien ausgelagert:
 
 \doinline
 \begin{lstlisting}[caption=Eclipse Optionen in gradle setzen, title=\hspace{0 pt}, language=groovy]
@@ -44,11 +44,11 @@ eclipse.jdt.file.withProperties { props ->
 \end{lstlisting}
 
 Dies ist ein gutes Beispiel wie mächtig die Groovy Konfigurationsdateien sind, wir fügen in die generierten Eclipse property files hier noch unsere eigenen Felder ein.
-In diesem Beispiel setzen wir die Einstellungen für projektspezifische Formatierungen, damit der automatische Quellcodeformattierer bei allen die das Projekt in Eclipse laden gleich funktioniert.
+In diesem Beispiel setzen wir die Einstellungen für projektspezifische Formatierungen, damit der automatische Quellcodeformattierer bei allen, die das Projekt in Eclipse laden gleich funktioniert.
 
 \paragraph{Verwendung in unserem Projekt}
 
-Um Problemen mit verschiedenen Versionen von gradle entgegen zu wirken ist in unserer git Repository nicht nur die build.gradle Dateien vorhanden sondern auch der \ti{gradle Wrapper}. Dies ist eine vollständige unabhängige Version von gradle die man anstatt der lokal installierten verwenden soll. Damit ist garantiert, dass jeder die gleiche Version von gradle verwendet.
+Um Problemen mit verschiedenen Versionen von gradle entgegen zu wirken, ist in unserer git Repository nicht nur die build.gradle Dateien vorhanden, sondern auch der \ti{gradle Wrapper}. Dies ist eine vollständige, unabhängige Version von gradle, die man anstatt der lokal installierten verwenden soll. Damit ist garantiert, dass jeder die gleiche Version von gradle verwendet.
 
 Ausgeführt wird sie dann über die Kommandozeile mit Befehlen wie
 
@@ -56,4 +56,4 @@ Ausgeführt wird sie dann über die Kommandozeile mit Befehlen wie
 > gradlew cleanEclipse eclipse afterclipseImport
 \end{lstlisting}
 
-Dieses Beispiel führt zuerst den Task \ti{cleanEclispe} aus um alle Dateien die mit der Eclipse IDE zusammenhängen zu löschen, dann werden sie mit \ti{eclipse} neu aus den gradle Einstellungen erzeugt und zuletzt werden mit \ti{afterEclipseImport} einige Änderungen vorgenommen. Der letzte Task ist von LibGDX vorgegeben damit das Android Projekt richtig konfiguriert ist.
+Dieses Beispiel führt zuerst den Task \ti{cleanEclispe} aus, um alle Dateien, die mit der Eclipse IDE zusammenhängen zu löschen. Dann werden sie mit \ti{eclipse} neu aus den gradle Einstellungen erzeugt. Zuletzt werden mit \ti{afterEclipseImport} einige Änderungen vorgenommen. Der letzte Task ist von LibGDX vorgegeben, damit das Android Projekt richtig konfiguriert ist.

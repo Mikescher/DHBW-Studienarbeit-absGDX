@@ -9,9 +9,9 @@ Die Unittests schreiben wir mit Test-Framework jUnit 4 \footnote{\url{http://jun
 
 \quickfigure{Beispiel der jUnit Test Anzeige}{junit-overview}{0.6}
 
-Das Ziel der Unittests ist es einen Großteil der Funktionen und Methoden des Frameworks zu testen in dem sie mit verschiedenen Parametern getestet werden und dann überprüft wird ob die Ergebnisse stimmen. \cite[S 62]{JUNIT}
+Das Ziel der Unittests ist es einen Großteil der Funktionen und Methoden des Frameworks zu testen, in dem sie mit verschiedenen Parametern getestet werden und dann überprüft wird, ob die Ergebnisse stimmen. \cite[S 62]{JUNIT}
 
-Besonders bei der Kollisionserkennung ist dies nützlich, da wir so überprüfen können ob nach Änderungen an der \keyword{Collisionmap} beispielsweise noch alle Kollisionen erkannt werden. Und es gibt sehr viele verschiedene Fälle von Kollisionen die überprüft werden müssen.
+Besonders bei der Kollisionserkennung ist dies nützlich. So können wir so überprüfen, ob nach Änderungen an der \keyword{Collisionmap} beispielsweise noch alle Kollisionen erkannt werden. Es gibt sehr viele verschiedene Fälle von Kollisionen, die überprüft werden müssen.
 
 \paragraph{Eigene Asserts}
 
@@ -35,23 +35,23 @@ private static boolean fcomp(float expected, float actual, float delta) {
 }
 \end{lstlisting}
 
-Da wir hier Gleitkommazahlen vergleichen, welche eine endliche Genauigkeit haben, muss ein epsilon Wert eingeführt werden. Dieser ist die maximale Abweichung die zwei \ti{floats} haben dürfen, um noch als gleich angesehen zu werden.
+Da wir hier Gleitkommazahlen vergleichen, welche eine endliche Genauigkeit haben, muss ein epsilon Wert eingeführt werden. Dieser ist die maximale Abweichung, die zwei \ti{floats} haben dürfen, um noch als gleich angesehen zu werden.
 
 \paragraph{Parametrisierte Tests}
 
-Ein Feature von jUnit 4, dass wir benutzen sind die parametrisierten Tests\footnote{\url{https://github.com/junit-team/junit/wiki/Parameterized-tests}}. 
+Ein Feature von jUnit 4, das wir benutzen, sind die parametrisierten Tests\footnote{\url{https://github.com/junit-team/junit/wiki/Parameterized-tests}}. 
 Hierbei führt man einen Test mehrmals unter verschiedenen Voraussetzungen aus. 
 Wir benutzen dies intensiv bei den Tests der Kollisionserkennung. 
 Jeder Kollisionstest wird mit mehreren verschiedenen Collisionmap-Größen ausgeführt. 
 Einmal mit normal großer Map, einmal mit einer Map der Größe 1x1 und auch noch mit verschiedenen anderen Größen. 
-Dies erhöht zwar die Anzahl der auszuführenden Tests stark, sorgt jedoch dafür, dass es wahrscheinlicher wird, Fehler zu erkennen und bei Unittests ist die Performance in soweit nicht sehr wichtig, da sie nur ab und zu auf dem Entwicklerrechner oder dem CI-Server ausgeführt werden.
+Dies erhöht zwar die Anzahl der auszuführenden Tests stark, sorgt jedoch dafür, dass es wahrscheinlicher wird, Fehler zu erkennen. Bei Unittests ist die Performance in soweit nicht sehr wichtig, da sie nur ab und zu auf dem Entwicklerrechner oder dem CI-Server ausgeführt werden.
 
 \paragraph{Android Build Probleme}
 
-Ein Problem, dass wir mit jUnit jedoch hatten war der Android Build Vorgang. 
+Ein Problem, das wir mit jUnit jedoch hatten, war der Android Build Vorgang. 
 Anfangs waren alle unsere Unittests in dem \keyword{absGDX-framework} Projekt. Deshalb war dieses Projekt von jUnit abhängig und jUnit ist seinerseits von der Hamcrest Bibliothek abhängig\footnote{\url{http://hamcrest.org/JavaHamcrest/}}. 
-Das Android Projekt \keyword{android}, dass wir zum Kompilieren für Android verwenden, ist von den Android Libraries und \keyword{absGDX-framework} abhängig.
-Problematisch wird es hier jedoch da auch die Standard Android Libraries Hamcrest enthalten und Hamcrest im root Ordner der jar/apk eine Datei \ti{LICENSE.txt} anlegen will. Der Android Compiler verbietet es jedoch, dass zwei Libraries die gleiche Datei anlegen wollen (auch wenn es in diesem Fall zweimal die gleiche Bibliothek ist).
+Das Android Projekt \keyword{android}, das wir zum Kompilieren für Android verwenden, ist von den Android Libraries und \keyword{absGDX-framework} abhängig.
+Problematisch wird es hier jedoch, da auch die Standard Android Libraries Hamcrest enthalten und Hamcrest im root Ordner der jar/apk eine Datei \ti{LICENSE.txt} anlegen will. Der Android Compiler verbietet es jedoch, dass zwei Libraries die gleiche Datei anlegen wollen (auch wenn es in diesem Fall zweimal die gleiche Bibliothek ist).
 Gradle hat hierfür eine Lösung. Mit der Einstellung packagingOptions.exclude kann man Dateien aus dem Paket ausschließen. Der Eclipse Compiler ist jedoch nicht so intelligent und somit führt das alles dazu, dass wir nur noch mit gradle das Android projekt bauen können und nicht mehr direkt in Eclipse.
 
-Die Lösung hierfür bestand darin, die Unittests in ein eigenes Projekt \keyword{absGDX-test} auszulagern welches von \keyword{absGDX-framework} abhängig ist. Somit ist \keyword{absGDX-framework} selbst nicht mehr von jUnit und hamcrest abhängig und das Projekt \keyword{android} bekommt die hamcrest-Bibliothek nur noch einmal eingebunden.
+Die Lösung hierfür bestand darin, die Unittests in ein eigenes Projekt \keyword{absGDX-test} auszulagern, welches von \keyword{absGDX-framework} abhängig ist. Somit ist \keyword{absGDX-framework} selbst nicht mehr von jUnit und hamcrest abhängig und das Projekt \keyword{android} bekommt die hamcrest-Bibliothek nur noch einmal eingebunden.
