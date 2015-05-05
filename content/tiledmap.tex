@@ -1,5 +1,5 @@
 Als Karte benutzt absGDX ein Tiled-Map System. Die Karte ist unterteilt in viele einzelne quadratische Tiles.
-Jedes Tile hat eine eigene Textur und zusammen bilden sie die Karte. Die Texturen kommen meist aus einer sogenannten Tilemap in der eine große Anzahl an Texturen in einer einzigen Datei zusammengefasst sind.
+Jedes Tile hat eine eigene Textur und zusammen bilden sie die Karte. Die Texturen kommen meist aus einer sogenannten Tilemap, in der eine große Anzahl an Texturen in einer einzigen Datei zusammengefasst sind.
 
 \quickfigure{Visualisierung einer Tiled Map}{tilemap_all}{1.0}
 
@@ -8,39 +8,39 @@ In absGDX wird eine solche Map durch eine Instanz der Klasse \keyword{TileMap} r
 Die einzelnen Tiles müssen von der abstrakten Klasse \keyword{Tile} abgeleitet werden. Man kann seine Tiles entweder direkt von dieser Klasse ableiten oder eine Unterklasse benutzen die jeweils für speziellere Fälle zugeschnitten sind:
 
 \begin{itemize}
-  \item \keyword{AnimationTile} Wenn von AnimationTile abgeleitet wird kann man der Tile nicht nur eine statische Textur zuweisen sondern eine sich wiederholende Animation
+  \item \keyword{AnimationTile} Wenn von AnimationTile abgeleitet wird, kann man der Tile nicht nur eine statische Textur zuweisen, sondern eine sich wiederholende Animation
   \item \keyword{EmptyTile} EmptyTiles sind Tiles ohne Textur oder Logik - sie werden standardmäßig für neue Maps eingesetzt
   \item \keyword{StaticTile} StaticTiles haben eine statische Textur und	keine Logik, rein-grafische Tiles könne hiervon abgeleitet werden
-  \item \keyword{AutoTile} AutoTiles sind nützlich in Zusammenhang mit aus Dateien geladenen Maps, sie beziehen ihre Textur automatisch aus der gegebenen Tilemap
+  \item \keyword{AutoTile} AutoTiles sind nützlich in Zusammenhang mit aus Dateien geladenen Maps. Sie beziehen ihre Textur automatisch aus der gegebenen Tilemap
 \end{itemize}
 
 \paragraph{Ermitteln der absoluten Größe}
 
-Intern besitzen alle Tiles die Dimension 1.0 x 1.0. Beim eigentlichen Anzeigen müssen diese Werte jedoch auf eine konkrete Pixelzahl skaliert werden. Dies kann komplex werden da besonders mobile Geräte in einer Vielzahl an Auflösungen und Verhältnissen kommen. Außerdem kann es anwendungsspezifische Vorgaben geben, wie beispielsweise eine minimale Anzahl an Tiles die auf jeden Fall sichtbar sein sollten.
-Um dies zu lösen gibt es verschiedene Ansätze, jeweils repräsentiert durch eine Klasse abgeleitet von \keyword{AbstractMapScaleResolver}.
+Intern besitzen alle Tiles die Dimension 1.0 x 1.0. Beim eigentlichen Anzeigen müssen diese Werte jedoch auf eine konkrete Pixelzahl skaliert werden. Dies kann komplex werden, da besonders mobile Geräte in einer Vielzahl an Auflösungen und Verhältnissen kommen. Außerdem kann es anwendungsspezifische Vorgaben geben, wie beispielsweise eine minimale Anzahl an Tiles, die auf jeden Fall sichtbar sein sollten.
+Um dies zu lösen gibt, es verschiedene Ansätze, jeweils repräsentiert durch eine Klasse, abgeleitet von \keyword{AbstractMapScaleResolver}.
 Ein MapScaleResolver berechnet aus den Kartendimensionen und den Dimensionen des Anzeigegerätes die echte Höhe und Breite eines Tiles in pixel.
 Standardmäßig sind in absGDX sechs verschiedene MapScaleResolver enthalten:
 
 \subparagraph{FixedMapScaleResolver} 
-Dies ist der einfachste MapScaleResolver, er gibt immer eine konstante, vorher bestimmte Größe zurück. (zum Beispiel 60px)
+Dies ist der einfachste MapScaleResolver. Er gibt immer eine konstante, vorher bestimmte Größe zurück. (z.B. 60px)
 
 \quickfigure{Visualisierung des FixedMapScaleResolver}{tilemap_fixed}{1.0}
   
 \subparagraph{ShowCompleteMapScaleResolver} 
-Hier wird immer die komplette Karte angezeigt, falls das Verhältnis von Kartenbreite und Höhe nicht mit dem des Anzeigegerätes übereinstimmt gibt es Teile des Bildschirms die nicht von der Karte bedeckt sind.
+Hier wird immer die komplette Karte angezeigt. Falls das Verhältnis von Kartenbreite und Höhe nicht mit dem des Anzeigegerätes übereinstimmt, gibt es Teile des Bildschirms, die nicht von der Karte bedeckt sind.
 
 \quickfigure{Visualisierung des ShowCompleteMapScaleResolver}{tilemap_complete}{1.0}
   
 \subparagraph{MaximumBoundaryMapScaleResolver} 
-Bei dieser Lösung wird eine Grenzfläche festgelegt die \textbf{immer} angezeigt wird, beispielsweise drei mal drei Tiles. 
-Es kann vorkommen dass mehr Tiles angezeigt werden (z.B.: 3x3.5 Tiles), es ist jedoch garantiert, dass die Grenzfläche selbst immer zu sehen ist.
+Bei dieser Lösung wird eine Grenzfläche festgelegt, die \textbf{immer} angezeigt wird, beispielsweise drei mal drei Tiles. 
+Es kann vorkommen, dass mehr Tiles angezeigt werden (z.B.: 3x3.5 Tiles), es ist jedoch garantiert, dass die Grenzfläche selbst immer zu sehen ist.
 
 \quickfigure{Visualisierung des MaximumBoundaryMapScaleResolver}{tilemap_maximum}{1.0}
   
 \subparagraph{MinimumBoundaryMapScaleResolver} 
 Dies ist das Gegenstück zum \keyword{MaximumBoundaryMapScaleResolver}. 
-Hier wird eine Grenzfläche festgelegt die nie überschritten wird. 
-Ist diese zum Beispiel 10x5 Tiles kann es sein, dass nur 10x3 angezeigt werden - es wird aber nie mehr als die Grenzfläche gezeigt und immer versucht sich dieser soweit wie möglich anzunähern ohne die Karte zu verzerren.
+Hier wird eine Grenzfläche festgelegt, die nie überschritten wird. 
+Ist diese zum Beispiel 10x5 Tiles kann es sein, dass nur 10x3 angezeigt werden. Es wird aber nie mehr als die Grenzfläche gezeigt und immer versucht sich dieser soweit wie möglich anzunähern, ohne die Karte zu verzerren.
 
 \quickfigure{Visualisierung des MinimumBoundaryMapScaleResolver}{tilemap_minimum}{1.0}
   
@@ -55,15 +55,15 @@ Diese Regel hat eine höhere Priorität als die minimale Grenzfläche und somit 
 \subparagraph{SectionMapScaleResolver} 
 Dies ist eine nochmalige Erweiterung des \keyword{LimitedMinimumBoundaryMapScaleResolver}. 
 Neben der maximalen Schnittfläche gibt es hier jetzt auch noch eine minimale Größe eines Tiles. 
-Ein Tile kann niemals kleiner als eine angegebene Anzahl Pixel werden, diese Regel hat die höchste Priorität und kann gegebenenfalls die anderen beiden außer Kraft setzen.
+Ein Tile kann niemals kleiner als eine angegebene Anzahl Pixel werden. Diese Regel hat die höchste Priorität und kann gegebenenfalls die anderen beiden außer Kraft setzen.
 
 \quickfigure{Visualisierung des SectionMapScaleResolver}{tilemap_section}{1.0}
 
 \paragraph{Das Rendern}
 
-Das Rendern der Karte wird von dem aktuellen Layer übernommen, dies ist in den meisten Fällen ein GameLayer da nur dieser eine TiledMap besitzt.
-In den meisten Fällen ist nicht die ganze Map sichtbar da der aktuelle MapScaleResolver die Tiles groß genug macht um mehr als das gesamte Display auszufüllen. Deshalb gibt es im \keyword{GameLayer} einen \ti{MapOffset}. Dieser gibt an wie weit die Karte in X und Y Richtung verschoben ist.
-Beim Rendern ist nun darauf zu achten, dass man nur die Tiles rendert die ganz oder teilweise sichtbar sind, man könnte zwar auch einfach alle anzeigen dies wäre jedoch nicht sehr performant. Es ist jedoch einfach zu berechnen welche Tiles aktuell sichtbar sind:\cite[S 232f.]{DGIJ}
+Das Rendern der Karte wird von dem aktuellen Layer übernommen. Dies ist in den meisten Fällen ein GameLayer, da nur dieser eine TiledMap besitzt.
+H�ufig ist nicht die ganze Map sichtbar, da der aktuelle MapScaleResolver die Tiles groß genug macht, um mehr als das gesamte Display auszufüllen. Deshalb gibt es im \keyword{GameLayer} einen \ti{MapOffset}. Dieser gibt an wie weit die Karte in X und Y Richtung verschoben ist.
+Beim Rendern ist nun darauf zu achten, dass man nur die Tiles rendert die ganz oder teilweise sichtbar sind. Man könnte zwar auch einfach alle anzeigen, dies wäre jedoch nicht sehr performant. Es ist jedoch einfach zu berechnen welche Tiles aktuell sichtbar sind:\cite[S 232f.]{DGIJ}
 
 \doinline
 \begin{lstlisting}[caption=Ermitteln der aktuell sichtbare Tiles, title=\hspace{0 pt}, language=java]
@@ -78,7 +78,7 @@ public Rectangle getVisibleMapBox() {
 
 \paragraph{Laden aus dem TMX Format}
 
-TileMaps kann man mit dem Programm Tiled erstellen \footnote{\url{http://www.mapeditor.org/}} welche TMX Dateien erstellt. Da dies ein bekanntes Format ist habe wir auch in absGDX die Funktion implementiert solche Dateien zu laden. Eine TMX Datei ist eine einfache xml Datei mit einem vorgegebenen Format \footnote{\url{http://mapeditor.org/dtd/1.0/map.dtd}}:
+TileMaps kann man mit dem Programm Tiled erstellen \footnote{\url{http://www.mapeditor.org/}} welche TMX Dateien generiert. Da dies ein bekanntes Format ist, haben wir auch in absGDX die Funktion implementiert solche Dateien zu laden. Eine TMX Datei ist eine einfache xml Datei mit einem vorgegebenen Format \footnote{\url{http://mapeditor.org/dtd/1.0/map.dtd}}:
 
 \doinline
 \begin{lstlisting}[caption=Beipiel einer TMX Datei, title=\hspace{0 pt}, language=xml]
@@ -94,16 +94,16 @@ TileMaps kann man mit dem Programm Tiled erstellen \footnote{\url{http://www.map
 
 TMX unterstützt verschiedene Karten und Tilegrößen, mehrere Layer und auch fest eingebundene Tilesets. Die eigentlichen Daten sind entweder in XML, CSV oder als base64-binär Daten kodiert. Zusätzlich kann entweder keine, \ti{gzip} oder \ti{zlib} Kompression vorliegen\footnote{\url{https://github.com/bjorn/tiled/wiki/TMX-Map-Format\#data}}.
 
-Als XML Parser haben wir uns für die XMLReader Library entschieden, welche schon in LibGDX integriert ist und auf allen Zielplattformen funktioniert. XMLReader ist ein java-XML-DOM Parser, dies bedeutet, dass die komplette Datei analysiert und in den Speicher geladen wird. Dies macht das Auswerten der Datei sehr einfach, verbraucht aber mehr Arbeitsspeicher als beispielsweise ein SAX-Parser. Da die TMX Dateien jedoch nicht sehr groß sind im Verhältnis zum gewöhnlich verfügbaren Arbeitsspeicher sollte dies keine Probleme bereiten.
+Als XML Parser haben wir uns für die XMLReader Library entschieden, welche schon in LibGDX integriert ist und auf allen Zielplattformen funktioniert. XMLReader ist ein java-XML-DOM Parser. Dies bedeutet, dass die komplette Datei analysiert und in den Speicher geladen wird. Dies macht das Auswerten der Datei sehr einfach, verbraucht aber mehr Arbeitsspeicher als beispielsweise ein SAX-Parser. Da die TMX Dateien jedoch nicht sehr groß sind im Verhältnis zum gewöhnlich verfügbaren Arbeitsspeicher sollte dies keine Probleme bereiten.
 
-Das Parsen einer TMX Datei wird von der Klasse \keyword{TmxParser} übernommen. Nach dem Laden der XML Datei geht dieser zuerst die einzelnen Layer von dem niedrigsten angefangen durch. Für jeden Layer müssen die Daten dekodiert werden. Sind sie in gzip oder zlib komprimiert muss man sie zuerst dekomprimieren. Sind die Daten dann in XML kodiert kann der XOM Parser einfach ebenfalls die Daten parsen. Auch CSV kodierte Daten können recht einfach mit der in java enthaltenen \keyword{String.split} Funktion analysiert werden.
+Das Parsen einer TMX Datei wird von der Klasse \keyword{TmxParser} übernommen. Nach dem Laden der XML Datei geht dieser zuerst die einzelnen Layer von dem niedrigsten angefangen durch. Für jeden Layer müssen die Daten dekodiert werden. Sind sie in gzip oder zlib komprimiert, muss man sie zuerst dekomprimieren. Sind die Daten dann in XML kodiert, kann der XOM Parser einfach ebenfalls die Daten parsen. Auch CSV kodierte Daten können recht einfach mit der in java enthaltenen \keyword{String.split} Funktion analysiert werden.
 Bei Base64 Daten ist der Prozess jedoch komplizierter. Zuerst muss der String als Reihe von Bytes interpretiert werden. Danach gruppiert man jeweils 3 bytes zusammen und interpretiert sie als Little-Endian unsigned 32bit-Integer. Der entstehende Int32-Array sind dann die GIDs der Tiles.
 
 In allen 3 Fällen erhält man einen Integer Array. Die einzelnen Integer sind die sogenannten GIDs, welche den Tiletyp eindeutig identifiziern (anhand der Texturposition im Tileset).
 Die GIDs fangen bei 1 an, eine 0 bedeutet "kein Tile". Unser \keyword{TmxParser} erstellt dann für jede GID die entsprechende Tile und bildet aus ihnen eine TileMap.
 
-Die Zuordnung von GID und Tile-Klasse muss der Entwickler bestimmen. Er kann dafür mit der Methode \keyword{addMapping(int, class)} eine GID einer bestimmten Tile-Klasse zuordnen. Beim Erstellen der Map wird dann jeweils nach einer solchen Zuordnung gesucht. Falls es eine gibt wird mittels java Reflection der Konstruktor der Klasse ermittelt und eine neue Instanz erzeugt. Dafür ist es notwendig dass alle Klassen die von Tile ableiten entweder einen Konstruktor ohne Parameter haben oder einen der eine Settingsmap nimmt. Eine Settingsmap ist eine \keyword{Hashmap<String, String>} in welcher verschiedene Informationen über das Tile enthalten sind wie Position, GID, Mapgröße etc. Falls vorhanden wird immer der Konstruktor mit der Hashmap genommen, nur falls dieser nicht existiert wird der leere benutzt.
+Die Zuordnung von GID und Tile-Klasse muss der Entwickler bestimmen. Er kann dafür mit der Methode \keyword{addMapping(int, class)} eine GID einer bestimmten Tile-Klasse zuordnen. Beim Erstellen der Map wird dann jeweils nach einer solchen Zuordnung gesucht. Falls es eine gibt, wird mittels java Reflection der Konstruktor der Klasse ermittelt und eine neue Instanz erzeugt. Dafür ist es notwendig dass alle Klassen, die von Tile ableiten entweder einen Konstruktor ohne Parameter haben oder einen, der eine Settingsmap nimmt. Eine Settingsmap ist eine \keyword{Hashmap<String, String>} in welcher verschiedene Informationen über das Tile enthalten sind wie Position, GID, Mapgröße etc. Falls vorhanden, wird immer der Konstruktor mit der Hashmap genommen. Nur falls dieser nicht existiert wird der leere benutzt.
 
-Eine geschickte Verwendung dieser Mechanik ist beispielsweise die \keyword{AutoTile} Klasse. Setzt man im Mapping diese Klasse als Default Mapping ein und sonst keine andere Klasse werden alle GIDs auf AutoTile gemappt. Die AutoTile Klasse hat dann einen Konstruktor mit einer Settingsmap und berechnet aus der darin enthaltenen GID zurück welche Textur im TILED MapEditor verwendet wurde. Man verliert zwar somit die Möglichkeit unterschiedlichen Tiles speziellen Code zuzuordnen, braucht jedoch bei einem großen Tileset nicht sehr viele Klassen die sich kaum unterscheiden.
+Eine geschickte Verwendung dieser Mechanik ist beispielsweise die \keyword{AutoTile} Klasse. Setzt man im Mapping diese Klasse als Default Mapping ein und sonst keine andere Klasse, werden alle GIDs auf AutoTile gemappt. Die AutoTile Klasse hat dann einen Konstruktor mit einer Settingsmap und berechnet aus der darin enthaltenen GID zurück, welche Textur im TILED MapEditor verwendet wurde. Man verliert zwar somit die Möglichkeit, unterschiedlichen Tiles speziellen Code zuzuordnen, braucht jedoch bei einem großen Tileset nicht sehr viele Klassen, die sich kaum unterscheiden.
 
 Man muss dem Programm nur die Tilmap und das Tileset zur Verfügung stellen und kann die Karte direkt mit Grafiken in das Programm laden.
