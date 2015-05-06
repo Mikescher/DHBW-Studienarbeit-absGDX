@@ -35,14 +35,19 @@
 
 \setcounter{page}{1}
 \pagenumbering{arabic}
-\input{content}
 
-%########################
-%######## FOOTER ########
-%########################
+\begin{bibunit}[unsrtnat]
+	\input{content}
+	\newpage 
+	\renewcommand{\refname}{Literatur}
+	\putbib[mainbib]
+\end{bibunit}
 
-\newpage 
-\bibliographystyle{unsrtnat}
-\bibliography{mainbib}
+\begin{bibunit}[unsrtnat]
+	\nocite{*}
+	\newpage
+	\renewcommand{\refname}{Bibliografie}
+	\putbib[refbib]
+\end{bibunit}
 
 \end{document}
