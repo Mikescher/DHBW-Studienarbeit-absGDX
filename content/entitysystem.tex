@@ -47,7 +47,7 @@ Jede dieser Geometrien wird zwar wiederum vom GameLayer verwaltet, kennt aber se
 \end{itemize}
 
 Das \keyword{active} bedeutet jeweils, dass die Kollision durch eine Bewegung der eigenen Geometrie ausgelöst wurde, und das \keyword{passiv} entsprechend, dass der Grund die Bewegung der anderen Geometrie war.
-Ist die Veränderung der Position Teil einer Bewegung, wird die Methode \ti{onActiveMovementCollide} oder \ti{onPassiveMovementCollide} aufgerufen. Wurde vorher festgelegt, dass die beiden Entities sich nicht überschneiden, dann entspricht dies einem Zusammenstoß, bei dem das bewegende Entity zum Stillstand gekommen ist. Als Resultat ber�hren sich beide Entity, schneiden sich aber nicht.
+Ist die Veränderung der Position Teil einer Bewegung, wird die Methode \ti{onActiveMovementCollide} oder \ti{onPassiveMovementCollide} aufgerufen. Wurde vorher festgelegt, dass die beiden Entities sich nicht überschneiden, dann entspricht dies einem Zusammenstoß, bei dem das bewegende Entity zum Stillstand gekommen ist. Als Resultat berühren sich beide Entity, schneiden sich aber nicht.
 Ist dies andererseits das Ergebnis eines direkten Aufrufs von \ti{setPosition(float x, float y)}, dann werden die Methoden \ti{onActiveCollide} oder \ti{onPassivCollide} aufgerufen.
 
 \paragraph{Framerate unabhängige Bewegung}
@@ -156,7 +156,7 @@ Wie schon zuvor gesagt müssen alle Entities von der Stammklasse \keyword{Entity
 Leitet man von der Klasse \keyword{Entity} ab, muss man eine Vielzahl an Methoden zwangsweise Überschreiben (da diese als \ti{abstract} markiert sind). Möchte man jedoch ein simples, statisches, rein visuelles Entity implementieren, kommt man in die Situation, alle oder viele überschriebene Methoden einfach leer zu lassen.
 
 Stattdessen kann man von \keyword{SimpleEntity} ableiten. Diese Klasse hat alle sinnvollen Methoden schon überschrieben und Handler/Listener leer gelassen beziehungsweise Standardwerte zurückgeben lassen. Möchte man trotzdem auf einige diese Events reagieren oder bei einigen Methoden andere Werte zurückgeben, kann man diese immer noch überschreiben. Standardmäßig existiert jedoch kein Zwang, diese zu implementieren.
-Gerade deshalb sollte man dies jedoch nur durchf�hren, wenn man schon Erfahrung mit dem Framework hat und mit Sicherheit weiß, was es bedeutet, auf keines der Events sinnvoll zu reagieren.
+Gerade deshalb sollte man dies jedoch nur durchführen, wenn man schon Erfahrung mit dem Framework hat und mit Sicherheit weiß, was es bedeutet, auf keines der Events sinnvoll zu reagieren.
 
 \subparagraph{PhysicsEntity}
 

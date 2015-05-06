@@ -62,7 +62,7 @@ Ein Tile kann niemals kleiner als eine angegebene Anzahl Pixel werden. Diese Reg
 \paragraph{Das Rendern}
 
 Das Rendern der Karte wird von dem aktuellen Layer übernommen. Dies ist in den meisten Fällen ein GameLayer, da nur dieser eine TiledMap besitzt.
-H�ufig ist nicht die ganze Map sichtbar, da der aktuelle MapScaleResolver die Tiles groß genug macht, um mehr als das gesamte Display auszufüllen. Deshalb gibt es im \keyword{GameLayer} einen \ti{MapOffset}. Dieser gibt an wie weit die Karte in X und Y Richtung verschoben ist.
+Häufig ist nicht die ganze Map sichtbar, da der aktuelle MapScaleResolver die Tiles groß genug macht, um mehr als das gesamte Display auszufüllen. Deshalb gibt es im \keyword{GameLayer} einen \ti{MapOffset}. Dieser gibt an wie weit die Karte in X und Y Richtung verschoben ist.
 Beim Rendern ist nun darauf zu achten, dass man nur die Tiles rendert die ganz oder teilweise sichtbar sind. Man könnte zwar auch einfach alle anzeigen, dies wäre jedoch nicht sehr performant. Es ist jedoch einfach zu berechnen welche Tiles aktuell sichtbar sind:\cite[S 232f.]{DGIJ}
 
 \doinline
