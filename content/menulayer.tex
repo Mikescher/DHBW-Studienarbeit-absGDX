@@ -1,16 +1,16 @@
 Neben dem \keyword{GameLayer} ist der \keyword{MenuLayer} der zweite wichtige Layer Typ. Mit ihm kann man eine einzelne Menüseite darstellen.
-Ein Menü besteht aus einem \keyword{MenuFrame} welcher verschiedene Menüelemente enthält, wie zum Beispiel Buttons, Edits, Label, Images etc.
+Ein Menü besteht aus einem \keyword{MenuFrame}, welcher verschiedene Menüelemente enthält, wie zum Beispiel Buttons, Edits, Label, Images etc.
 
-Mit einem MenuLayer kann man beispielsweise das Hauptmenü gestalten oder auch die Levelauswahl. Unser Layersystem ist dabei eine große Hilfe, denn wenn man auf den Layerstack ein Untermenü pusht muss man dieses nur wieder vom Stack entfernen um auf dem Obermenü zu landen.
+Mit einem MenuLayer kann man beispielsweise das Hauptmenü gestalten oder auch die Levelauswahl. Unser Layersystem ist dabei eine große Hilfe, denn wenn man auf den Layerstack ein Untermenü pusht, muss man dieses nur wieder vom Stack entfernen, um auf dem Obermenü zu landen.
 
 \paragraph{Komponenten}
 
-Sämtliche Komponenten sind von der Klasse \keyword{MenuBaseElement} abgeleitet. Jedes MenuElement hat eine feste Position, Größe und eine eindeutige ID. Vom Framework aus sind schon eine Reihe an Standard Komponenten definiert, jedoch können auch eigene neue erstellt werden.
-Alle Komponenten befinden sich immer innerhalb eines \keyword{MenuFrames} (ausgenommen der \keyword{MenuFrame} selbst) und dieser befindet sich innerhalb eines \keyword{MenuLayers}. In einem Layer ist immer eine Komponente aktuell fokusiert. Der Fokus wird gewechselt wenn auf eine neue Komponente geklickt wird. Die Bedeutung des Fokus ist von der entsprechenden Komponente abhängig und kann sowohl visuelle als auch funktionelle Veränderung bedeuten.
+Sämtliche Komponenten sind von der Klasse \keyword{MenuBaseElement} abgeleitet. Jedes MenuElement hat eine feste Position, Größe und eine eindeutige ID. Vom Framework aus sind schon eine Reihe an Standardkomponenten definiert, jedoch können auch eigene neue erstellt werden.
+Alle Komponenten befinden sich immer innerhalb eines \keyword{MenuFrames} (ausgenommen der \keyword{MenuFrame} selbst) und dieser befindet sich innerhalb eines \keyword{MenuLayers}. In einem Layer ist immer eine Komponente aktuell fokusiert. Der Fokus wird gewechselt, wenn auf eine neue Komponente geklickt wird. Die Bedeutung des Fokus ist von der entsprechenden Komponente abhängig und kann sowohl visuelle als auch funktionelle Veränderung bedeuten.
 
 \quickfigure{Klassendiagramm der Menü Elemente}{menuclassdia}{0.85}
 
-Die meisten Komponenten werden durch Komposition anderer Komponenten gebildet. So zeigt der \keyword{MenuButton} beispielsweise seinen Text nicht selbst an, sondern besitzt intern ein Label mit dem Text des Buttons. Indem man das rendern immer wieder auf Subkomponenten auslagert kann man relativ einfach auch komplexere Komponenten bilden. So besteht beispielsweise der \keyword{MenuSettingsTree} aus mehreren \keyword{MenuImages}. \keyword{MenuLabels} und \keyword{MenuCheckboxes}. 
+Die meisten Komponenten werden durch Komposition anderer Komponenten gebildet. So zeigt der \keyword{MenuButton} beispielsweise seinen Text nicht selbst an, sondern besitzt intern ein Label mit dem Text des Buttons. Indem man das rendern immer wieder auf Subkomponenten auslagert, kann man relativ einfach auch komplexere Komponenten bilden. So besteht beispielsweise der \keyword{MenuSettingsTree} aus mehreren \keyword{MenuImages}. \keyword{MenuLabels} und \keyword{MenuCheckboxes}. 
 
 \begin{center}
 \begin{tabularx}{\textwidth}{|l|X|} 
@@ -23,15 +23,15 @@ Klasse & Funktion \\
 \hline
 \keyword{MenuRadioButton} & Eine Optionsbox, welche entweder aktiviert oder deaktiviert ist. Im Kontext des übergeordneten Containers ist immer nur maximal ein RadioButton aktiviert \\
 \hline
-\keyword{MenuEdit} & Ein Text Eingabefeld. Es sind nur Eingaben möglich die von der übergebenen BitmapFont dargestellt werden können. Bei Eingaben länger als die Komponentenbreite entsteht ein Scrolleffekt. \\
+\keyword{MenuEdit} & Ein Text Eingabefeld. Es sind nur Eingaben möglich, die von der übergebenen BitmapFont dargestellt werden können. Bei Eingaben länger als die Komponentenbreite entsteht ein Scrolleffekt. \\
 \hline
 \keyword{MenuImage} & Zeigt entweder eine statische Textur an oder eine sich wiederholende Animation \\
 \hline
 \keyword{MenuLabel} & Zeigt einen Text an. Der Text ist entweder fest skaliert oder passt sich den Dimensionen des Labels an\\
 \hline
-\keyword{MenuContainer} & Ein Container welcher mehrere Kindelemente enthält. Die Positionen der Kinder sind relativ zu der des Containers. Möchte man einen Container zum reinen Zweck der logischen Gruppierung kann man direkt diese Klasse verwenden. Ist eine visuelle Gruppierung erwünscht sollte man die Klasse \keyword{MenuPanel} verwenden.\\
+\keyword{MenuContainer} & Ein Container, welcher mehrere Kindelemente enthält. Die Positionen der Kinder sind relativ zu der des Containers. Möchte man einen Container zum reinen Zweck der logischen Gruppierung, kann man direkt diese Klasse verwenden. Ist eine visuelle Gruppierung erwünscht, sollte man die Klasse \keyword{MenuPanel} verwenden.\\
 \hline
-\keyword{MenuPanel} & Ein Container welcher eine eigene Textur besitzt.\\
+\keyword{MenuPanel} & Ein Container, welcher eine eigene Textur besitzt.\\
 \hline
 \keyword{MenuFrame} & Der Wurzelcontainer jedes \keyword{MenuLayers}. Er besitzt immer die Breite des aktuellen Anzeigegerätes und kann nicht ausgetauscht werden.\\
 \hline
@@ -40,27 +40,27 @@ Klasse & Funktion \\
 \end{tabularx}
 \end{center}
 
-Einige Elemente benötigen einen Möglichkeit um Schrift anzuzeigen. Hierfür hat jedes \keyword{MenuElement} ein Feld \ti{font} welches vom Typ \keyword{BitmapFont} ist.
-Dieses Feld wird von den Komponenten an ihre Kinder weitervererbt. Es reicht also theoretisch dem \keyword{MenuFrame} ein Font zu geben und der Frame wird es an alle seine Kinder weitergeben. Hat eines der Kinder jedoch einenen eigenen Font definiert erhält dieser Priorität. So ist es auch möglich, zwei Containern jeweils unterschiedliche Fonts zu geben und damit ihnen und all ihren Kindern ein unterschiedlichen Aussehen zu spendieren.
+Einige Elemente benötigen einen Möglichkeit, um Schrift anzuzeigen. Hierfür hat jedes \keyword{MenuElement} ein Feld \ti{font}, welches vom Typ \keyword{BitmapFont} ist.
+Dieses Feld wird von den Komponenten an ihre Kinder weitervererbt. Es reicht also theoretisch, dem \keyword{MenuFrame} ein Font zu geben und der Frame wird es an alle seine Kinder weitergeben. Hat eines der Kinder jedoch einenen eigenen Font definiert, erhält dieser Priorität. So ist es auch möglich, zwei Containern jeweils unterschiedliche Fonts zu geben und damit ihnen und all ihren Kindern ein unterschiedlichen Aussehen zu spendieren.
 
 \paragraph{Texturen und GUITextureProvider}
 
-Außer dem \keyword{MenuContainer} werden alle Komponenten angezeigt. Standardmäßig haben die Komponenten eine Renderroutine welcher allein mit dem ShapeRenderer auskommt. Dies bedeutet, dass die Komponenten mittels farbigen Rechtecken und Linien gezeichnet werden. Dies ist jedoch eigentlich nur zum Debuggen gedacht. Im Produktiveinsatz braucht jede Komponente eine Reihe an Texturen um gezeichnet zu werden.
+Außer dem \keyword{MenuContainer} werden alle Komponenten angezeigt. Standardmäßig haben die Komponenten eine Renderroutine, welcher allein mit dem ShapeRenderer auskommt. Dies bedeutet, dass die Komponenten mittels farbigen Rechtecken und Linien gezeichnet werden. Dies ist jedoch eigentlich nur zum Debuggen gedacht. Im Produktiveinsatz braucht jede Komponente eine Reihe an Texturen, um gezeichnet zu werden.
 
-Ein \keyword{MenuButton} beispielsweise braucht insgesamt 36 Texturen um gezeichnet zu werden. Er besitzt vier Zustände (normal, gedrückt, fokusiert, deaktiviert) und Jeder dieser Zustände braucht neun Texturen: Die vier Ecken, die vier Kanten und eine für die eigentliche Fläche.
+Ein \keyword{MenuButton} beispielsweise braucht insgesamt 36 Texturen, um gezeichnet zu werden. Er besitzt vier Zustände (normal, gedrückt, fokusiert, deaktiviert) und jeder dieser Zustände braucht neun Texturen: Die vier Ecken, die vier Kanten und eine für die eigentliche Fläche.
 
 \quickfigure{Die neun Texturen einer Menüfläche}{nine_side_texturing}{0.4}
 
-Diese Unterteilung in neun Texturen sorgt dafür, dass man Elemente in beliebiger Dimensionierung anzeigen kann, ohne die Texturen verzerren zu müssen. Außerdem ist es hier relativ einfach ein neues UI Kit zur Verfügung zu stellen - alles was man hierfür tun muss ist die Texturen auszutauschen.
+Diese Unterteilung in neun Texturen sorgt dafür, dass man Elemente in beliebiger Dimensionierung anzeigen kann, ohne die Texturen verzerren zu müssen. Außerdem ist es hier relativ einfach, ein neues UI Kit zur Verfügung zu stellen - alles was man hierfür tun muss ist die Texturen auszutauschen.
 
 Die Verteilung der Texturen erfolgt über eine Instanz der Klasse \keyword{GUITextureProvider}. Dies ist primäre eine HashMap welche einem 3-Tupel aus \ti{Klasse}, \ti{Identifier} und \ti{Modifier} eine Textur zuordnet. So ist beispielsweise der Klasse \ti{MenuButton}, dem Identifier \ti{texture-topleft} und dem Modifier \ti{focused} eine spezielle Textur zugeordnet.
-Den Weg über diese Klasse hat den Vorteil, dass man allen Buttons den gleichen TextureProvider geben kann und sie alle damit die gleiche Button-Textur bekommen. Möchte man einen Button welcher eine andere Textur hat, muss man ihm nur einen eigenen TextureProvider geben. Die Identifikation über die Klasse ermöglicht es auch verschiedene Texturen für verschiedene Subklassen von MenuButton zur Verfügung zu stellen und eine einfache Unterscheidung zwischen den Texturen von zum Beispiel einer CheckBox und einem RadioButton zu haben.
+Den Weg über diese Klasse hat den Vorteil, dass man allen Buttons den gleichen TextureProvider geben kann und sie alle damit die gleiche Button-Textur bekommen. Möchte man einen Button welcher eine andere Textur hat, muss man ihm nur einen eigenen TextureProvider geben. Die Identifikation über die Klasse ermöglicht es auch, verschiedene Texturen für verschiedene Subklassen von MenuButton zur Verfügung zu stellen und eine einfache Unterscheidung zwischen den Texturen von zum Beispiel einer CheckBox und einem RadioButton zu haben.
 
-Die einzige Ausnahme bilden \keyword{MenuImages}. Da diese im Normalfall alle eine eigene Textur haben wird ihre Anzeigetextur über die Methode \ti{setImage()} gesetzt wird und nicht über den TextureProvider.
+Die einzige Ausnahme bilden \keyword{MenuImages}. Da diese im Normalfall alle eine eigene Textur haben, wird ihre Anzeigetextur über die Methode \ti{setImage()} gesetzt wird und nicht über den TextureProvider.
 
 \paragraph{Events}
 
-Jedes \keyword{MenuElement} hat eine Liste von \keyword{MenuElementListener}. In diesem Listener sind alle Events integriert welche Element unabhängig auftreten:
+Jedes \keyword{MenuElement} hat eine Liste von \keyword{MenuElementListener}. In diesem Listener sind alle Events integriert, welche Element unabhängig auftreten:
 
 \begin{description}
 	\item[\textbf{onPointerDown}] \hfill \\  Die Maus/der Touchpointer drückt auf dieses Element
@@ -72,11 +72,11 @@ Jedes \keyword{MenuElement} hat eine Liste von \keyword{MenuElementListener}. In
 	\item[\textbf{onFocusLost}]   \hfill \\  Diese Komponente verliert den Fokus
 \end{description}
 
-Zusätzlich können Elemente von dem Interface \keyword{MenuElementListener} erben und somit neue Events einführen welche speziell für ein Element gedacht sind. So gibt es beispielsweise das Interface \keyword{MenuCheckboxListener} welches zu den vorhandenen Methoden noch die Methode \ti{onChecked} hinzufügt.
+Zusätzlich können Elemente von dem Interface \keyword{MenuElementListener} erben und somit neue Events einführen, welche speziell für ein Element gedacht sind. So gibt es beispielsweise das Interface \keyword{MenuCheckboxListener}, welches zu den vorhandenen Methoden noch die Methode \ti{onChecked} hinzufügt.
 
 \paragraph{Menüs mit AGDXML definieren}
 
-Bisher haben wir Menüs manuell im Code erstellt. Dies hat zwei Nachteile. Einerseits kann es sehr kompliziert werden komplexere Menüs zusammenzustellen- Andererseits sind diese Menüs statisch und können sich nicht an verschiedene Größen oder dynamische Größenänderungen anpassen.
+Bisher haben wir Menüs manuell im Code erstellt. Dies hat zwei Nachteile. Einerseits kann es sehr kompliziert werden komplexere Menüs zusammenzustellen, andererseits sind diese Menüs statisch und können sich nicht an verschiedene Größen oder dynamische Größenänderungen anpassen.
 
 Als Lösung hierfür gibt es den \keyword{AgdxmlLayer}, welcher vom \keyword{MenuLayer} ableitet. Dieser bekommt eine Menüdefinition in Form einer speziellen XML Datei. Mittels dieser Definition wird dann dynamisch ein Menü erstellt. Die Menüdefinition kann entweder auf fixen Maßen beruhen oder die Komponenten dynamisch und relativ zur verfügbaren Fläche definieren.
 
@@ -84,14 +84,14 @@ Als Lösung hierfür gibt es den \keyword{AgdxmlLayer}, welcher vom \keyword{Men
 
 \quickfigure{Der AGDXML Tag Tree}{agdxmltree-class}{0.95}
 
-Das AGDXML Format besteht aktuell aus acht verschiedenen Tags die jeweils einem MenuElement zugeordnet sind. Der Root-Tag des AGDXML Dokumentes muss immer \textbf{<frame>} sein. Darunter kann man mittels anderer Tags Menükomponenten erzeugen. Es gibt einige Attribute, welche alle Tags (außer dem \textbf{<frame>} Tag) haben. Zum Beispiel kann man für alle Komponenten die Position, Höhe und Breite festlegen. Hierbei kann man entweder ein konstantes Maß in der Einheit Pixel angeben oder einen Prozentwert, welcher relativ zum übergeordneten Element interpretiert wird. Diese Prozentwerte sind die erste Möglichkeit um dynamische Menüs zu erzeugen. Außerdem kann man für alle Komponenten die ID festlegen, so wie den \keyword{GUITextureProvider} und die Sichtbarkeit.
+Das AGDXML Format besteht aktuell aus acht verschiedenen Tags, die jeweils einem MenuElement zugeordnet sind. Der Root-Tag des AGDXML Dokumentes muss immer \textbf{<frame>} sein. Darunter kann man mittels anderer Tags Menükomponenten erzeugen. Es gibt einige Attribute, welche alle Tags (außer dem \textbf{<frame>} Tag) haben. Zum Beispiel kann man für alle Komponenten die Position, Höhe und Breite festlegen. Hierbei kann man entweder ein konstantes Maß in der Einheit Pixel angeben oder einen Prozentwert, welcher relativ zum übergeordneten Element interpretiert wird. Diese Prozentwerte sind die erste Möglichkeit, um dynamische Menüs zu erzeugen. Außerdem kann man für alle Komponenten die ID festlegen, so wie den \keyword{GUITextureProvider} und die Sichtbarkeit.
 
-Der TextureProvider wird in einem AGDXML Baum automatisch vererbt. Möchte man also allen Komponenten den gleichen Provider zur Verfügung stellen so muss man diesen nur im \textbf{<frame>} Tag definieren und er wird nach unten im Baum an alle Komponenten weitergegeben. 
-Angegeben wird der \keyword{GUITextureProvider}. über einen \ti{identifier} Dieser muss im Programmcode mittels der Methode \ti{addAgdxmlGuiTextureProvider(String key, GUITextureProvider value)} einem TextureProvider zugeordnet werden.
+Der TextureProvider wird in einem AGDXML Baum automatisch vererbt. Möchte man also allen Komponenten den gleichen Provider zur Verfügung stellen, so muss man diesen nur im \textbf{<frame>} Tag definieren und er wird nach unten im Baum an alle Komponenten weitergegeben. 
+Angegeben wird der \keyword{GUITextureProvider}. über einen \ti{identifier}. Dieser muss im Programmcode mittels der Methode \ti{addAgdxmlGuiTextureProvider(String key, GUITextureProvider value)} einem TextureProvider zugeordnet werden.
 
-Auch Events kann man in AGDXML registrieren, hierzu muss man in der AGDXML Datei nur den Methodennamen angeben. Über \ti{Type Introspection} wird automatisch die passende Methode in der Klasse welche von \keyword{AgdxmlLayer} ableitet gesucht. Dabei ist zu beachten, dass eine Methode mit richtigem Namen und richtiger Parameterliste existieren muss, sonst wird eine Exception vom Type \keyword{AgdxmlParsingException} geworfen. Dies vereinfacht die Definition von Events erheblich - da man Methoden nicht umständlich doppelt registrieren muss, sondern sie einfach deklarieren kann und in der AGDXML Datei angeben.
+Auch Events kann man in AGDXML registrieren. Hierzu muss man in der AGDXML Datei nur den Methodennamen angeben. Über \ti{Type Introspection} wird automatisch die passende Methode in der Klasse, welche von \keyword{AgdxmlLayer} ableitet gesucht. Dabei ist zu beachten, dass eine Methode mit richtigem Namen und richtiger Parameterliste existieren muss, sonst wird eine Exception vom Type \keyword{AgdxmlParsingException} geworfen. Dies vereinfacht die Definition von Events erheblich - da man Methoden nicht umständlich doppelt registrieren muss, sondern sie einfach deklarieren und in der AGDXML Datei angeben kann.
 
-Der wirklich große Vorteil von AGDXML ist jedoch der \textbf{<grid>} Tag. Mit ihm kann man einen dynamischen Container erzeugen. Mithilfe der Tags \textbf{<columndefinitions>} und \textbf{<rowdefinitions>} kann man das Grid in ein Raster unterteilen. Und mit den Pseudo-Attributen \ti{grid.row} und \ti{grid.column} können Elemente in dieses Raster eingebettet werden. Sind keine zusätzlichen Attribute angegeben füllt ein Element immer seine gesamte Rasterzelle aus. Jedoch kann dies auch mit den Attributen \ti{position}, \ti{width} und \ti{height} manipuliert werden. Als Spalten-/Zellenmaße gibt es drei verschiedene Definitionsmöglichkeiten:
+Der wirklich große Vorteil von AGDXML ist jedoch der \textbf{<grid>} Tag. Mit ihm kann man einen dynamischen Container erzeugen. Mithilfe der Tags \textbf{<columndefinitions>} und \textbf{<rowdefinitions>} kann man das Grid in ein Raster unterteilen. Und mit den Pseudo-Attributen \ti{grid.row} und \ti{grid.column} können Elemente in dieses Raster eingebettet werden. Sind keine zusätzlichen Attribute angegeben, füllt ein Element immer seine gesamte Rasterzelle aus. Jedoch kann dies auch mit den Attributen \ti{position}, \ti{width} und \ti{height} manipuliert werden. Als Spalten-/Zellenmaße gibt es drei verschiedene Definitionsmöglichkeiten:
 
 \begin{center}
 \begin{tabularx}{\textwidth}{|l|l|X|} 
@@ -107,11 +107,11 @@ WEIGHT & Zahlenwert mit angefügtem Stern & Der verbleibende Freiraum (nach PIXE
 \end{tabularx}
 \end{center}
 
-Die einzelnen Definitionen werden am beste in Kombination genutzt. So kann man ein Grid mit 3 Reihen definieren bei dem zwei gleich groß sind und die dritte hundert Pixel hoch.
+Die einzelnen Definitionen werden am besten in Kombination genutzt. So kann man ein Grid mit 3 Reihen definieren, bei dem zwei gleich groß sind und die dritte hundert Pixel hoch.
 
 Einige Attribute sind Farbdefinitionen. Hier kann man entweder direkt einen Hexadezimal-Wert angeben (zum Beispiel \textbf{\#FF8800}). Alternativ kann man auch direkt einen Wert aus einer Liste an vordefinierten Farbkonstanten benutzen (zum Beispiel \textbf{BLACK} oder \textbf{MAGENTA}).
 
-Zuletzt gibt es einige Attribute welche ein Padding definieren. Dies sind vier Werte welche den vier Seiten eines Rechtecks entsprechen. Diese Werte kann man in unterschiedlichen Formaten angeben:
+Zuletzt gibt es einige Attribute, welche ein Padding definieren. Dies sind vier Werte, welche den vier Seiten eines Rechtecks entsprechen. Diese Werte kann man in unterschiedlichen Formaten angeben:
 
 \begin{center}
 \begin{tabularx}{\textwidth}{|l|l|} 
@@ -149,4 +149,4 @@ Als zusätzliches Hilfsmittel für AGDXML Dateien gibt es den \ti{AGDXML-Menudes
 
 \quickfigure{Screenshot des AGDXML Menudesigner}{menudesigner}{0.9}
 
-Der Vorteil des Menudesigners ist es, dass man direkt - während dem Schreiben - sehen kann ob ein syntaktischer Fehler in der AGDXML Datei ist und wie das resultierende Format ungefähr Aussehen wird. Außerdem kann man Sehen wie sich das Menü unter verschiedenen Auflösungen verhält.
+Der Vorteil des Menudesigners ist es, dass man direkt - während des Schreibens - sehen kann ob ein syntaktischer Fehler in der AGDXML Datei ist und wie das resultierende Format ungefähr aussehen wird. Außerdem kann man sehen wie sich das Menü unter verschiedenen Auflösungen verhält.
