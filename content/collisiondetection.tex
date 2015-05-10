@@ -79,7 +79,7 @@ Aktuell gibt es drei verschiedene Arten von \keyword{CollisionGeometry}: \keywor
 \subparagraph{CollisionCircle}
 
 Der Kreis ist die einfachste \keyword{CollisionGeometry}. Bei Programmen mit vielen Entities sollte darüber nachgedacht werden, nur Kreisgeometrien zu verwenden.
-Für den Fall Kollision Kreis-Kreis ist die Formel um zu berechnen ob sie sich schneiden sehr einfach:
+Für den Fall der Kollision von Kreis-Kreis, ist die Formel um zu berechnen, ob sie sich schneiden sehr einfach:
 $ Abstand < (Radius_1 + Radius_2) $ was in unserem Fall zu $ sqrt((x_1 - x_2)^2 + (y_1 - y_2)^2) < (r_1 + r_2)$ wird. Dies kann noch weiter optimiert werden indem man beide Seiten quadriert: $ x_1 - x_2)^2 + (y_1 - y_2)^2 < (r_1 + r_2)^2 $ \cite[S 499]{DGIJ}. Dies liegt daran, dass eine Multiplikation um mehrere Größenordnungen schneller als eine Quadratwurzel ist, ersteres ist meist ein einzelner Maschinenbefehl.
 
 In unserem Projekt wird mit folgender Methode überprüft, ob sich zwei Kreise schneiden:
@@ -122,7 +122,7 @@ public boolean doGeometriesIntersect(CollisionTriangle a, CollisionCircle b) {
 
 Unsere zweite Standard Geometrie ist das Rechteck. Es ist zu beachten, dass dies kein frei drehbares Rechteck ist, sondern eines, dass an den Koordinatenachsen ausgerichtet ist. Deshalb wird es auch nur von \ti{width}, \ti{height} und \ti{center} definiert. \cite{EMFGAIA}[S. 564ff]
 
-Diese Geometrie wird wohl am meisten verwendet, da einerseits Kollisionen zwischen zwei Rechtecken sehr schnell zu berechnen sind und andererseits es sich oft natürlich anfühlt Objekte in ein Rechteck zusammenzufassen. Um zu erkennen, ob zwei Rechtecke sich überschneiden, dreht man die Frage zuerst um. Zwei Rechtecke überschneiden sich nicht, wenn die Rechtecke übereinander/untereinander oder nebeneinander liegen. Negiert man dies, bekommt man ganz einfach heraus, ob sich zwei Rechtecke schneiden:
+Diese Geometrie wird wohl am meisten verwendet, da einerseits Kollisionen zwischen zwei Rechtecken sehr schnell zu berechnen sind und andererseits sich viele Geometrien mit einem Rechteck abschätzen lassen. Um zu erkennen, ob zwei Rechtecke sich überschneiden, dreht man die Frage zuerst um. Zwei Rechtecke überschneiden sich nicht, wenn die Rechtecke übereinander/untereinander oder nebeneinander liegen. Negiert man dies, bekommt man ganz einfach heraus, ob sich zwei Rechtecke schneiden:
 
 \doinline
 \begin{lstlisting}[caption=Erkennen von Kollisionen (Box-Box), title=\hspace{0 pt}, language=java]
@@ -201,7 +201,7 @@ Das bedeutet, dass jedes mal, wenn eine CollisionGeometry hinzugefügt wird oder
 Diese \keyword{CollisionMap} muss jedoch immer aktuell gehalten werden. Jedes mal wenn eine Geometrie hinzugefügt/bewegt/entfernt wird, muss die jeweilige Methode aufgerufen werden, um die \keyword{CollisionMap} zu aktualisieren. Dies ist auch der technische Grund, warum sowohl bei \keyword{Entity} als auch bei \keyword{CollisionGeometry} der \ti{position}-Vektor nicht öffentlich ist, sondern nur durch Setter verändert werden kann. Denn dadurch kann man diese Events abfangen und an die \keyword{CollisionMap} weitergeben.
 
 Eine Frage ist nun wie die \keyword{CollisionMapTiles} skaliert werden sollen. Der Standard Ansatz unseres Frameworks ist es die \keyword{CollisionMapTiles} gleich groß wie die normalen Map \keyword{Tiles} zu haben.
-Dies ist als Standard Ansatz in soweit gut, dass normalerweise eine Map weder nur ein paar Tiles noch eine extreme Anzahl Tiles hat und meist sind maximal eine Hand voll Entities gleichzeitig auf einer Tile.
+
 Trotzdem bieten wir dem Benutzer die Möglichkeit, die Tilegröße manuell anzupassen.
 Dafür gibt es im \keyword{CollisionMap}-Konstruktor den Parameter \ti{expTileScale}.
 Dieser ist das Verhältnis von MapTiles zu CollisionTiles in der Form $ 2^n $.
@@ -381,7 +381,7 @@ Nun gibt es in der Klasse \keyword{CollisionListener} auch noch Events für solc
 
 Ein Problem können hier Entities mit mehreren \keyword{CollisonGeometries} sein. Hierbei muss drauf geachtet werden, dass alle Geometrien in der Kollision beachtet werden und jeweils der größte "Rücksetz-Wert" benutzt wird.
 
-Ein weiteres Problem sind entstehende Rundungsfehler bei der Verwendung von FloatingPoint Zahlen. Führt man den Algorithmus exakt so wie oben beschrieben aus, kann es vorkommen, dass sich die beiden Geometrien auch nach dem Rücksetzen immer noch leicht schneiden. Der einzige Weg um dieses Problem herum ist es einen delta Wert in der Berechnung des minimalen Abstands einzuführen.\cite[S 18]{KRAY} Damit wird nicht mehr der minimale Abstand zurückgeliefert, sondern der minimale Abstand plus einen delta Wert. Somit können sich Entities nicht mehr "wirklich" berühren, sondern nur noch bis maximal delta Einheiten nähern.
+Ein weiteres Problem sind entstehende Rundungsfehler bei der Verwendung von FloatingPoint Zahlen. Führt man den Algorithmus exakt so wie oben beschrieben aus, kann es vorkommen, dass sich die beiden Geometrien auch nach dem Rücksetzen immer noch leicht schneiden. Der einzige Weg um dieses Problem zu lösen, ist es einen delta Wert in der Berechnung des minimalen Abstands einzuführen.\cite[S 18]{KRAY} Damit wird nicht mehr der minimale Abstand zurückgeliefert, sondern der minimale Abstand plus einen delta Wert. Somit können sich Entities nicht mehr "wirklich" berühren, sondern nur noch bis maximal delta Einheiten nähern.
 
 Ein letztes Problem ist das sogenannte Discrete-Time-Issue \cite[S 503]{DGIJ}  \cite[S 14]{ACP}. Falls die Update rate niedrig genug ist, kann es vorkommen, dass ein Objekt links neben einem anderen ist und sich dann schnell genug nach rechts bewegt, um im nächsten Schritt rechts neben dem Objekt zu sein. Obwohl sich das Entity nun direkt durch ein anderes bewegt hat, wurde an keiner Stelle eine Kollision bemerkt. Zwar gibt es mathematische Ansätze dieses Problem zu lösen, diese gehen jedoch auf Kosten der Performance.\cite[S 11ff]{KRAY} Einfacher ist es eine konstante Update-Rate aufrecht zu erhalten und keine extrem dünne Entities zu verwenden, wo Kollisionen wichtig sind.
 
